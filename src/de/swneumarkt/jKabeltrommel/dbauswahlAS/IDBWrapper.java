@@ -9,4 +9,5 @@ import java.util.List;
  */
 public interface IDBWrapper {
     List<KabeltypE> getAllKabeltypen();
+    void update(KabeltypE kabeltyp);
 }

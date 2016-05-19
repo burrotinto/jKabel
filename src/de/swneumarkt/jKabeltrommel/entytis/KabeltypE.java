@@ -4,36 +4,34 @@ package de.swneumarkt.jKabeltrommel.entytis;
  * Created by derduke on 19.05.2016.
  */
 public class KabeltypE {
-    private String name;
-    private int nummer;
+    private String typ;
+    private final int materialNummer;
 
     @Override
     public String toString() {
         return "KabeltypE{" +
-                "name='" + name + '\'' +
-                ", nummer=" + nummer +
+                "materialNummer=" + materialNummer +
+                ", typ='" + typ + '\'' +
                 '}';
     }
 
-    public String getName() {
-        return name;
+    public String getTyp() {
+        return typ;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setTyp(String typ) {
+        this.typ = typ;
     }
 
-    public int getNummer() {
-        return nummer;
+    public int getMaterialNummer() {
+        return materialNummer;
     }
 
-    public void setNummer(int nummer) {
-        this.nummer = nummer;
-    }
 
-    public KabeltypE(String name, int nummer) {
-        this.name = name;
-        this.nummer = nummer;
+
+    public KabeltypE(String typ, int materialNummer) {
+        this.typ = typ;
+        this.materialNummer = materialNummer;
 
     }
 }

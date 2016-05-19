@@ -12,32 +12,48 @@ import java.util.List;
  */
 class HSQLDBWrapper implements IDBWrapper {
     Connection con = null;
-    Statement stmnt = null;
+
     HSQLDBWrapper(String path) throws ClassNotFoundException, SQLException {
-        Class.forName( "org.hsqldb.jdbcDriver" );
-        con = DriverManager.getConnection("jdbc:hsqldb:file:"+path+"jKabeltrommelDB;shutdown=true", "sa", "" );
-        stmnt = con.createStatement();
+        Class.forName("org.hsqldb.jdbcDriver");
+        con = DriverManager.getConnection("jdbc:hsqldb:file:" + path + "jKabeltrommelHSQLDB;shutdown=true", "sa", "");
+        Statement stmnt = con.createStatement();
+
         try {
-            stmnt.execute("create table kabeltyp(name VARCHAR (64) NOT NULL PRIMARY KEY , materialnummer integer not null);");
-            stmnt.executeUpdate("create table trommel(id IDENTITY, trommelnummer VARCHAR(64) NOT NULL, gesamtlaenge INTEGER, lieferdatum DATE); ");
-            stmnt.executeUpdate("create TABLE strecke(id IDENTITY, ba INTEGER, ort VARCHAR(64), verlegedatum DATE , start INTEGER , ende INTEGER );");
+            stmnt.execute("SET WRITE_DELAY 0;");
+            stmnt.executeQuery("Select * FROM kabeltyp;");
+            stmnt.executeQuery("Select * FROM trommel;");
+            stmnt.executeQuery("Select * FROM strecke;");
         } catch (SQLException e) {
             e.printStackTrace();
+            // Create DB
+            stmnt.execute("create table kabeltyp(materialnummer integer not null PRIMARY KEY , typ VARCHAR (64) );");
+            stmnt.execute("create table trommel(id IDENTITY, trommelnummer VARCHAR(64) NOT NULL, gesamtlaenge INTEGER, lieferdatum DATE); ");
+            stmnt.execute("create TABLE strecke(id IDENTITY, ba INTEGER, ort VARCHAR(64), verlegedatum DATE , start INTEGER , ende INTEGER );");
         }
-        stmnt.executeUpdate("INSERT INTO kabeltyp (name, materialnummer) VALUES('4x40',102008 )");
     }
 
     @Override
     public List<KabeltypE> getAllKabeltypen() {
         ArrayList<KabeltypE> list = new ArrayList<>();
         try {
+            Statement stmnt = con.createStatement();
             ResultSet rs = stmnt.executeQuery("Select * FROM kabeltyp;");
-            while(rs.next()){
-                list.add(new KabeltypE(rs.getString(1),rs.getInt(2)));
+            while (rs.next()) {
+                list.add(new KabeltypE(rs.getString(2), rs.getInt(1)));
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return list;
+    }
+
+    @Override
+    public void update(KabeltypE kabeltyp) {
+        try {
+            Statement stmnt = con.createStatement();
+            stmnt.executeUpdate("UPDATE kabeltyp SET typ='" + kabeltyp.getTyp() + "' WHERE materialnummer=" + kabeltyp.getMaterialNummer() + ";");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }

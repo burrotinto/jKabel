@@ -37,12 +37,17 @@ public class DBAuswahlAAS {
         return null;
     }
 
-    public static void main(String[] args) {
-        new DBAuswahlAAS().getDBWrapper().getAllKabeltypen().forEach(new Consumer<KabeltypE>() {
+    public static void main(String[] args) throws InterruptedException {
+        KabeltypE k = null;
+        IDBWrapper db =    new DBAuswahlAAS().getDBWrapper();
+        db.getAllKabeltypen().forEach(new Consumer<KabeltypE>() {
             @Override
             public void accept(KabeltypE kabeltypE) {
                 System.out.println(kabeltypE.toString());
             }
         });
+        k=db.getAllKabeltypen().get(1);
+        k.setTyp("ANDERS");
+        db.update(k);
     }
 }
