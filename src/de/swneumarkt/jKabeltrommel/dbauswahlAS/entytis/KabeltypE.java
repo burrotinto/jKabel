@@ -1,4 +1,4 @@
-package de.swneumarkt.jKabeltrommel.entytis;
+package de.swneumarkt.jKabeltrommel.dbauswahlAS.entytis;
 
 /**
  * Created by derduke on 19.05.2016.
@@ -16,7 +16,7 @@ public class KabeltypE {
     }
 
     public String getTyp() {
-        return typ;
+        return typ == null ? "" : typ;
     }
 
     public void setTyp(String typ) {
@@ -28,6 +28,9 @@ public class KabeltypE {
     }
 
 
+    public KabeltypE(int materialNummer, String typ) {
+        this(typ, materialNummer);
+    }
 
     public KabeltypE(String typ, int materialNummer) {
         this.typ = typ;

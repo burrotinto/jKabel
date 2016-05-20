@@ -1,6 +1,7 @@
 package de.swneumarkt.jKabeltrommel.dbauswahlAS;
 
-import de.swneumarkt.jKabeltrommel.entytis.KabeltypE;
+import de.swneumarkt.jKabeltrommel.dbauswahlAS.entytis.KabeltypE;
+import de.swneumarkt.jKabeltrommel.dbauswahlAS.entytis.TrommelE;
 
 import javax.swing.*;
 import java.io.File;
@@ -40,14 +41,25 @@ public class DBAuswahlAAS {
     public static void main(String[] args) throws InterruptedException {
         KabeltypE k = null;
         IDBWrapper db =    new DBAuswahlAAS().getDBWrapper();
+
+//        db.create(new KabeltypE(102035,"4*150"));
+
         db.getAllKabeltypen().forEach(new Consumer<KabeltypE>() {
             @Override
             public void accept(KabeltypE kabeltypE) {
                 System.out.println(kabeltypE.toString());
             }
         });
-        k=db.getAllKabeltypen().get(1);
-        k.setTyp("ANDERS");
+
+        k=db.getAllKabeltypen().get(0);
         db.update(k);
+
+//        db.create(new TrommelE(k,"100030002",0,500));
+        db.getTrommelnForTyp(k).forEach(new Consumer<TrommelE>() {
+            @Override
+            public void accept(TrommelE kabeltypE) {
+                System.out.println(kabeltypE.toString());
+            }
+        });
     }
 }
