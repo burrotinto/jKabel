@@ -11,7 +11,10 @@ import java.util.List;
  */
 public interface IDBWrapper {
     List<KabeltypE> getAllKabeltypen();
+
     List<TrommelE> getTrommelnForTyp(KabeltypE kabeltyp);
+
+    List<StreckeE> getStreckenForTrommel(TrommelE trommel);
 
     boolean update(KabeltypE kabeltyp);
 

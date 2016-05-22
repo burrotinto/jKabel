@@ -57,7 +57,7 @@ class HSQLDBWrapper implements IDBWrapper {
             ResultSet rs = stmnt.executeQuery("Select id,trommelnummer, gesamtlaenge, lieferdatum FROM kabeltyp JOIN trommel ON kabeltyp.materialnummer = trommel.materialnummer Where kabeltyp.materialnummer = " + kabeltyp.getMaterialNummer() + ";");
             while (rs.next()) {
                 //KabeltypE kabelTyp, int id, String trommelnummer, long date, int gesamtlaenge
-                list.add(new TrommelE(kabeltyp, rs.getInt("id"), rs.getString("trommelnummer"), rs.getLong("lieferdatum"),rs.getInt("gesamtlaenge")));
+                list.add(new TrommelE(kabeltyp, rs.getInt("id"), rs.getString("trommelnummer"), rs.getLong("lieferdatum"), rs.getInt("gesamtlaenge")));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -65,6 +65,23 @@ class HSQLDBWrapper implements IDBWrapper {
         return list;
 
     }
+
+    @Override
+    public List<StreckeE> getStreckenForTrommel(TrommelE trommel) {
+        ArrayList<StreckeE> list = new ArrayList<>();
+        try {
+            Statement stmnt = con.createStatement();
+            ResultSet rs = stmnt.executeQuery("Select * FROM trommel JOIN strecke ON strecke.trommelid = trommel.id Where strecke.trommelid = " + trommel.getId() + ";");
+            while (rs.next()) {
+                //KabeltypE kabelTyp, int id, String trommelnummer, long date, int gesamtlaenge
+                list.add(new StreckeE(rs.getInt("strecke.id") , rs.getInt("strecke.ba"),rs.getString("strecke.ort"), rs.getLong("strecke.verlegedatum"),  rs.getInt("strecke.start"),  rs.getInt("strecke.ende"),trommel));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
 
     private boolean execute(String ex) {
         try {
@@ -88,30 +105,24 @@ class HSQLDBWrapper implements IDBWrapper {
 
     @Override
     public boolean update(StreckeE strecke) {
+        //!TODO
         return false;
     }
 
     @Override
     public boolean create(StreckeE strecke) {
-        return false;
+        return execute("INSERT INTO strecke(id, trommelid, ba, ort,verlegedatum,start,ende) VALUES(NULL," + strecke.getTrommelID() + "," + strecke.getBa() + ",'" + strecke.getOrt() + "'," + strecke.getVerlegedatum() + "," + strecke.getStart() + "," + strecke.getEnde() + " )");
     }
 
     @Override
     public boolean update(TrommelE trommel) {
-
+//!TODO
         return false;
     }
 
     @Override
     public boolean create(TrommelE trommel) {
-//        create table trommel(id IDENTITY, materialnummer integer not null, trommelnummer VARCHAR(64) NOT NULL, gesamtlaenge INTEGER, lieferdatum INTEGER, FOREIGN KEY(materialnummer) REFERENCES kabeltyp(materialnummer)
-//        try {
-        try {
-            stmnt.executeUpdate("insert into trommel(id, materialnummer,trommelnummer,gesamtlaenge,lieferdatum) VALUES(NULL," + trommel.getMaterialNummer() + ",'"+trommel.getTrommelnummer()+"', " + trommel.getGesamtlaenge() + "," + trommel.getDate() + "); ");
-            return true;
-        } catch (SQLException e1) {
-            e1.printStackTrace();
-            return false;
-        }
+        return execute("insert into trommel(id, materialnummer,trommelnummer,gesamtlaenge,lieferdatum) VALUES(NULL," + trommel.getMaterialNummer() + ",'" + trommel.getTrommelnummer() + "', " + trommel.getGesamtlaenge() + "," + trommel.getDate() + "); ");
+
     }
 }
