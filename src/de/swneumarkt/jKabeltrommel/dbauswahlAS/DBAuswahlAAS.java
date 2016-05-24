@@ -30,7 +30,7 @@ public class DBAuswahlAAS {
     public IDBWrapper getDBWrapper() {
         try {
             if(new File("O:\\KFM-Verwaltung\\Materialwirtschaft\\Lager\\jKabelDB").exists()){
-                return new HSQLDBWrapper("O:\\KFM-Verwaltung\\Materialwirtschaft\\Lager\\jKabelDB");
+                return new HSQLDBWrapper("O:\\KFM-Verwaltung\\Materialwirtschaft\\Lager\\jKabelDB\\");
             } else {
                 return new HSQLDBWrapper(getPath());
             }
