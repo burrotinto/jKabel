@@ -34,12 +34,7 @@ class StreckenK {
         return strecken;
     }
     public KabeltypE getTyp(TrommelE trommel){
-        for(KabeltypE typ: db.getAllKabeltypen()){
-            if(db.getTrommelnForTyp(typ).contains(trommel)){
-                return typ;
-            }
-        }
-        return this.typ;
+        return db.getTyp(trommel);
     }
 
     public void eintragen(StreckeE strecke) {

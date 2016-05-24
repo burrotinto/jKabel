@@ -19,7 +19,7 @@ import java.util.List;
  */
 public class StreckenAAS extends JPanel implements ITrommelListner, ActionListener, IKabelTypListner {
     private final StreckenK kontroller;
-    private JTextField trommelnummerField, datumField, laengeField, typField, matNrField, baField, startField, endField, ortField;
+    private JTextField trommelnummerField, datumField, laengeField, typField, matNrField, baField, startField, endField, ortField, lagerplatzField;
     private List<Abgang> abgaenge;
     private JButton create = new JButton("Eintragen");
     private JButton update = new JButton("Ändern");
@@ -45,7 +45,7 @@ public class StreckenAAS extends JPanel implements ITrommelListner, ActionListen
         this.trommel = trommel;
         List<StreckeE> strecken = kontroller.getStreckenForTrommel(trommel);
         JPanel p = new JPanel();
-        p.setLayout(new GridLayout(strecken.size() + 10, 1));
+        p.setLayout(new GridLayout(strecken.size() + 11, 1));
 
         // Überschrift
         JPanel uebers = new JPanel(new FlowLayout());
@@ -92,6 +92,13 @@ public class StreckenAAS extends JPanel implements ITrommelListner, ActionListen
         typField = new JTextField(kontroller.getTyp(trommel).getTyp(), 16);
         typ.add(typField);
         p.add(typ);
+
+        //Lagerplatz
+        JPanel lP = new JPanel(new FlowLayout());
+        lP.add(new JLabel("Lagerplatz:"));
+        lagerplatzField = new JTextField(trommel.getLagerPlatz(), 12);
+        lP.add(lagerplatzField);
+        p.add(lP);
 
         //MatNr
         JPanel matNr = new JPanel(new FlowLayout());
@@ -233,6 +240,7 @@ public class StreckenAAS extends JPanel implements ITrommelListner, ActionListen
 
                 trommel.setGesamtlaenge(Integer.parseInt(laengeField.getText()));
                 trommel.setTrommelnummer(trommelnummerField.getText());
+                trommel.setLagerPlatz(lagerplatzField.getText());
                 kontroller.update(trommel);
 
                 typ.setTyp(typField.getText());

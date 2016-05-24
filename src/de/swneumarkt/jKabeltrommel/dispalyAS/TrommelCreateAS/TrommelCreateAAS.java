@@ -20,6 +20,7 @@ public class TrommelCreateAAS extends JDialog implements ActionListener {
     private JTextField trommelNummer = new JTextField();
     private JTextField laenge = new JTextField();
     private JTextField lieferscheinNr = new JTextField();
+    private JTextField lagerPlatz = new JTextField();
 
     private JButton cancel = new JButton("Abbruch");
     private JButton create = new JButton("Erstellen");
@@ -38,11 +39,13 @@ public class TrommelCreateAAS extends JDialog implements ActionListener {
         JPanel auswahl = new JPanel();
 
         JPanel p = new JPanel();
-        p.setLayout(new GridLayout(3, 2));
+        p.setLayout(new GridLayout(4, 2));
         p.add(new JLabel("Trommelnummer:"));
         p.add(trommelNummer);
         p.add(new JLabel("Gesamtlänge:"));
         p.add(laenge);
+        p.add(new JLabel("Lagerplatz:"));
+        p.add(lagerPlatz);
         p.add(new JLabel("Lieferscheinnummer:"));
         p.add(lieferscheinNr);
 
@@ -71,7 +74,7 @@ public class TrommelCreateAAS extends JDialog implements ActionListener {
         if (e.getSource() == create) {
             try {
 //                KabeltypE kabelTyp, String trommelnummer, long date, int gesamtlaenge
-                db.create(new TrommelE(typ, trommelNummer.getText(), Integer.parseInt(laenge.getText())), lieferantenAuswahlAAS.getAuswahl(), new GeliefertE(System.currentTimeMillis(),lieferscheinNr.getText(),lieferantenAuswahlAAS.getAuswahl().getId()));
+                db.create(new TrommelE(typ, trommelNummer.getText(), Integer.parseInt(laenge.getText()),lagerPlatz.getText()), lieferantenAuswahlAAS.getAuswahl(), new GeliefertE(System.currentTimeMillis(),lieferscheinNr.getText(),lieferantenAuswahlAAS.getAuswahl().getId()));
                 System.out.println();
             } catch (Exception x) {
                 //TODO

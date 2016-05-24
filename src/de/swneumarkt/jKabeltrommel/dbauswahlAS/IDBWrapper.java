@@ -20,6 +20,8 @@ public interface IDBWrapper {
 
     LieferantE getLieferant(GeliefertE liefert);
 
+    KabeltypE getTyp(TrommelE trommel);
+
     boolean update(KabeltypE kabeltyp);
 
     boolean create(KabeltypE kabeltyp);
