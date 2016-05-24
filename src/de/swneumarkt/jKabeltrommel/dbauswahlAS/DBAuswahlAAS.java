@@ -5,7 +5,6 @@ import de.swneumarkt.jKabeltrommel.dbauswahlAS.entytis.TrommelE;
 
 import javax.swing.*;
 import java.io.File;
-import java.sql.SQLException;
 import java.util.function.Consumer;
 
 /**
@@ -34,12 +33,9 @@ public class DBAuswahlAAS {
             } else {
                 return new HSQLDBWrapper(getPath());
             }
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (SQLException e) {
-            e.printStackTrace();
+        } catch (Exception e){
+            return null;
         }
-        return null;
     }
 
     public static void main(String[] args) throws InterruptedException {

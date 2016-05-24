@@ -3,6 +3,8 @@ package de.swneumarkt.jKabeltrommel.dbauswahlAS;
 
 import de.swneumarkt.jKabeltrommel.dbauswahlAS.entytis.*;
 
+import java.io.File;
+import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,13 +13,18 @@ import java.util.List;
  * Wrapper für eine HSQLDB
  */
 class HSQLDBWrapper implements IDBWrapper {
-    private Connection con;
-    private Statement stmnt;
+    private final String path;
 
-    HSQLDBWrapper(String path) throws ClassNotFoundException, SQLException {
-        Class.forName("org.hsqldb.jdbcDriver");
-        con = DriverManager.getConnection("jdbc:hsqldb:file:" + path + "jKabeltrommelHSQLDB;shutdown=true", "sa", "");
-        stmnt = con.createStatement();
+
+    HSQLDBWrapper(String path) throws ClassNotFoundException, SQLException, OnlyOneUserExeption, IOException {
+       File lck = new File(path+"lock.lck");
+        if(lck.exists()){
+            throw new OnlyOneUserExeption();
+        } else {
+            lck.createNewFile();
+            lck.deleteOnExit();}
+        this.path = path;
+        Statement stmnt = getStatement();
 
         try {
             stmnt.execute("SET WRITE_DELAY 0;");
@@ -44,11 +51,23 @@ class HSQLDBWrapper implements IDBWrapper {
         }
     }
 
+    Statement getStatement(){
+        try {
+            Class.forName("org.hsqldb.jdbcDriver");
+            Connection con = DriverManager.getConnection("jdbc:hsqldb:file:" + path + "jKabeltrommelHSQLDB;shutdown=true", "sa", "");
+            return con.createStatement();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
     @Override
     public List<KabeltypE> getAllKabeltypen() {
         ArrayList<KabeltypE> list = new ArrayList<>();
         try {
-            Statement stmnt = con.createStatement();
+            Statement stmnt = getStatement();
             ResultSet rs = stmnt.executeQuery("Select * FROM kabeltyp;");
             while (rs.next()) {
                 list.add(new KabeltypE(rs.getString(2), rs.getInt(1)));
@@ -64,7 +83,7 @@ class HSQLDBWrapper implements IDBWrapper {
     public List<TrommelE> getTrommelnForTyp(KabeltypE kabeltyp) {
         ArrayList<TrommelE> list = new ArrayList<>();
         try {
-            Statement stmnt = con.createStatement();
+            Statement stmnt = getStatement();
             ResultSet rs = stmnt.executeQuery("Select * FROM kabeltyp JOIN trommel ON kabeltyp.materialnummer = trommel.materialnummer Where kabeltyp.materialnummer = " + kabeltyp.getMaterialNummer() + ";");
             while (rs.next()) {
                 list.add(new TrommelE(kabeltyp, rs.getInt("id"), rs.getString("trommelnummer"), rs.getInt("gesamtlaenge"),rs.getString("lagerplatz")));
@@ -81,7 +100,7 @@ class HSQLDBWrapper implements IDBWrapper {
     public List<StreckeE> getStreckenForTrommel(TrommelE trommel) {
         ArrayList<StreckeE> list = new ArrayList<>();
         try {
-            Statement stmnt = con.createStatement();
+            Statement stmnt = getStatement();
             ResultSet rs = stmnt.executeQuery("Select * FROM trommel JOIN strecke ON strecke.trommelid = trommel.id Where strecke.trommelid = " + trommel.getId() + ";");
 //            System.out.println(getResultSetAsStringTable(rs));
             while (rs.next()) {
@@ -100,7 +119,7 @@ class HSQLDBWrapper implements IDBWrapper {
     public List<LieferantE> getAllLieferanten() {
         ArrayList<LieferantE> list = new ArrayList<>();
         try {
-            Statement stmnt = con.createStatement();
+            Statement stmnt = getStatement();
             ResultSet rs = stmnt.executeQuery("Select * FROM lieferant;");
             while (rs.next()) {
                 list.add(new LieferantE(rs.getInt("hid"),rs.getString("name")));
@@ -115,7 +134,7 @@ class HSQLDBWrapper implements IDBWrapper {
     @Override
     public GeliefertE getLiefer(TrommelE trommel) {
         try {
-            ResultSet rs = stmnt.executeQuery("SELECT * FROM geliefert JOIN trommel ON trommel.id = geliefert.id WHERE id ="+ trommel.getId()+";");
+            ResultSet rs = getStatement().executeQuery("SELECT * FROM geliefert JOIN trommel ON trommel.id = geliefert.id WHERE id ="+ trommel.getId()+";");
             if(rs.next()){
                 return new GeliefertE(rs.getLong("datum"),rs.getString("lieferschein"),rs.getInt("hid"),rs.getInt("id"));
             } else {
@@ -130,7 +149,7 @@ class HSQLDBWrapper implements IDBWrapper {
     @Override
     public LieferantE getLieferant(GeliefertE liefert) {
         try {
-            ResultSet rs = stmnt.executeQuery("SELECT * FROM geliefert JOIN lieferant ON lieferant.hid = geliefert.hid WHERE hid ="+ liefert.getLieferantID()+";");
+            ResultSet rs = getStatement().executeQuery("SELECT * FROM geliefert JOIN lieferant ON lieferant.hid = geliefert.hid WHERE hid ="+ liefert.getLieferantID()+";");
 //            ResultSet rs = stmnt.executeQuery("SELECT * FROM (geliefert JOIN lieferant ON lieferant.hid = geliefert.hid) JOIN trommel on trommel.id == geliefert.id WHERE hid ="+ liefert.getLieferantID()+";");
             if(rs.next()){
                 return new LieferantE(rs.getInt("lid"),rs.getString("name"));
@@ -146,7 +165,7 @@ class HSQLDBWrapper implements IDBWrapper {
     @Override
     public KabeltypE getTyp(TrommelE trommel) {
         try {
-            ResultSet rs = stmnt.executeQuery("SELECT * FROM trommel JOIN kabeltyp ON kabeltyp.materialnummer = trommel.materialnummer WHERE id ="+ trommel.getId()+";");
+            ResultSet rs = getStatement().executeQuery("SELECT * FROM trommel JOIN kabeltyp ON kabeltyp.materialnummer = trommel.materialnummer WHERE id ="+ trommel.getId()+";");
             if(rs.next()){
                 return new KabeltypE(rs.getInt("materialnummer"),rs.getString("typ"));
             } else {
@@ -161,7 +180,7 @@ class HSQLDBWrapper implements IDBWrapper {
 
     private boolean execute(String ex) {
         try {
-            stmnt.executeUpdate(ex);
+            getStatement().executeUpdate(ex);
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
@@ -201,7 +220,7 @@ class HSQLDBWrapper implements IDBWrapper {
         System.out.println(trommel.toString());
         boolean out = true;
         try {
-            ResultSet rs = stmnt.executeQuery("insert into trommel(id, materialnummer,trommelnummer,gesamtlaenge,lagerplatz) VALUES(NULL," + trommel.getMaterialNummer() + ",'" + trommel.getTrommelnummer() + "', " + trommel.getGesamtlaenge() + ",'"+trommel.getLagerPlatz() + "'); CALL IDENTITY()");
+            ResultSet rs = getStatement().executeQuery("insert into trommel(id, materialnummer,trommelnummer,gesamtlaenge,lagerplatz) VALUES(NULL," + trommel.getMaterialNummer() + ",'" + trommel.getTrommelnummer() + "', " + trommel.getGesamtlaenge() + ",'"+trommel.getLagerPlatz() + "'); CALL IDENTITY()");
             rs.next();
             int trommelID = rs.getInt(1);
 
