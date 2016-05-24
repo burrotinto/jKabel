@@ -28,4 +28,13 @@ public class LieferantE {
     public String toString() {
         return getName();
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        try{
+            return id == ((LieferantE)obj).id;
+        } catch (Exception e){
+            return false;
+        }
+    }
 }

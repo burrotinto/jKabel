@@ -1,9 +1,7 @@
 package de.swneumarkt.jKabeltrommel.dispalyAS.StreckenAS;
 
 import de.swneumarkt.jKabeltrommel.dbauswahlAS.IDBWrapper;
-import de.swneumarkt.jKabeltrommel.dbauswahlAS.entytis.KabeltypE;
-import de.swneumarkt.jKabeltrommel.dbauswahlAS.entytis.StreckeE;
-import de.swneumarkt.jKabeltrommel.dbauswahlAS.entytis.TrommelE;
+import de.swneumarkt.jKabeltrommel.dbauswahlAS.entytis.*;
 import de.swneumarkt.jKabeltrommel.dispalyAS.KabelTypAuswahlAS.IKabelTypListner;
 import de.swneumarkt.jKabeltrommel.dispalyAS.TrommelAuswahlAS.ITrommelListner;
 
@@ -13,6 +11,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
 
 /**
  * Created by derduke on 22.05.16.
@@ -25,6 +24,7 @@ public class StreckenAAS extends JPanel implements ITrommelListner, ActionListen
     private JButton update = new JButton("Ändern");
     private TrommelE trommel = null;
     private KabeltypE typ = null;
+    private JComboBox<LieferantE> cBox;
 
 
     public StreckenAAS(IDBWrapper db) {
@@ -65,9 +65,16 @@ public class StreckenAAS extends JPanel implements ITrommelListner, ActionListen
         //Lieferant
         JPanel liefer = new JPanel(new FlowLayout());
         liefer.add(new JLabel("Lieferant:"));
-        JTextField ltf = new JTextField(kontroller.getLieferant(trommel));
-        ltf.setEditable(false);
-        liefer.add(ltf);
+        Vector<LieferantE> v = kontroller.getLieferanten();
+        int pos = 0;
+        for (int i = 0; i< v.size();i++){
+            if(v.get(i).getId() == kontroller.getLiefer(trommel).getLieferantID() ){
+                pos = i;
+            }
+        }
+        cBox = new JComboBox<>(v);
+        cBox.setSelectedIndex(pos);
+        liefer.add(cBox);
         p.add(liefer);
 
         //Lieferscheinnummer
@@ -251,6 +258,11 @@ public class StreckenAAS extends JPanel implements ITrommelListner, ActionListen
                 trommel.setLagerPlatz(lagerplatzField.getText());
                 trommel.setStart(Integer.parseInt(trommelstartField.getText()));
                 kontroller.update(trommel);
+
+                GeliefertE g = kontroller.getLiefer(trommel);
+                g.setLieferantID(((LieferantE)cBox.getSelectedItem()).getId());
+                kontroller.update(g);
+
 
                 typ.setTyp(typField.getText());
                 kontroller.update(typ);

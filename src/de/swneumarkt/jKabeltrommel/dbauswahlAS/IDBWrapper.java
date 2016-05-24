@@ -39,4 +39,6 @@ public interface IDBWrapper {
     boolean create(LieferantE lieferant);
 
     boolean update(LieferantE lieferantE);
+
+    boolean update(GeliefertE geliefert);
 }

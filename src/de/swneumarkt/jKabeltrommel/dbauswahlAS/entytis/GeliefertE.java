@@ -36,4 +36,8 @@ public class GeliefertE {
     public int getTrommelID() {
         return trommelID;
     }
+
+    public void setLieferantID(int lieferantID) {
+        this.lieferantID = lieferantID;
+    }
 }

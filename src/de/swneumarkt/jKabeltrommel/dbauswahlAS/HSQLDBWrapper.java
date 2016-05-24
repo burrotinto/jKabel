@@ -40,7 +40,7 @@ class HSQLDBWrapper implements IDBWrapper {
             }
             //Update zu Lagerplätze
             try {
-                stmnt.execute("ALTER TABLE trommel ADD start INTEGER;");
+                stmnt.execute("ALTER TABLE trommel ADD kabelstart INTEGER;");
             } catch (SQLException e) {
             }
         } catch (SQLException e) {
@@ -49,7 +49,7 @@ class HSQLDBWrapper implements IDBWrapper {
 
             stmnt.execute("CREATE TABLE lieferant(hid IDENTITY,name VARCHAR(64) );");
 
-            stmnt.execute("create table trommel(id IDENTITY, materialnummer integer not null, trommelnummer VARCHAR(64) NOT NULL, gesamtlaenge INTEGER,lagerplatz VARCHAR(32),start INTEGER ,  FOREIGN KEY(materialnummer) REFERENCES kabeltyp(materialnummer) ); ");
+            stmnt.execute("create table trommel(id IDENTITY, materialnummer integer not null, trommelnummer VARCHAR(64) NOT NULL, gesamtlaenge INTEGER,lagerplatz VARCHAR(32),kabelstart INTEGER ,  FOREIGN KEY(materialnummer) REFERENCES kabeltyp(materialnummer) ); ");
 
             stmnt.execute("CREATE TABLE geliefert(lid IDENTITY,hid INTEGER, id INTEGER, datum BIGINT,lieferschein VARCHAR(64), FOREIGN KEY(hid) REFERENCES lieferant(hid) , FOREIGN KEY(id) REFERENCES trommel(id));");
 
@@ -95,7 +95,7 @@ class HSQLDBWrapper implements IDBWrapper {
             Statement stmnt = getStatement();
             ResultSet rs = stmnt.executeQuery("Select * FROM kabeltyp JOIN trommel ON kabeltyp.materialnummer = trommel.materialnummer Where kabeltyp.materialnummer = " + kabeltyp.getMaterialNummer() + ";");
             while (rs.next()) {
-                list.add(new TrommelE(kabeltyp, rs.getInt("id"), rs.getString("trommelnummer"), rs.getInt("gesamtlaenge"), rs.getString("lagerplatz"), rs.getInt("start")));
+                list.add(new TrommelE(kabeltyp, rs.getInt("id"), rs.getString("trommelnummer"), rs.getInt("gesamtlaenge"), rs.getString("lagerplatz"), rs.getInt("kabelstart")));
             }
             rs.close();
         } catch (SQLException e) {
@@ -112,9 +112,9 @@ class HSQLDBWrapper implements IDBWrapper {
             Statement stmnt = getStatement();
             ResultSet rs = stmnt.executeQuery("Select * FROM trommel JOIN strecke ON strecke.trommelid = trommel.id Where strecke.trommelid = " + trommel.getId() + ";");
 //            System.out.println(getResultSetAsStringTable(rs));
+//                System.out.println(getResultSetAsStringTable(rs));
             while (rs.next()) {
                 //KabeltypE kabelTyp, int id, String trommelnummer, long date, int gesamtlaenge
-
                 list.add(new StreckeE(rs.getInt("sid"), rs.getInt("ba"), rs.getString("ort"), rs.getLong("verlegedatum"), rs.getInt("start"), rs.getInt("ende"), trommel));
             }
             rs.close();
@@ -219,15 +219,18 @@ class HSQLDBWrapper implements IDBWrapper {
 
     @Override
     public boolean update(TrommelE trommel) {
-        // materialnummer integer not null, trommelnummer VARCHAR(64) NOT NULL, gesamtlaenge INTEGER, lieferdatum BIGINT,
-        return execute("UPDATE trommel SET trommelnummer='" + trommel.getTrommelnummer() + "',gesamtlaenge=" + trommel.getGesamtlaenge() + ",lagerplatz='" + trommel.getLagerPlatz() + "', start=" + trommel.getStart() + "  WHERE id=" + trommel.getId() + ";");
+        return execute("UPDATE trommel SET trommelnummer='" + trommel.getTrommelnummer() + "',gesamtlaenge=" + trommel.getGesamtlaenge() + ",lagerplatz='" + trommel.getLagerPlatz() + "', kabelstart=" + trommel.getStart() + "  WHERE id=" + trommel.getId() + ";");
     }
 
+    public boolean update(GeliefertE geliefert) {
+        execute("UPDATE geliefert SET hid="+geliefert.getLieferantID()+" WHERE id=" + geliefert.getTrommelID() +";");
+        return true;
+    }
     @Override
     public boolean create(TrommelE trommel, LieferantE lieferant, GeliefertE geliefert) {
         boolean out = true;
         try {
-            ResultSet rs = getStatement().executeQuery("insert into trommel(id, materialnummer,trommelnummer,gesamtlaenge,lagerplatz,start) VALUES(NULL," + trommel.getMaterialNummer() + ",'" + trommel.getTrommelnummer() + "', " + trommel.getGesamtlaenge() + ",'" + trommel.getLagerPlatz() + "'," + trommel.getStart() + "); CALL IDENTITY()");
+            ResultSet rs = getStatement().executeQuery("insert into trommel(id, materialnummer,trommelnummer,gesamtlaenge,lagerplatz,kabelstart) VALUES(NULL," + trommel.getMaterialNummer() + ",'" + trommel.getTrommelnummer() + "', " + trommel.getGesamtlaenge() + ",'" + trommel.getLagerPlatz() + "'," + trommel.getStart() + "); CALL IDENTITY()");
             rs.next();
             int trommelID = rs.getInt(1);
 

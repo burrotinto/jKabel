@@ -1,15 +1,9 @@
 package de.swneumarkt.jKabeltrommel.dispalyAS.StreckenAS;
 
 import de.swneumarkt.jKabeltrommel.dbauswahlAS.IDBWrapper;
-import de.swneumarkt.jKabeltrommel.dbauswahlAS.entytis.GeliefertE;
-import de.swneumarkt.jKabeltrommel.dbauswahlAS.entytis.KabeltypE;
-import de.swneumarkt.jKabeltrommel.dbauswahlAS.entytis.StreckeE;
-import de.swneumarkt.jKabeltrommel.dbauswahlAS.entytis.TrommelE;
+import de.swneumarkt.jKabeltrommel.dbauswahlAS.entytis.*;
 
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by derduke on 22.05.16.
@@ -79,7 +73,7 @@ class StreckenK {
         }
 
     }
-    private GeliefertE getLiefer(TrommelE trommel){
+    public GeliefertE getLiefer(TrommelE trommel){
         return db.getLiefer(trommel);
     }
 
@@ -87,11 +81,19 @@ class StreckenK {
         return getLiefer(trommel).getDatum();
     }
 
-    public String getLieferant(TrommelE trommel) {
-        return db.getLieferant(getLiefer(trommel)).getName();
+    public LieferantE getLieferant(TrommelE trommel) {
+        return db.getLieferant(getLiefer(trommel));
     }
 
     public String getLieferscheinNR(TrommelE trommel){
         return getLiefer(trommel).getLieferscheinNr();
+    }
+
+    public Vector<LieferantE> getLieferanten() {
+        return new Vector<LieferantE>(db.getAllLieferanten());
+    }
+
+    public void update(GeliefertE g) {
+        db.update(g);
     }
 }
