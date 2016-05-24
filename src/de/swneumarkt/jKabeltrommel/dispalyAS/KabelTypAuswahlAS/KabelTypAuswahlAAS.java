@@ -2,6 +2,7 @@ package de.swneumarkt.jKabeltrommel.dispalyAS.KabelTypAuswahlAS;
 
 import de.swneumarkt.jKabeltrommel.dbauswahlAS.IDBWrapper;
 import de.swneumarkt.jKabeltrommel.dbauswahlAS.entytis.KabeltypE;
+import de.swneumarkt.jKabeltrommel.dispalyAS.KabeltypCreateAS.KabelTypCreateAAS;
 
 import javax.swing.*;
 import java.awt.*;
@@ -21,43 +22,42 @@ public class KabelTypAuswahlAAS extends JPanel implements ActionListener, IKabel
     private HashMap<JButton, Integer> buttonsMatNr = new HashMap<>();
     private Set<IKabelTypListner> kabelTypLIstners = new HashSet<IKabelTypListner>();
     private JButton addNewButt = new JButton("Neuer Kabeltyp");
+    private final IDBWrapper db;
 
     public KabelTypAuswahlAAS(IDBWrapper db) {
         kontroll = new KabelTypAuswahlK(db);
         addKabelTypListner(this);
         buildPanel();
+        this.db = db;
+        addNewButt.addActionListener(this);
     }
 
     private void buildPanel() {
-        HashMap<Integer, String> namen = kontroll.getTypenMap();
-        buttonsMatNr = new HashMap<>();
-        setLayout(new GridLayout(namen.size() + 1, 1));
-        KabelTypAuswahlAAS panel = this;
-        namen.forEach(new BiConsumer<Integer, String>() {
-            @Override
-            public void accept(Integer integer, String s) {
-                JPanel p = new JPanel();
+        if(kontroll != null) {
+            HashMap<Integer, String> namen = kontroll.getTypenMap();
+            buttonsMatNr = new HashMap<>();
+            JPanel panel = new JPanel();
+            panel.setLayout(new GridLayout(namen.size() + 1, 1));
+            KabelTypAuswahlAAS kta = this;
+            namen.forEach(new BiConsumer<Integer, String>() {
+                @Override
+                public void accept(Integer integer, String s) {
+                    JPanel p = new JPanel();
 
-                JButton b = new JButton(integer + "");
-                buttonsMatNr.put(b, integer);
-                p.add(new JLabel(s));
-                p.add(b);
-                b.addActionListener(panel);
-                panel.add(p);
-            }
-        });
+                    JButton b = new JButton(integer + "");
+                    buttonsMatNr.put(b, integer);
+                    p.add(new JLabel(s));
+                    p.add(b);
+                    b.addActionListener(kta);
+                    panel.add(p);
+                }
+            });
 
-        JPanel p =  new JPanel();
-        p.add(addNewButt);
-        add(p);
+            panel.add(addNewButt);
+            add(panel);
+        }
     }
 
-    @Override
-    public void print(Graphics g) {
-        super.print(g);
-
-
-    }
 
     public void addKabelTypListner(IKabelTypListner listner) {
         kabelTypLIstners.add(listner);
@@ -66,7 +66,7 @@ public class KabelTypAuswahlAAS extends JPanel implements ActionListener, IKabel
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == addNewButt) {
-            //TODO
+            new KabelTypCreateAAS(db, this);
         } else {
             KabeltypE typ = kontroll.getTyp(buttonsMatNr.get(e.getSource()));
             kabelTypLIstners.forEach(new Consumer<IKabelTypListner>() {
@@ -79,8 +79,15 @@ public class KabelTypAuswahlAAS extends JPanel implements ActionListener, IKabel
     }
 
 
-        @Override
-        public void typSelected (KabeltypE typ){
+    @Override
+    public void typSelected(KabeltypE typ) {
 
-        }
     }
+
+    @Override
+    public void revalidate() {
+        removeAll();
+        buildPanel();
+        super.revalidate();
+    }
+}

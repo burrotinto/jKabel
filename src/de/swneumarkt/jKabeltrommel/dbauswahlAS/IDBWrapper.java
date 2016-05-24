@@ -1,8 +1,6 @@
 package de.swneumarkt.jKabeltrommel.dbauswahlAS;
 
-import de.swneumarkt.jKabeltrommel.dbauswahlAS.entytis.KabeltypE;
-import de.swneumarkt.jKabeltrommel.dbauswahlAS.entytis.StreckeE;
-import de.swneumarkt.jKabeltrommel.dbauswahlAS.entytis.TrommelE;
+import de.swneumarkt.jKabeltrommel.dbauswahlAS.entytis.*;
 
 import java.util.List;
 
@@ -16,6 +14,12 @@ public interface IDBWrapper {
 
     List<StreckeE> getStreckenForTrommel(TrommelE trommel);
 
+    List<LieferantE> getAllLieferanten();
+
+    GeliefertE getLiefer(TrommelE trommel);
+
+    LieferantE getLieferant(GeliefertE liefert);
+
     boolean update(KabeltypE kabeltyp);
 
     boolean create(KabeltypE kabeltyp);
@@ -26,5 +30,11 @@ public interface IDBWrapper {
 
     boolean update(TrommelE trommel);
 
-    boolean create(TrommelE trommel);
+    boolean create(TrommelE trommel, LieferantE lieferantE, GeliefertE geliefert);
+
+    boolean remove(StreckeE strecke);
+
+    boolean create(LieferantE lieferant);
+
+    boolean update(LieferantE lieferantE);
 }

@@ -29,7 +29,11 @@ public class DBAuswahlAAS {
 
     public IDBWrapper getDBWrapper() {
         try {
-            return new HSQLDBWrapper(getPath());
+            if(new File("O:KFM-VerwaltungMaterialwirtschaftLagerjKabelDB").exists()){
+                return new HSQLDBWrapper("O:KFM-VerwaltungMaterialwirtschaftLagerjKabelDB");
+            } else {
+                return new HSQLDBWrapper(getPath());
+            }
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         } catch (SQLException e) {

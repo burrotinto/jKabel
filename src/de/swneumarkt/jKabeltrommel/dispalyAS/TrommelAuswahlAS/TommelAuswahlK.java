@@ -36,4 +36,16 @@ class TommelAuswahlK {
         }
         return  laenge;
     }
+
+    public boolean isAusserHaus(TrommelE t) {
+       return getBaustelle(t) != null;
+    }
+    public String getBaustelle(TrommelE t){
+        for(StreckeE s: db.getStreckenForTrommel(t)){
+            if(s.getEnde() <0 || s.getStart() < 0){
+                return s.getOrt();
+            }
+        }
+        return null;
+    }
 }

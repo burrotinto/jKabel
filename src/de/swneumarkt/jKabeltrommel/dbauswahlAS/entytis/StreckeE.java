@@ -84,4 +84,8 @@ public class StreckeE {
     public int getMeter() {
         return Math.max(start,ende) - Math.min(start,ende);
     }
+
+    public int getId() {
+        return id;
+    }
 }
