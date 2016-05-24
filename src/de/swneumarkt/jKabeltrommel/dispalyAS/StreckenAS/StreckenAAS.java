@@ -19,7 +19,7 @@ import java.util.List;
  */
 public class StreckenAAS extends JPanel implements ITrommelListner, ActionListener, IKabelTypListner {
     private final StreckenK kontroller;
-    private JTextField trommelnummerField, datumField, laengeField, typField, matNrField, baField, startField, endField, ortField, lagerplatzField;
+    private JTextField trommelnummerField, datumField, laengeField, typField, matNrField, baField, startField, endField, ortField, lagerplatzField,trommelstartField;
     private List<Abgang> abgaenge;
     private JButton create = new JButton("Eintragen");
     private JButton update = new JButton("Ändern");
@@ -45,7 +45,7 @@ public class StreckenAAS extends JPanel implements ITrommelListner, ActionListen
         this.trommel = trommel;
         List<StreckeE> strecken = kontroller.getStreckenForTrommel(trommel);
         JPanel p = new JPanel();
-        p.setLayout(new GridLayout(strecken.size() + 11, 1));
+        p.setLayout(new GridLayout(strecken.size() + 12, 1));
 
         // Überschrift
         JPanel uebers = new JPanel(new FlowLayout());
@@ -85,6 +85,14 @@ public class StreckenAAS extends JPanel implements ITrommelListner, ActionListen
         laengeField = new JTextField(trommel.getGesamtlaenge() + "", 6);
         laenge.add(laengeField);
         p.add(laenge);
+
+        //Trommelanfang
+        JPanel trommelP = new JPanel(new FlowLayout());
+        trommelP.add(new JLabel("Trommelanfang:"));
+        trommelstartField = new JTextField(trommel.getStart() + "", 6);
+        trommelP.add(trommelstartField);
+        p.add(trommelP);
+
 
         //Typ
         JPanel typ = new JPanel(new FlowLayout());
@@ -131,7 +139,7 @@ public class StreckenAAS extends JPanel implements ITrommelListner, ActionListen
         bes.add(new JLabel("                          "));
         p.add(bes);
 
-        String last = trommel.getGesamtlaenge() + "";
+        String last = trommel.getStart()+"";
         abgaenge = new ArrayList<>();
 
         for (StreckeE s : strecken) {
@@ -241,6 +249,7 @@ public class StreckenAAS extends JPanel implements ITrommelListner, ActionListen
                 trommel.setGesamtlaenge(Integer.parseInt(laengeField.getText()));
                 trommel.setTrommelnummer(trommelnummerField.getText());
                 trommel.setLagerPlatz(lagerplatzField.getText());
+                trommel.setStart(Integer.parseInt(trommelstartField.getText()));
                 kontroller.update(trommel);
 
                 typ.setTyp(typField.getText());

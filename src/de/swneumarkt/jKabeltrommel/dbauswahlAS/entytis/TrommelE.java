@@ -4,26 +4,37 @@ package de.swneumarkt.jKabeltrommel.dbauswahlAS.entytis;
  * Created by derduke on 20.05.16.
  */
 public class TrommelE {
+    private  int start;
     private String lagerPlatz;
     private int id;
     private String trommelnummer;
     private int gesamtlaenge;
     private final KabeltypE kabelTyp;
 
-    public TrommelE(KabeltypE kabelTyp, int id, String trommelnummer, int gesamtlaenge, String lagerPlatz) {
+    public TrommelE(KabeltypE kabelTyp, int id, String trommelnummer, int gesamtlaenge, String lagerPlatz, int start) {
         this.kabelTyp = kabelTyp;
         this.lagerPlatz = lagerPlatz;
         this.id = id;
+        this.start = start;
         this.trommelnummer = trommelnummer;
         this.gesamtlaenge = gesamtlaenge;
     }
 
 
-    public TrommelE(KabeltypE kabelTyp, String trommelnummer, int gesamtlaenge,String lagerPlatz) {
+    public TrommelE(KabeltypE kabelTyp, String trommelnummer, int gesamtlaenge,String lagerPlatz, int start) {
         this.kabelTyp = kabelTyp;
-this.lagerPlatz = lagerPlatz;
+        this.lagerPlatz = lagerPlatz;
         this.trommelnummer = trommelnummer;
         this.gesamtlaenge = gesamtlaenge;
+        this.start = start;
+    }
+
+    public int getStart() {
+        return start;
+    }
+
+    public void setStart(int start) {
+        this.start = start;
     }
 
     public String getLagerPlatz() {

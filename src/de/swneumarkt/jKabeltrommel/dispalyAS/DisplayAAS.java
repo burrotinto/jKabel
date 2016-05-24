@@ -21,6 +21,7 @@ public class DisplayAAS extends JFrame{
 
     public static void main(String[] args) {
         JFrame f = new DisplayAAS();
+        f.setTitle("jKabeltrommel");
         IDBWrapper db = new DBAuswahlAAS().getDBWrapper();
         if(db == null){
             f.setLayout(new FlowLayout());

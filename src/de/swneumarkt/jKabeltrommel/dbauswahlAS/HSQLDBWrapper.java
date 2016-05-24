@@ -14,15 +14,16 @@ import java.util.List;
  */
 class HSQLDBWrapper implements IDBWrapper {
     private final String path;
-
+    private Statement stmnt = null;
 
     HSQLDBWrapper(String path) throws ClassNotFoundException, SQLException, OnlyOneUserExeption, IOException {
-       File lck = new File(path+"lock.lck");
-        if(lck.exists()){
+        File lck = new File(path + "lock.lck");
+        if (lck.exists()) {
             throw new OnlyOneUserExeption();
         } else {
             lck.createNewFile();
-            lck.deleteOnExit();}
+            lck.deleteOnExit();
+        }
         this.path = path;
         Statement stmnt = getStatement();
 
@@ -33,9 +34,14 @@ class HSQLDBWrapper implements IDBWrapper {
             stmnt.executeQuery("Select * FROM strecke;");
 
             //Update zu Lagerplätze
-            try{
+            try {
                 stmnt.execute("ALTER TABLE trommel ADD lagerplatz VARCHAR(32);");
-            } catch ( SQLException e){
+            } catch (SQLException e) {
+            }
+            //Update zu Lagerplätze
+            try {
+                stmnt.execute("ALTER TABLE trommel ADD start INTEGER;");
+            } catch (SQLException e) {
             }
         } catch (SQLException e) {
             // Create DB
@@ -43,7 +49,7 @@ class HSQLDBWrapper implements IDBWrapper {
 
             stmnt.execute("CREATE TABLE lieferant(hid IDENTITY,name VARCHAR(64) );");
 
-            stmnt.execute("create table trommel(id IDENTITY, materialnummer integer not null, trommelnummer VARCHAR(64) NOT NULL, gesamtlaenge INTEGER,lagerplatz VARCHAR(32),  FOREIGN KEY(materialnummer) REFERENCES kabeltyp(materialnummer) ); ");
+            stmnt.execute("create table trommel(id IDENTITY, materialnummer integer not null, trommelnummer VARCHAR(64) NOT NULL, gesamtlaenge INTEGER,lagerplatz VARCHAR(32),start INTEGER ,  FOREIGN KEY(materialnummer) REFERENCES kabeltyp(materialnummer) ); ");
 
             stmnt.execute("CREATE TABLE geliefert(lid IDENTITY,hid INTEGER, id INTEGER, datum BIGINT,lieferschein VARCHAR(64), FOREIGN KEY(hid) REFERENCES lieferant(hid) , FOREIGN KEY(id) REFERENCES trommel(id));");
 
@@ -51,18 +57,21 @@ class HSQLDBWrapper implements IDBWrapper {
         }
     }
 
-    Statement getStatement(){
-        try {
-            Class.forName("org.hsqldb.jdbcDriver");
-            Connection con = DriverManager.getConnection("jdbc:hsqldb:file:" + path + "jKabeltrommelHSQLDB;shutdown=true", "sa", "");
-            return con.createStatement();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (SQLException e) {
-            e.printStackTrace();
+    Statement getStatement() {
+        if (stmnt == null) {
+            try {
+                Class.forName("org.hsqldb.jdbcDriver");
+                Connection con = DriverManager.getConnection("jdbc:hsqldb:file:" + path + "jKabeltrommelHSQLDB;shutdown=true", "sa", "");
+                stmnt = con.createStatement();
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
-        return null;
+        return stmnt;
     }
+
     @Override
     public List<KabeltypE> getAllKabeltypen() {
         ArrayList<KabeltypE> list = new ArrayList<>();
@@ -86,7 +95,7 @@ class HSQLDBWrapper implements IDBWrapper {
             Statement stmnt = getStatement();
             ResultSet rs = stmnt.executeQuery("Select * FROM kabeltyp JOIN trommel ON kabeltyp.materialnummer = trommel.materialnummer Where kabeltyp.materialnummer = " + kabeltyp.getMaterialNummer() + ";");
             while (rs.next()) {
-                list.add(new TrommelE(kabeltyp, rs.getInt("id"), rs.getString("trommelnummer"), rs.getInt("gesamtlaenge"),rs.getString("lagerplatz")));
+                list.add(new TrommelE(kabeltyp, rs.getInt("id"), rs.getString("trommelnummer"), rs.getInt("gesamtlaenge"), rs.getString("lagerplatz"), rs.getInt("start")));
             }
             rs.close();
         } catch (SQLException e) {
@@ -122,7 +131,7 @@ class HSQLDBWrapper implements IDBWrapper {
             Statement stmnt = getStatement();
             ResultSet rs = stmnt.executeQuery("Select * FROM lieferant;");
             while (rs.next()) {
-                list.add(new LieferantE(rs.getInt("hid"),rs.getString("name")));
+                list.add(new LieferantE(rs.getInt("hid"), rs.getString("name")));
             }
             rs.close();
         } catch (SQLException e) {
@@ -134,11 +143,11 @@ class HSQLDBWrapper implements IDBWrapper {
     @Override
     public GeliefertE getLiefer(TrommelE trommel) {
         try {
-            ResultSet rs = getStatement().executeQuery("SELECT * FROM geliefert JOIN trommel ON trommel.id = geliefert.id WHERE id ="+ trommel.getId()+";");
-            if(rs.next()){
-                return new GeliefertE(rs.getLong("datum"),rs.getString("lieferschein"),rs.getInt("hid"),rs.getInt("id"));
+            ResultSet rs = getStatement().executeQuery("SELECT * FROM geliefert JOIN trommel ON trommel.id = geliefert.id WHERE id =" + trommel.getId() + ";");
+            if (rs.next()) {
+                return new GeliefertE(rs.getLong("datum"), rs.getString("lieferschein"), rs.getInt("hid"), rs.getInt("id"));
             } else {
-                return  null;
+                return null;
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -149,12 +158,12 @@ class HSQLDBWrapper implements IDBWrapper {
     @Override
     public LieferantE getLieferant(GeliefertE liefert) {
         try {
-            ResultSet rs = getStatement().executeQuery("SELECT * FROM geliefert JOIN lieferant ON lieferant.hid = geliefert.hid WHERE hid ="+ liefert.getLieferantID()+";");
+            ResultSet rs = getStatement().executeQuery("SELECT * FROM geliefert JOIN lieferant ON lieferant.hid = geliefert.hid WHERE hid =" + liefert.getLieferantID() + ";");
 //            ResultSet rs = stmnt.executeQuery("SELECT * FROM (geliefert JOIN lieferant ON lieferant.hid = geliefert.hid) JOIN trommel on trommel.id == geliefert.id WHERE hid ="+ liefert.getLieferantID()+";");
-            if(rs.next()){
-                return new LieferantE(rs.getInt("lid"),rs.getString("name"));
+            if (rs.next()) {
+                return new LieferantE(rs.getInt("lid"), rs.getString("name"));
             } else {
-                return  null;
+                return null;
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -165,11 +174,11 @@ class HSQLDBWrapper implements IDBWrapper {
     @Override
     public KabeltypE getTyp(TrommelE trommel) {
         try {
-            ResultSet rs = getStatement().executeQuery("SELECT * FROM trommel JOIN kabeltyp ON kabeltyp.materialnummer = trommel.materialnummer WHERE id ="+ trommel.getId()+";");
-            if(rs.next()){
-                return new KabeltypE(rs.getInt("materialnummer"),rs.getString("typ"));
+            ResultSet rs = getStatement().executeQuery("SELECT * FROM trommel JOIN kabeltyp ON kabeltyp.materialnummer = trommel.materialnummer WHERE id =" + trommel.getId() + ";");
+            if (rs.next()) {
+                return new KabeltypE(rs.getInt("materialnummer"), rs.getString("typ"));
             } else {
-                return  null;
+                return null;
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -211,28 +220,26 @@ class HSQLDBWrapper implements IDBWrapper {
     @Override
     public boolean update(TrommelE trommel) {
         // materialnummer integer not null, trommelnummer VARCHAR(64) NOT NULL, gesamtlaenge INTEGER, lieferdatum BIGINT,
-        return execute("UPDATE trommel SET trommelnummer='" + trommel.getTrommelnummer() + "',gesamtlaenge=" + trommel.getGesamtlaenge() + ",lagerplatz='"+trommel.getLagerPlatz()+"' WHERE id=" + trommel.getId() + ";");
+        return execute("UPDATE trommel SET trommelnummer='" + trommel.getTrommelnummer() + "',gesamtlaenge=" + trommel.getGesamtlaenge() + ",lagerplatz='" + trommel.getLagerPlatz() + "', start=" + trommel.getStart() + "  WHERE id=" + trommel.getId() + ";");
     }
 
     @Override
-    public boolean create(TrommelE trommel, LieferantE lieferant,GeliefertE geliefert) {
-        //TODO geliefert
-        System.out.println(trommel.toString());
+    public boolean create(TrommelE trommel, LieferantE lieferant, GeliefertE geliefert) {
         boolean out = true;
         try {
-            ResultSet rs = getStatement().executeQuery("insert into trommel(id, materialnummer,trommelnummer,gesamtlaenge,lagerplatz) VALUES(NULL," + trommel.getMaterialNummer() + ",'" + trommel.getTrommelnummer() + "', " + trommel.getGesamtlaenge() + ",'"+trommel.getLagerPlatz() + "'); CALL IDENTITY()");
+            ResultSet rs = getStatement().executeQuery("insert into trommel(id, materialnummer,trommelnummer,gesamtlaenge,lagerplatz,start) VALUES(NULL," + trommel.getMaterialNummer() + ",'" + trommel.getTrommelnummer() + "', " + trommel.getGesamtlaenge() + ",'" + trommel.getLagerPlatz() + "'," + trommel.getStart() + "); CALL IDENTITY()");
             rs.next();
             int trommelID = rs.getInt(1);
 
             //  geliefert(lid IDENTITY,hid INTEGER, id INTEGER, datum BIGINT,lieferschein VARCHAR(64),
-            out = execute("INSERT INTO geliefert(lid,hid,id,datum,lieferschein) VALUES(NULL,"+lieferant.getId()+","+trommelID+","+geliefert.getDatum()+",'"+geliefert.getLieferscheinNr()+"');");
+            out = execute("INSERT INTO geliefert(lid,hid,id,datum,lieferschein) VALUES(NULL," + lieferant.getId() + "," + trommelID + "," + geliefert.getDatum() + ",'" + geliefert.getLieferscheinNr() + "' );");
 
             rs.close();
         } catch (SQLException e) {
             e.printStackTrace();
             return out;
         }
-    return true;
+        return true;
     }
 
     @Override
@@ -242,12 +249,12 @@ class HSQLDBWrapper implements IDBWrapper {
 
     @Override
     public boolean create(LieferantE lieferant) {
-        return execute("INSERT INTO lieferant(hid,name) VALUES(NULL,'"+ lieferant.getName() +"')");
+        return execute("INSERT INTO lieferant(hid,name) VALUES(NULL,'" + lieferant.getName() + "')");
     }
 
     @Override
     public boolean update(LieferantE lieferantE) {
-        return execute("UPDATE lieferant SET name='" + lieferantE.getName() + "' WHERE hid="+ lieferantE.getId()+";" );
+        return execute("UPDATE lieferant SET name='" + lieferantE.getName() + "' WHERE hid=" + lieferantE.getId() + ";");
     }
 
     public static String getResultSetAsStringTable(ResultSet rs) throws SQLException {

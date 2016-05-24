@@ -21,6 +21,7 @@ public class TrommelCreateAAS extends JDialog implements ActionListener {
     private JTextField laenge = new JTextField();
     private JTextField lieferscheinNr = new JTextField();
     private JTextField lagerPlatz = new JTextField();
+    private JTextField start = new JTextField();
 
     private JButton cancel = new JButton("Abbruch");
     private JButton create = new JButton("Erstellen");
@@ -34,16 +35,29 @@ public class TrommelCreateAAS extends JDialog implements ActionListener {
         this.typ = typ;
         this.auswahlAAS = auswahlAAS;
         setLayout(new BorderLayout());
+        createPanel();
+
+        cancel.addActionListener(this);
+        create.addActionListener(this);
+
+        setLocationRelativeTo(null);
+        pack();
+        setVisible(true);
+    }
+
+    private void createPanel() {
         add(new JLabel("Trommel erstellen"), BorderLayout.NORTH);
 
         JPanel auswahl = new JPanel();
 
         JPanel p = new JPanel();
-        p.setLayout(new GridLayout(4, 2));
+        p.setLayout(new GridLayout(5, 2));
         p.add(new JLabel("Trommelnummer:"));
         p.add(trommelNummer);
         p.add(new JLabel("Gesamtlänge:"));
         p.add(laenge);
+        p.add(new JLabel("Anfang:"));
+        p.add(start);
         p.add(new JLabel("Lagerplatz:"));
         p.add(lagerPlatz);
         p.add(new JLabel("Lieferscheinnummer:"));
@@ -60,13 +74,6 @@ public class TrommelCreateAAS extends JDialog implements ActionListener {
         south.add(cancel);
         south.add(create);
         add(south, BorderLayout.SOUTH);
-
-        cancel.addActionListener(this);
-        create.addActionListener(this);
-
-        setLocationRelativeTo(null);
-        pack();
-        setVisible(true);
     }
 
     @Override
@@ -74,8 +81,7 @@ public class TrommelCreateAAS extends JDialog implements ActionListener {
         if (e.getSource() == create) {
             try {
 //                KabeltypE kabelTyp, String trommelnummer, long date, int gesamtlaenge
-                db.create(new TrommelE(typ, trommelNummer.getText(), Integer.parseInt(laenge.getText()),lagerPlatz.getText()), lieferantenAuswahlAAS.getAuswahl(), new GeliefertE(System.currentTimeMillis(),lieferscheinNr.getText(),lieferantenAuswahlAAS.getAuswahl().getId()));
-                System.out.println();
+                db.create(new TrommelE(typ, trommelNummer.getText(), Integer.parseInt(laenge.getText()),lagerPlatz.getText(),Integer.parseInt(start.getText())), lieferantenAuswahlAAS.getAuswahl(), new GeliefertE(System.currentTimeMillis(),lieferscheinNr.getText(),lieferantenAuswahlAAS.getAuswahl().getId()));
             } catch (Exception x) {
                 //TODO
             }
