@@ -24,13 +24,19 @@ class HSQLDBWrapper implements IDBWrapper {
             stmnt.executeQuery("Select * FROM kabeltyp;");
             stmnt.executeQuery("Select * FROM trommel;");
             stmnt.executeQuery("Select * FROM strecke;");
+
+            //Update zu Lagerplätze
+            try{
+                stmnt.execute("ALTER TABLE trommel ADD lagerplatz VARCHAR(32);");
+            } catch ( SQLException e){
+            }
         } catch (SQLException e) {
             // Create DB
             stmnt.execute("create table kabeltyp(materialnummer integer not null PRIMARY KEY , typ VARCHAR (64) );");
 
             stmnt.execute("CREATE TABLE lieferant(hid IDENTITY,name VARCHAR(64) );");
 
-            stmnt.execute("create table trommel(id IDENTITY, materialnummer integer not null, trommelnummer VARCHAR(64) NOT NULL, gesamtlaenge INTEGER, lagerplatz VARCHAR(32), FOREIGN KEY(materialnummer) REFERENCES kabeltyp(materialnummer) ); ");
+            stmnt.execute("create table trommel(id IDENTITY, materialnummer integer not null, trommelnummer VARCHAR(64) NOT NULL, gesamtlaenge INTEGER,lagerplatz VARCHAR(32),  FOREIGN KEY(materialnummer) REFERENCES kabeltyp(materialnummer) ); ");
 
             stmnt.execute("CREATE TABLE geliefert(lid IDENTITY,hid INTEGER, id INTEGER, datum BIGINT,lieferschein VARCHAR(64), FOREIGN KEY(hid) REFERENCES lieferant(hid) , FOREIGN KEY(id) REFERENCES trommel(id));");
 
