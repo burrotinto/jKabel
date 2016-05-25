@@ -22,6 +22,7 @@ public class DisplayAAS extends JFrame implements ItemListener, ActionListener {
     private JPanel north = new JPanel();
     private JMenuItem edit = new JMenuItem("Bearbeiten");
     private JMenuItem search = new JMenuItem("Suchen");
+    private JMenuItem exit = new JMenuItem("Ende");
     private JScrollPane center = new JScrollPane();
 
     private IDBWrapper db = null;
@@ -34,8 +35,10 @@ public class DisplayAAS extends JFrame implements ItemListener, ActionListener {
         JMenu menue = new JMenu("File");
         menue.add(edit);
         menue.add(search);
+        menue.add(exit);
         edit.addActionListener(this);
         search.addActionListener(this);
+        exit.addActionListener(this);
         menuBar.add(menue);
         setJMenuBar(menuBar);
 
@@ -62,6 +65,11 @@ public class DisplayAAS extends JFrame implements ItemListener, ActionListener {
 
     public void setDb(IDBWrapper db) {
         this.db = db;
+
+        // Zuerst mal Bearbeiten öffnen
+        remove(center);
+        center = new JScrollPane(getBearbeitenPanel());
+        getContentPane().add(center, BorderLayout.CENTER);
     }
 
     public JPanel getBearbeitenPanel() {
@@ -97,6 +105,9 @@ public class DisplayAAS extends JFrame implements ItemListener, ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        if (e.getSource() == exit) {
+            System.exit(0);
+        }
         if (db != null) {
             if (e.getSource() == edit) {
                 remove(center);
