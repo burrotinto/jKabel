@@ -1,9 +1,7 @@
 package de.swneumarkt.jKabeltrommel.dispalyAS.TrommelCreateAS;
 
 import de.swneumarkt.jKabeltrommel.dbauswahlAS.IDBWrapper;
-import de.swneumarkt.jKabeltrommel.dbauswahlAS.entytis.GeliefertE;
-import de.swneumarkt.jKabeltrommel.dbauswahlAS.entytis.KabeltypE;
-import de.swneumarkt.jKabeltrommel.dbauswahlAS.entytis.TrommelE;
+import de.swneumarkt.jKabeltrommel.dbauswahlAS.enitys.IKabeltypE;
 import de.swneumarkt.jKabeltrommel.dispalyAS.LieferantAuswahlAS.LieferantenAuswahlAAS;
 import de.swneumarkt.jKabeltrommel.dispalyAS.TrommelAuswahlAS.TrommelAuswahlAAS;
 
@@ -26,11 +24,11 @@ public class TrommelCreateAAS extends JDialog implements ActionListener {
     private JButton cancel = new JButton("Abbruch");
     private JButton create = new JButton("Erstellen");
     private TrommelAuswahlAAS auswahlAAS;
-    private KabeltypE typ;
+    private IKabeltypE typ;
 
     private LieferantenAuswahlAAS lieferantenAuswahlAAS;
 
-    public TrommelCreateAAS(IDBWrapper db, KabeltypE typ, TrommelAuswahlAAS auswahlAAS) {
+    public TrommelCreateAAS(IDBWrapper db, IKabeltypE typ, TrommelAuswahlAAS auswahlAAS) {
         this.db = db;
         this.typ = typ;
         this.auswahlAAS = auswahlAAS;
@@ -81,7 +79,7 @@ public class TrommelCreateAAS extends JDialog implements ActionListener {
         if (e.getSource() == create) {
             try {
 //                KabeltypE kabelTyp, String trommelnummer, long date, int gesamtlaenge
-                db.create(new TrommelE(typ, trommelNummer.getText(), Integer.parseInt(laenge.getText()),lagerPlatz.getText(),Integer.parseInt(start.getText())), lieferantenAuswahlAAS.getAuswahl(), new GeliefertE(System.currentTimeMillis(),lieferscheinNr.getText(),lieferantenAuswahlAAS.getAuswahl().getId()));
+                db.createTrommel(typ, trommelNummer.getText(), Integer.parseInt(laenge.getText()), lagerPlatz.getText(), Integer.parseInt(start.getText()), lieferantenAuswahlAAS.getAuswahl(), System.currentTimeMillis(), lieferscheinNr.getText());
             } catch (Exception x) {
                 //TODO
             }

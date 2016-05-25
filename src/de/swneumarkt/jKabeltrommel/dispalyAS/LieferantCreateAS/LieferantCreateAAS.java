@@ -1,7 +1,6 @@
 package de.swneumarkt.jKabeltrommel.dispalyAS.LieferantCreateAS;
 
 import de.swneumarkt.jKabeltrommel.dbauswahlAS.IDBWrapper;
-import de.swneumarkt.jKabeltrommel.dbauswahlAS.entytis.LieferantE;
 import de.swneumarkt.jKabeltrommel.dispalyAS.LieferantAuswahlAS.LieferantenAuswahlAAS;
 
 import javax.swing.*;
@@ -50,7 +49,7 @@ public class LieferantCreateAAS extends JDialog implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == create) {
             try {
-                db.create(new LieferantE(-1,name.getText()));
+                db.createLieferant(name.getText());
                 lAAS.hastToUpdate();
             } catch (Exception x) {
                 //TODO

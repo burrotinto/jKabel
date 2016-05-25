@@ -1,7 +1,7 @@
 package de.swneumarkt.jKabeltrommel.dispalyAS.StreckenAS;
 
 import de.swneumarkt.jKabeltrommel.dbauswahlAS.IDBWrapper;
-import de.swneumarkt.jKabeltrommel.dbauswahlAS.entytis.*;
+import de.swneumarkt.jKabeltrommel.dbauswahlAS.enitys.*;
 import de.swneumarkt.jKabeltrommel.dispalyAS.KabelTypAuswahlAS.IKabelTypListner;
 import de.swneumarkt.jKabeltrommel.dispalyAS.TrommelAuswahlAS.ITrommelListner;
 
@@ -9,41 +9,43 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.List;
-import java.util.Vector;
+import java.util.function.Consumer;
 
 /**
  * Created by derduke on 22.05.16.
  */
 public class StreckenAAS extends JPanel implements ITrommelListner, ActionListener, IKabelTypListner {
     private final StreckenK kontroller;
+    private final Set<JPanel> updateOnChange;
     private JTextField trommelnummerField, datumField, laengeField, typField, matNrField, baField, startField, endField, ortField, lagerplatzField,trommelstartField;
     private List<Abgang> abgaenge;
     private JButton create = new JButton("Eintragen");
     private JButton update = new JButton("Ändern");
-    private TrommelE trommel = null;
-    private KabeltypE typ = null;
-    private JComboBox<LieferantE> cBox;
+    private ITrommelE trommel = null;
+    private IKabeltypE typ = null;
+    private JComboBox<ILieferantE> cBox;
 
 
-    public StreckenAAS(IDBWrapper db) {
+    public StreckenAAS(IDBWrapper db, Set<JPanel> updateOnChange) {
+        this.updateOnChange = updateOnChange == null ? new HashSet<>() : updateOnChange;
         kontroller = new StreckenK(db);
         create.addActionListener(this);
         update.addActionListener(this);
     }
 
     @Override
-    public void trommelAusgewaehlt(TrommelE trommel) {
+    public void trommelAusgewaehlt(ITrommelE trommel) {
         removeAll();
         buildPanel(trommel);
         repaint();
         revalidate();
     }
 
-    private void buildPanel(TrommelE trommel) {
+    private void buildPanel(ITrommelE trommel) {
         this.trommel = trommel;
-        List<StreckeE> strecken = kontroller.getStreckenForTrommel(trommel);
+        List<IStreckeE> strecken = kontroller.getStreckenForTrommel(trommel);
         JPanel p = new JPanel();
         p.setLayout(new GridLayout(strecken.size() + 12, 1));
 
@@ -65,10 +67,10 @@ public class StreckenAAS extends JPanel implements ITrommelListner, ActionListen
         //Lieferant
         JPanel liefer = new JPanel(new FlowLayout());
         liefer.add(new JLabel("Lieferant:"));
-        Vector<LieferantE> v = kontroller.getLieferanten();
+        Vector<ILieferantE> v = kontroller.getLieferanten();
         int pos = 0;
         for (int i = 0; i< v.size();i++){
-            if(v.get(i).getId() == kontroller.getLiefer(trommel).getLieferantID() ){
+            if (v.get(i).getId() == kontroller.getLiefer(trommel).getLieferant().getId()) {
                 pos = i;
             }
         }
@@ -124,7 +126,7 @@ public class StreckenAAS extends JPanel implements ITrommelListner, ActionListen
         p.add(matNr);
 
         // Beschriftung
-        JPanel bes = new JPanel();
+        JPanel bes = new JPanel(new FlowLayout(FlowLayout.LEFT));
         JTextField tf = new JTextField("Datum", 10);
         tf.setEditable(false);
         bes.add(tf);
@@ -143,14 +145,13 @@ public class StreckenAAS extends JPanel implements ITrommelListner, ActionListen
         tf = new JTextField("Ort", 16);
         tf.setEditable(false);
         bes.add(tf);
-        bes.add(new JLabel("                          "));
         p.add(bes);
 
         String last = trommel.getStart()+"";
         abgaenge = new ArrayList<>();
 
-        for (StreckeE s : strecken) {
-            JPanel panel = new JPanel(new FlowLayout());
+        for (IStreckeE s : strecken) {
+            JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
             JButton del = new JButton("Löschen");
             del.addActionListener(this);
             Abgang a = new Abgang(s, del);
@@ -171,7 +172,7 @@ public class StreckenAAS extends JPanel implements ITrommelListner, ActionListen
         }
 
         // Neuer Eintrag
-        JPanel panel = new JPanel(new FlowLayout());
+        JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         JTextField dT = new JTextField(kontroller.getTimeString(System.currentTimeMillis()), 10);
         dT.setEditable(false);
         panel.add(dT);
@@ -234,14 +235,13 @@ public class StreckenAAS extends JPanel implements ITrommelListner, ActionListen
                 dialog.setVisible(true);
 
             } else {
-                StreckeE strecke = new StreckeE(ba, ortField.getText(), System.currentTimeMillis(), start, ende, trommel);
-                kontroller.eintragen(strecke);
+                kontroller.eintragenStrecke(ba, ortField.getText(), System.currentTimeMillis(), start, ende, trommel);
             }
         } else {
             // Updates der Einträge
             if (e.getSource() == update) {
                 for (Abgang a : abgaenge) {
-                    StreckeE s = a.strecke;
+                    IStreckeE s = a.strecke;
                     s.setBa(Integer.parseInt(a.bA.getText()));
                     try {
                         s.setEnde(Integer.parseInt(a.ende.getText()));
@@ -259,15 +259,15 @@ public class StreckenAAS extends JPanel implements ITrommelListner, ActionListen
                 trommel.setStart(Integer.parseInt(trommelstartField.getText()));
                 kontroller.update(trommel);
 
-                GeliefertE g = kontroller.getLiefer(trommel);
-                g.setLieferantID(((LieferantE)cBox.getSelectedItem()).getId());
+                IGeliefertE g = kontroller.getLiefer(trommel);
+                g.setLieferantID(((ILieferantE) cBox.getSelectedItem()));
                 kontroller.update(g);
 
 
                 typ.setTyp(typField.getText());
                 kontroller.update(typ);
             } else {
-                StreckeE s = null;
+                IStreckeE s = null;
                 for (Abgang a : abgaenge) {
                     if (e.getSource() == a.butt) {
                         kontroller.remove(a.strecke);
@@ -281,10 +281,17 @@ public class StreckenAAS extends JPanel implements ITrommelListner, ActionListen
         buildPanel(trommel);
         repaint();
         revalidate();
+        updateOnChange.forEach(new Consumer<JPanel>() {
+            @Override
+            public void accept(JPanel jPanel) {
+                jPanel.repaint();
+                jPanel.revalidate();
+            }
+        });
     }
 
     @Override
-    public void typSelected(KabeltypE typ) {
+    public void typSelected(IKabeltypE typ) {
         removeAll();
         repaint();
         revalidate();
@@ -294,11 +301,11 @@ public class StreckenAAS extends JPanel implements ITrommelListner, ActionListen
     }
 
     private class Abgang {
-        final StreckeE strecke;
+        final IStreckeE strecke;
         JTextField bA, start, ende, text;
         JButton butt;
 
-        private Abgang(StreckeE strecke, JButton butt) {
+        private Abgang(IStreckeE strecke, JButton butt) {
             this.butt = butt;
             this.strecke = strecke;
             bA = new JTextField(strecke.getBa() + "", 8);

@@ -1,7 +1,6 @@
 package de.swneumarkt.jKabeltrommel.dispalyAS.KabeltypCreateAS;
 
 import de.swneumarkt.jKabeltrommel.dbauswahlAS.IDBWrapper;
-import de.swneumarkt.jKabeltrommel.dbauswahlAS.entytis.KabeltypE;
 import de.swneumarkt.jKabeltrommel.dispalyAS.KabelTypAuswahlAS.KabelTypAuswahlAAS;
 
 import javax.swing.*;
@@ -51,7 +50,7 @@ public class KabelTypCreateAAS extends JDialog implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == create) {
             try {
-                db.create(new KabeltypE(Integer.parseInt(matNummer.getText()), typ.getText()));
+                db.createKabeltyp(typ.getText(), Integer.parseInt(matNummer.getText()));
 
             } catch (Exception x) {
                 //TODO

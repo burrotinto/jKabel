@@ -1,8 +1,8 @@
 package de.swneumarkt.jKabeltrommel.dispalyAS.TrommelAuswahlAS;
 
 import de.swneumarkt.jKabeltrommel.dbauswahlAS.IDBWrapper;
-import de.swneumarkt.jKabeltrommel.dbauswahlAS.entytis.KabeltypE;
-import de.swneumarkt.jKabeltrommel.dbauswahlAS.entytis.TrommelE;
+import de.swneumarkt.jKabeltrommel.dbauswahlAS.enitys.IKabeltypE;
+import de.swneumarkt.jKabeltrommel.dbauswahlAS.enitys.ITrommelE;
 import de.swneumarkt.jKabeltrommel.dispalyAS.KabelTypAuswahlAS.IKabelTypListner;
 import de.swneumarkt.jKabeltrommel.dispalyAS.TrommelCreateAS.TrommelCreateAAS;
 
@@ -21,16 +21,12 @@ import java.util.function.Consumer;
 public class TrommelAuswahlAAS extends JPanel implements IKabelTypListner, ActionListener {
     private TommelAuswahlK kontroll;
     private JButton addNewButt = new JButton("Neue Trommel");
-    private KabeltypE typ = null;
+    private IKabeltypE typ = null;
     private IDBWrapper db;
 
-    private HashMap<JButton, TrommelE> buttonTrommelMap;
+    private HashMap<JButton, ITrommelE> buttonTrommelMap;
 
     private Set<ITrommelListner> trommelListners = new HashSet<>();
-
-    public void addTrommelListner(ITrommelListner listner) {
-        trommelListners.add(listner);
-    }
 
     public TrommelAuswahlAAS(IDBWrapper db) {
         kontroll = new TommelAuswahlK(db);
@@ -38,34 +34,40 @@ public class TrommelAuswahlAAS extends JPanel implements IKabelTypListner, Actio
         addNewButt.addActionListener(this);
     }
 
-    private void buildPanel(KabeltypE typ) {
-        this.typ = typ;
-        buttonTrommelMap = new HashMap<>();
-        JPanel panel = new JPanel(new GridLayout(kontroll.getAllTrommelForMatNr(typ).size() + 1,1));
-        JPanel p = new JPanel();
-        p.add(addNewButt);
-        panel.add(p);
+    public void addTrommelListner(ITrommelListner listner) {
+        trommelListners.add(listner);
+    }
 
-        for (TrommelE t : kontroll.getAllTrommelForMatNr(typ)) {
-            p = new JPanel();
-            JButton b = new JButton(t.getTrommelnummer() + "");
-            buttonTrommelMap.put(b, t);
-            p.add(b);
-            if(!kontroll.isAusserHaus(t)) {
-                p.add(new JLabel("Noch: " + kontroll.getRestMeter(t) + " m"));
-            } else {
-                p.add(new JLabel("Bei: " + kontroll.getBaustelle(t)) );
-            }
-
-            b.addActionListener(this);
+    private void buildPanel(IKabeltypE typ) {
+        if (typ != null) {
+            this.typ = typ;
+            buttonTrommelMap = new HashMap<>();
+            JPanel panel = new JPanel(new GridLayout(kontroll.getAllTrommelForMatNr(typ).size() + 1, 1));
+            JPanel p = new JPanel();
+            p.add(addNewButt);
             panel.add(p);
+
+            for (ITrommelE t : kontroll.getAllTrommelForMatNr(typ)) {
+                p = new JPanel(new FlowLayout(FlowLayout.LEFT));
+                JButton b = new JButton(t.getTrommelnummer() + "");
+                buttonTrommelMap.put(b, t);
+                p.add(b);
+                if (!kontroll.isAusserHaus(t)) {
+                    p.add(new JLabel("Noch: " + kontroll.getRestMeter(t) + " m"));
+                } else {
+                    p.add(new JLabel("Bei: " + kontroll.getBaustelle(t)));
+                }
+
+                b.addActionListener(this);
+                panel.add(p);
+            }
+            add(panel);
         }
-        add(panel);
     }
 
 
     @Override
-    public void typSelected(KabeltypE typ) {
+    public void typSelected(IKabeltypE typ) {
         removeAll();
         buildPanel(typ);
         repaint();
@@ -89,5 +91,10 @@ public class TrommelAuswahlAAS extends JPanel implements IKabelTypListner, Actio
         }
     }
 
-
+    @Override
+    public void repaint() {
+        super.repaint();
+        removeAll();
+        buildPanel(typ);
+    }
 }

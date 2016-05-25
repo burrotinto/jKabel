@@ -1,6 +1,6 @@
 package de.swneumarkt.jKabeltrommel.dbauswahlAS;
 
-import de.swneumarkt.jKabeltrommel.dbauswahlAS.entytis.*;
+import de.swneumarkt.jKabeltrommel.dbauswahlAS.enitys.*;
 
 import java.util.List;
 
@@ -8,37 +8,37 @@ import java.util.List;
  * Created by derduke on 19.05.2016.
  */
 public interface IDBWrapper {
-    List<KabeltypE> getAllKabeltypen();
+    List<IKabeltypE> getAllKabeltypen();
 
-    List<TrommelE> getTrommelnForTyp(KabeltypE kabeltyp);
+    List<ITrommelE> getTrommelnForTyp(IKabeltypE kabeltyp);
 
-    List<StreckeE> getStreckenForTrommel(TrommelE trommel);
+    List<IStreckeE> getStreckenForTrommel(ITrommelE trommel);
 
-    List<LieferantE> getAllLieferanten();
+    List<ILieferantE> getAllLieferanten();
 
-    GeliefertE getLiefer(TrommelE trommel);
+    IGeliefertE getLiefer(ITrommelE trommel);
 
-    LieferantE getLieferant(GeliefertE liefert);
+    ILieferantE getLieferant(IGeliefertE liefert);
 
-    KabeltypE getTyp(TrommelE trommel);
+    IKabeltypE getTyp(ITrommelE trommel);
 
-    boolean update(KabeltypE kabeltyp);
+    boolean update(IKabeltypE kabeltyp);
 
-    boolean create(KabeltypE kabeltyp);
+    boolean createKabeltyp(String name, int materialnummer);
 
-    boolean update(StreckeE strecke);
+    boolean update(IStreckeE strecke);
 
-    boolean create(StreckeE strecke);
+    boolean createStrecke(int ba, String ort, long verlegedatum, int start, int ende, ITrommelE trommel);
 
-    boolean update(TrommelE trommel);
+    boolean update(ITrommelE trommel);
 
-    boolean create(TrommelE trommel, LieferantE lieferantE, GeliefertE geliefert);
+    boolean createTrommel(IKabeltypE kabelTyp, String trommelnummer, int gesamtlaenge, String lagerPlatz, int start, ILieferantE lieferantE, long Lieferdatum, String lieferscheinNr);
 
-    boolean remove(StreckeE strecke);
+    boolean remove(IStreckeE strecke);
 
-    boolean create(LieferantE lieferant);
+    boolean createLieferant(String name);
 
-    boolean update(LieferantE lieferantE);
+    boolean update(ILieferantE lieferantE);
 
-    boolean update(GeliefertE geliefert);
+    boolean update(IGeliefertE geliefert);
 }

@@ -1,7 +1,8 @@
-package de.swneumarkt.jKabeltrommel.dbauswahlAS;
+package de.swneumarkt.jKabeltrommel.dbauswahlAS.HSQLDB;
 
 
-import de.swneumarkt.jKabeltrommel.dbauswahlAS.entytis.*;
+import de.swneumarkt.jKabeltrommel.dbauswahlAS.IDBWrapper;
+import de.swneumarkt.jKabeltrommel.dbauswahlAS.enitys.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -12,11 +13,11 @@ import java.util.List;
 /**
  * Wrapper für eine HSQLDB
  */
-class HSQLDBWrapper implements IDBWrapper {
+public class HSQLDBWrapper implements IDBWrapper {
     private final String path;
     private Statement stmnt = null;
 
-    HSQLDBWrapper(String path) throws ClassNotFoundException, SQLException, OnlyOneUserExeption, IOException {
+    public HSQLDBWrapper(String path) throws ClassNotFoundException, SQLException, OnlyOneUserExeption, IOException {
         File lck = new File(path + "lock.lck");
         if (lck.exists()) {
             throw new OnlyOneUserExeption();
@@ -57,6 +58,28 @@ class HSQLDBWrapper implements IDBWrapper {
         }
     }
 
+    public static String getResultSetAsStringTable(ResultSet rs) throws SQLException {
+        if (rs != null) {
+            StringBuilder sb = new StringBuilder();
+            ResultSetMetaData md = rs.getMetaData();
+            //Tabellen Kopf erzeugen
+            for (int i = 1; i <= md.getColumnCount(); i++) {
+                sb.append(md.getTableName(i) + "." + md.getColumnName(i) + " || ");
+            }
+            sb.append("\n");
+            // Tabbeleneintäge
+            while (rs.next()) {
+                for (int i = 1; i <= md.getColumnCount(); i++) {
+                    sb.append(rs.getString(i) + " || ");
+                }
+                sb.append("\n");
+            }
+            return sb.toString();
+        } else {
+            return null;
+        }
+    }
+
     Statement getStatement() {
         if (stmnt == null) {
             try {
@@ -73,8 +96,8 @@ class HSQLDBWrapper implements IDBWrapper {
     }
 
     @Override
-    public List<KabeltypE> getAllKabeltypen() {
-        ArrayList<KabeltypE> list = new ArrayList<>();
+    public List<IKabeltypE> getAllKabeltypen() {
+        ArrayList<IKabeltypE> list = new ArrayList<>();
         try {
             Statement stmnt = getStatement();
             ResultSet rs = stmnt.executeQuery("Select * FROM kabeltyp;");
@@ -89,8 +112,8 @@ class HSQLDBWrapper implements IDBWrapper {
     }
 
     @Override
-    public List<TrommelE> getTrommelnForTyp(KabeltypE kabeltyp) {
-        ArrayList<TrommelE> list = new ArrayList<>();
+    public List<ITrommelE> getTrommelnForTyp(IKabeltypE kabeltyp) {
+        ArrayList<ITrommelE> list = new ArrayList<>();
         try {
             Statement stmnt = getStatement();
             ResultSet rs = stmnt.executeQuery("Select * FROM kabeltyp JOIN trommel ON kabeltyp.materialnummer = trommel.materialnummer Where kabeltyp.materialnummer = " + kabeltyp.getMaterialNummer() + ";");
@@ -106,8 +129,8 @@ class HSQLDBWrapper implements IDBWrapper {
     }
 
     @Override
-    public List<StreckeE> getStreckenForTrommel(TrommelE trommel) {
-        ArrayList<StreckeE> list = new ArrayList<>();
+    public List<IStreckeE> getStreckenForTrommel(ITrommelE trommel) {
+        ArrayList<IStreckeE> list = new ArrayList<>();
         try {
             Statement stmnt = getStatement();
             ResultSet rs = stmnt.executeQuery("Select * FROM trommel JOIN strecke ON strecke.trommelid = trommel.id Where strecke.trommelid = " + trommel.getId() + ";");
@@ -125,8 +148,8 @@ class HSQLDBWrapper implements IDBWrapper {
     }
 
     @Override
-    public List<LieferantE> getAllLieferanten() {
-        ArrayList<LieferantE> list = new ArrayList<>();
+    public List<ILieferantE> getAllLieferanten() {
+        ArrayList<ILieferantE> list = new ArrayList<>();
         try {
             Statement stmnt = getStatement();
             ResultSet rs = stmnt.executeQuery("Select * FROM lieferant;");
@@ -141,11 +164,26 @@ class HSQLDBWrapper implements IDBWrapper {
     }
 
     @Override
-    public GeliefertE getLiefer(TrommelE trommel) {
+    public IGeliefertE getLiefer(ITrommelE trommel) {
         try {
             ResultSet rs = getStatement().executeQuery("SELECT * FROM geliefert JOIN trommel ON trommel.id = geliefert.id WHERE id =" + trommel.getId() + ";");
             if (rs.next()) {
-                return new GeliefertE(rs.getLong("datum"), rs.getString("lieferschein"), rs.getInt("hid"), rs.getInt("id"));
+                ILieferantE l = getLieferantByID(rs.getInt("hid"));
+                return new GeliefertE(rs.getLong("datum"), rs.getString("lieferschein"), l, trommel);
+            } else {
+                return null;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    private ILieferantE getLieferantByID(int id) {
+        try {
+            ResultSet rs = getStatement().executeQuery("SELECT * FROM lieferant WHERE hid =" + id + ";");
+            if (rs.next()) {
+                return new LieferantE(rs.getInt("hid"), rs.getString("name"));
             } else {
                 return null;
             }
@@ -156,10 +194,9 @@ class HSQLDBWrapper implements IDBWrapper {
     }
 
     @Override
-    public LieferantE getLieferant(GeliefertE liefert) {
+    public LieferantE getLieferant(IGeliefertE liefert) {
         try {
-            ResultSet rs = getStatement().executeQuery("SELECT * FROM geliefert JOIN lieferant ON lieferant.hid = geliefert.hid WHERE hid =" + liefert.getLieferantID() + ";");
-//            ResultSet rs = stmnt.executeQuery("SELECT * FROM (geliefert JOIN lieferant ON lieferant.hid = geliefert.hid) JOIN trommel on trommel.id == geliefert.id WHERE hid ="+ liefert.getLieferantID()+";");
+            ResultSet rs = getStatement().executeQuery("SELECT * FROM geliefert JOIN lieferant ON lieferant.hid = geliefert.hid WHERE hid =" + liefert.getLieferant().getId() + ";");
             if (rs.next()) {
                 return new LieferantE(rs.getInt("lid"), rs.getString("name"));
             } else {
@@ -172,7 +209,7 @@ class HSQLDBWrapper implements IDBWrapper {
     }
 
     @Override
-    public KabeltypE getTyp(TrommelE trommel) {
+    public KabeltypE getTyp(ITrommelE trommel) {
         try {
             ResultSet rs = getStatement().executeQuery("SELECT * FROM trommel JOIN kabeltyp ON kabeltyp.materialnummer = trommel.materialnummer WHERE id =" + trommel.getId() + ";");
             if (rs.next()) {
@@ -186,7 +223,6 @@ class HSQLDBWrapper implements IDBWrapper {
         }
     }
 
-
     private boolean execute(String ex) {
         try {
             getStatement().executeUpdate(ex);
@@ -198,44 +234,45 @@ class HSQLDBWrapper implements IDBWrapper {
     }
 
     @Override
-    public boolean update(KabeltypE kabeltyp) {
+    public boolean update(IKabeltypE kabeltyp) {
         return execute("UPDATE kabeltyp SET typ='" + kabeltyp.getTyp() + "' WHERE materialnummer=" + kabeltyp.getMaterialNummer() + ";");
     }
 
     @Override
-    public boolean create(KabeltypE kabeltyp) {
-        return execute("INSERT INTO kabeltyp (materialnummer, typ) VALUES(" + kabeltyp.getMaterialNummer() + ", '" + kabeltyp.getTyp() + "');");
+    public boolean createKabeltyp(String name, int materialnummer) {
+        return execute("INSERT INTO kabeltyp (materialnummer, typ) VALUES(" + materialnummer + ", '" + name + "');");
     }
 
     @Override
-    public boolean update(StreckeE strecke) {
+    public boolean update(IStreckeE strecke) {
         return execute("UPDATE strecke SET ba=" + strecke.getBa() + ",ort='" + strecke.getOrt() + "',start=" + strecke.getStart() + ",ende=" + strecke.getEnde() + " WHERE sid=" + strecke.getId() + ";");
     }
 
     @Override
-    public boolean create(StreckeE strecke) {
-        return execute("INSERT INTO strecke(sid, trommelid, ba, ort,verlegedatum,start,ende) VALUES(NULL," + strecke.getTrommelID() + "," + strecke.getBa() + ",'" + strecke.getOrt() + "'," + strecke.getVerlegedatum() + "," + strecke.getStart() + "," + strecke.getEnde() + " )");
+    public boolean createStrecke(int ba, String ort, long verlegedatum, int start, int ende, ITrommelE trommel) {
+        return execute("INSERT INTO strecke(sid, trommelid, ba, ort,verlegedatum,start,ende) VALUES(NULL," + trommel.getId() + "," + ba + ",'" + ort + "'," + verlegedatum + "," + start + "," + ende + " )");
     }
 
     @Override
-    public boolean update(TrommelE trommel) {
+    public boolean update(ITrommelE trommel) {
         return execute("UPDATE trommel SET trommelnummer='" + trommel.getTrommelnummer() + "',gesamtlaenge=" + trommel.getGesamtlaenge() + ",lagerplatz='" + trommel.getLagerPlatz() + "', kabelstart=" + trommel.getStart() + "  WHERE id=" + trommel.getId() + ";");
     }
 
-    public boolean update(GeliefertE geliefert) {
-        execute("UPDATE geliefert SET hid="+geliefert.getLieferantID()+" WHERE id=" + geliefert.getTrommelID() +";");
+    public boolean update(IGeliefertE geliefert) {
+        execute("UPDATE geliefert SET hid=" + geliefert.getLieferant().getId() + " WHERE id=" + geliefert.getTrommel().getId() + ";");
         return true;
     }
+
     @Override
-    public boolean create(TrommelE trommel, LieferantE lieferant, GeliefertE geliefert) {
+    public boolean createTrommel(IKabeltypE kabelTyp, String trommelnummer, int gesamtlaenge, String lagerPlatz, int start, ILieferantE lieferantE, long lieferdatum, String lieferscheinNr) {
         boolean out = true;
         try {
-            ResultSet rs = getStatement().executeQuery("insert into trommel(id, materialnummer,trommelnummer,gesamtlaenge,lagerplatz,kabelstart) VALUES(NULL," + trommel.getMaterialNummer() + ",'" + trommel.getTrommelnummer() + "', " + trommel.getGesamtlaenge() + ",'" + trommel.getLagerPlatz() + "'," + trommel.getStart() + "); CALL IDENTITY()");
+            ResultSet rs = getStatement().executeQuery("insert into trommel(id, materialnummer,trommelnummer,gesamtlaenge,lagerplatz,kabelstart) VALUES(NULL," + kabelTyp.getMaterialNummer() + ",'" + trommelnummer + "', " + gesamtlaenge + ",'" + lagerPlatz + "'," + start + "); CALL IDENTITY()");
             rs.next();
             int trommelID = rs.getInt(1);
 
             //  geliefert(lid IDENTITY,hid INTEGER, id INTEGER, datum BIGINT,lieferschein VARCHAR(64),
-            out = execute("INSERT INTO geliefert(lid,hid,id,datum,lieferschein) VALUES(NULL," + lieferant.getId() + "," + trommelID + "," + geliefert.getDatum() + ",'" + geliefert.getLieferscheinNr() + "' );");
+            out = execute("INSERT INTO geliefert(lid,hid,id,datum,lieferschein) VALUES(NULL," + lieferantE.getId() + "," + trommelID + "," + lieferdatum + ",'" + lieferscheinNr + "' );");
 
             rs.close();
         } catch (SQLException e) {
@@ -246,35 +283,17 @@ class HSQLDBWrapper implements IDBWrapper {
     }
 
     @Override
-    public boolean remove(StreckeE strecke) {
+    public boolean remove(IStreckeE strecke) {
         return execute("DELETE FROM strecke WHERE sid=" + strecke.getId() + ";");
     }
 
     @Override
-    public boolean create(LieferantE lieferant) {
-        return execute("INSERT INTO lieferant(hid,name) VALUES(NULL,'" + lieferant.getName() + "')");
+    public boolean createLieferant(String name) {
+        return execute("INSERT INTO lieferant(hid,name) VALUES(NULL,'" + name + "')");
     }
 
     @Override
-    public boolean update(LieferantE lieferantE) {
+    public boolean update(ILieferantE lieferantE) {
         return execute("UPDATE lieferant SET name='" + lieferantE.getName() + "' WHERE hid=" + lieferantE.getId() + ";");
-    }
-
-    public static String getResultSetAsStringTable(ResultSet rs) throws SQLException {
-        StringBuilder sb = new StringBuilder();
-        ResultSetMetaData md = rs.getMetaData();
-        //Tabellen Kopf erzeugen
-        for (int i = 1; i <= md.getColumnCount(); i++) {
-            sb.append(md.getTableName(i) + "." + md.getColumnName(i) + " || ");
-        }
-        sb.append("\n");
-        // Tabbeleneintäge
-        while (rs.next()) {
-            for (int i = 1; i <= md.getColumnCount(); i++) {
-                sb.append(rs.getString(i) + " || ");
-            }
-            sb.append("\n");
-        }
-        return sb.toString();
     }
 }

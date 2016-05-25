@@ -1,9 +1,9 @@
 package de.swneumarkt.jKabeltrommel.dispalyAS.TrommelAuswahlAS;
 
 import de.swneumarkt.jKabeltrommel.dbauswahlAS.IDBWrapper;
-import de.swneumarkt.jKabeltrommel.dbauswahlAS.entytis.KabeltypE;
-import de.swneumarkt.jKabeltrommel.dbauswahlAS.entytis.StreckeE;
-import de.swneumarkt.jKabeltrommel.dbauswahlAS.entytis.TrommelE;
+import de.swneumarkt.jKabeltrommel.dbauswahlAS.enitys.IKabeltypE;
+import de.swneumarkt.jKabeltrommel.dbauswahlAS.enitys.IStreckeE;
+import de.swneumarkt.jKabeltrommel.dbauswahlAS.enitys.ITrommelE;
 
 import java.util.Collections;
 import java.util.Comparator;
@@ -18,30 +18,31 @@ class TommelAuswahlK {
         this.db = db;
     }
 
-    public List<TrommelE> getAllTrommelForMatNr(KabeltypE typ){
-        List<TrommelE> list = db.getTrommelnForTyp(typ);
-        Collections.sort(list, new Comparator<TrommelE>() {
+    public List<ITrommelE> getAllTrommelForMatNr(IKabeltypE typ) {
+        List<ITrommelE> list = db.getTrommelnForTyp(typ);
+        Collections.sort(list, new Comparator<ITrommelE>() {
             @Override
-            public int compare(TrommelE o1, TrommelE o2) {
+            public int compare(ITrommelE o1, ITrommelE o2) {
                 return getRestMeter(o2) - getRestMeter(o1);
             }
         });
         return list;
     }
 
-    public int getRestMeter(TrommelE trommel){
+    public int getRestMeter(ITrommelE trommel) {
         int laenge = trommel.getGesamtlaenge();
-        for(StreckeE s: db.getStreckenForTrommel(trommel)){
+        for (IStreckeE s : db.getStreckenForTrommel(trommel)) {
            laenge-= s.getMeter();
         }
         return  laenge;
     }
 
-    public boolean isAusserHaus(TrommelE t) {
+    public boolean isAusserHaus(ITrommelE t) {
        return getBaustelle(t) != null;
     }
-    public String getBaustelle(TrommelE t){
-        for(StreckeE s: db.getStreckenForTrommel(t)){
+
+    public String getBaustelle(ITrommelE t) {
+        for (IStreckeE s : db.getStreckenForTrommel(t)) {
             if(s.getEnde() <0 || s.getStart() < 0){
                 return s.getOrt();
             }

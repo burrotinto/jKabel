@@ -1,7 +1,7 @@
 package de.swneumarkt.jKabeltrommel.dispalyAS.LieferantAuswahlAS;
 
 import de.swneumarkt.jKabeltrommel.dbauswahlAS.IDBWrapper;
-import de.swneumarkt.jKabeltrommel.dbauswahlAS.entytis.LieferantE;
+import de.swneumarkt.jKabeltrommel.dbauswahlAS.enitys.ILieferantE;
 
 import java.util.Vector;
 
@@ -16,7 +16,7 @@ class LieferantenAuswahlK {
         this.db = db;
     }
 
-    public Vector<LieferantE> getLieferanten() {
-        return new Vector<LieferantE>(db.getAllLieferanten());
+    public Vector<ILieferantE> getLieferanten() {
+        return new Vector<ILieferantE>(db.getAllLieferanten());
     }
 }

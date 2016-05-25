@@ -1,10 +1,9 @@
 package de.swneumarkt.jKabeltrommel.dispalyAS.KabelTypAuswahlAS;
 
 import de.swneumarkt.jKabeltrommel.dbauswahlAS.IDBWrapper;
-import de.swneumarkt.jKabeltrommel.dbauswahlAS.entytis.KabeltypE;
+import de.swneumarkt.jKabeltrommel.dbauswahlAS.enitys.IKabeltypE;
 
-import java.util.HashMap;
-import java.util.function.Consumer;
+import java.util.List;
 
 /**
  * Created by derduke on 21.05.16.
@@ -16,19 +15,13 @@ class KabelTypAuswahlK {
         this.db = db;
     }
 
-    public HashMap<Integer,String> getTypenMap() {
-        HashMap<Integer,String> map= new HashMap<>();
-        db.getAllKabeltypen().forEach(new Consumer<KabeltypE>() {
-            @Override
-            public void accept(KabeltypE kabeltypE) {
-                map.put(kabeltypE.getMaterialNummer(),kabeltypE.getTyp());
-            }
-        });
-        return map;
+    public List<IKabeltypE> getTypen() {
+
+        return db.getAllKabeltypen();
     }
 
-    public KabeltypE getTyp(Integer integer) {
-        for(KabeltypE k : db.getAllKabeltypen()){
+    public IKabeltypE getTyp(Integer integer) {
+        for (IKabeltypE k : db.getAllKabeltypen()) {
             if(k.getMaterialNummer() == integer){
                 return k;
             }
