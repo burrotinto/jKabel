@@ -1,9 +1,9 @@
-package de.swneumarkt.jKabeltrommel.dispalyAS.StreckenAS;
+package de.swneumarkt.jKabeltrommel.dispalyAS.bearbeiten.StreckenAS;
 
 import de.swneumarkt.jKabeltrommel.dbauswahlAS.IDBWrapper;
 import de.swneumarkt.jKabeltrommel.dbauswahlAS.enitys.*;
-import de.swneumarkt.jKabeltrommel.dispalyAS.KabelTypAuswahlAS.IKabelTypListner;
-import de.swneumarkt.jKabeltrommel.dispalyAS.TrommelAuswahlAS.ITrommelListner;
+import de.swneumarkt.jKabeltrommel.dispalyAS.bearbeiten.KabelTypAuswahlAS.IKabelTypListner;
+import de.swneumarkt.jKabeltrommel.dispalyAS.bearbeiten.TrommelAuswahlAS.ITrommelListner;
 
 import javax.swing.*;
 import java.awt.*;
@@ -33,6 +33,12 @@ public class StreckenAAS extends JPanel implements ITrommelListner, ActionListen
         kontroller = new StreckenK(db);
         create.addActionListener(this);
         update.addActionListener(this);
+//        setPreferredSize(new Dimension(680,680));
+
+    }
+
+    public StreckenAAS(IDBWrapper db) {
+        this(db, null);
     }
 
     @Override

@@ -21,10 +21,7 @@ class KabeltypE implements IKabeltypE {
 
     @Override
     public String toString() {
-        return "KabeltypE{" +
-                "materialNummer=" + materialNummer +
-                ", typ='" + typ + '\'' +
-                '}';
+        return materialNummer + " - " + typ;
     }
 
     @Override

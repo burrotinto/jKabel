@@ -1,4 +1,4 @@
-package de.swneumarkt.jKabeltrommel.dispalyAS.LieferantAuswahlAS;
+package de.swneumarkt.jKabeltrommel.dispalyAS.bearbeiten.LieferantAuswahlAS;
 
 import de.swneumarkt.jKabeltrommel.dbauswahlAS.IDBWrapper;
 import de.swneumarkt.jKabeltrommel.dbauswahlAS.enitys.ILieferantE;

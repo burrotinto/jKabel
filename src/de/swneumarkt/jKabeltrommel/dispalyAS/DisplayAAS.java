@@ -2,49 +2,69 @@ package de.swneumarkt.jKabeltrommel.dispalyAS;
 
 import de.swneumarkt.jKabeltrommel.dbauswahlAS.DBAuswahlAAS;
 import de.swneumarkt.jKabeltrommel.dbauswahlAS.IDBWrapper;
-import de.swneumarkt.jKabeltrommel.dispalyAS.KabelTypAuswahlAS.KabelTypAuswahlAAS;
-import de.swneumarkt.jKabeltrommel.dispalyAS.StreckenAS.StreckenAAS;
-import de.swneumarkt.jKabeltrommel.dispalyAS.TrommelAuswahlAS.TrommelAuswahlAAS;
+import de.swneumarkt.jKabeltrommel.dispalyAS.bearbeiten.KabelTypAuswahlAS.KabelTypAuswahlAAS;
+import de.swneumarkt.jKabeltrommel.dispalyAS.bearbeiten.StreckenAS.StreckenAAS;
+import de.swneumarkt.jKabeltrommel.dispalyAS.bearbeiten.TrommelAuswahlAS.TrommelAuswahlAAS;
+import de.swneumarkt.jKabeltrommel.dispalyAS.search.SearchAAS;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.util.HashSet;
 
 /**
  * Created by derduke on 22.05.16.
  */
-public class DisplayAAS extends JFrame{
+public class DisplayAAS extends JFrame implements ItemListener, ActionListener {
+    private JPanel north = new JPanel();
+    private JMenuItem edit = new JMenuItem("Bearbeiten");
+    private JMenuItem search = new JMenuItem("Suchen");
+    private JScrollPane center = new JScrollPane();
 
+    private IDBWrapper db = null;
 
-    private  IDBWrapper db;
+    public DisplayAAS() {
+        getContentPane().setLayout(new BorderLayout());
+        getContentPane().add(new JLabel("proudly made by Florian Klinger"), BorderLayout.SOUTH);
+
+        JMenuBar menuBar = new JMenuBar();
+        JMenu menue = new JMenu("File");
+        menue.add(edit);
+        menue.add(search);
+        edit.addActionListener(this);
+        search.addActionListener(this);
+        menuBar.add(menue);
+        setJMenuBar(menuBar);
+
+    }
 
     public static void main(String[] args) {
         DisplayAAS f = new DisplayAAS();
         f.setTitle("jKabeltrommel");
         IDBWrapper db = new DBAuswahlAAS().getDBWrapper();
-        if(db == null){
-            f.setLayout(new FlowLayout());
-            f.add(new JLabel("Es wurde bereits eine Instanz auf einem anderen Rechner geöffnet. Mehrbenutzerbetrieb ist aktuell nicht möglich.(Es steht kein Server zur verfügung)"));
-            f.add(new JLabel("Wenn !!!sicher!!! ist das kein anderer auf dedr DB arbeitet die lock.lck Datei löschen"));
-            f.pack();
-        }else {
+        if (db == null) {
+            JPanel p = new JPanel();
+            p.add(new JLabel("Es wurde bereits eine Instanz auf einem anderen Rechner geöffnet. Mehrbenutzerbetrieb ist aktuell nicht möglich.(Es steht kein Server zur verfügung)."));
+            p.add(new JLabel("Wenn !!!sicher!!! ist das kein anderer auf dedr DB arbeitet die lock.lck Datei löschen"));
+            f.getContentPane().add(p, BorderLayout.CENTER);
+        } else {
             f.setDb(db);
-            f.getContentPane().setLayout(new BorderLayout());
-            f.getContentPane().add(f.getBearbeitenPanel(),BorderLayout.CENTER);
-            f.getContentPane().add(new JLabel("proudly made by Florian Klinger"),BorderLayout.SOUTH);
-            f.getContentPane().add(new JLabel(";-)"),BorderLayout.NORTH);
-            f.setSize(1400, 640);
-            f.setMinimumSize(new Dimension(480, 480));
-            f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            f.setVisible(true);
+
         }
+        f.setSize(1400, 640);
+        f.setMinimumSize(new Dimension(480, 480));
+        f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        f.setVisible(true);
     }
 
     public void setDb(IDBWrapper db) {
         this.db = db;
     }
 
-    public JPanel getBearbeitenPanel(){
+    public JPanel getBearbeitenPanel() {
         KabelTypAuswahlAAS k = new KabelTypAuswahlAAS(db);
         TrommelAuswahlAAS t = new TrommelAuswahlAAS(db);
         HashSet<JPanel> updateSet = new HashSet<>();
@@ -58,11 +78,38 @@ public class DisplayAAS extends JFrame{
         t.addTrommelListner(s);
 
         JPanel l = new JPanel(new GridLayout(1, 2));
-        JPanel all =new JPanel(new GridLayout(1, 2));
+        JPanel all = new JPanel(new GridLayout(1, 2));
         l.add(new JScrollPane(k));
         l.add(new JScrollPane(t));
         all.add(l);
         all.add(new JScrollPane(s));
         return all;
+    }
+
+    @Override
+    public void itemStateChanged(ItemEvent e) {
+        if (e.getSource() == edit) {
+            System.out.println("EDIT");
+        } else if (e.getSource() == search) {
+            System.out.println("Suchen");
+        }
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if (db != null) {
+            if (e.getSource() == edit) {
+                remove(center);
+                center = new JScrollPane(getBearbeitenPanel());
+                getContentPane().add(center, BorderLayout.CENTER);
+
+            } else if (e.getSource() == search) {
+                remove(center);
+                center = new JScrollPane(new SearchAAS(db));
+                getContentPane().add(center, BorderLayout.CENTER);
+            }
+            repaint();
+            revalidate();
+        }
     }
 }

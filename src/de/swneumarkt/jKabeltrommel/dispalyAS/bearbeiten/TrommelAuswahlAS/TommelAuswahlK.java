@@ -1,4 +1,4 @@
-package de.swneumarkt.jKabeltrommel.dispalyAS.TrommelAuswahlAS;
+package de.swneumarkt.jKabeltrommel.dispalyAS.bearbeiten.TrommelAuswahlAS;
 
 import de.swneumarkt.jKabeltrommel.dbauswahlAS.IDBWrapper;
 import de.swneumarkt.jKabeltrommel.dbauswahlAS.enitys.IKabeltypE;

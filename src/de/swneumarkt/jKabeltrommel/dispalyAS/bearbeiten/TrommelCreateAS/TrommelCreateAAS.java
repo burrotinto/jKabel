@@ -1,9 +1,9 @@
-package de.swneumarkt.jKabeltrommel.dispalyAS.TrommelCreateAS;
+package de.swneumarkt.jKabeltrommel.dispalyAS.bearbeiten.TrommelCreateAS;
 
 import de.swneumarkt.jKabeltrommel.dbauswahlAS.IDBWrapper;
 import de.swneumarkt.jKabeltrommel.dbauswahlAS.enitys.IKabeltypE;
-import de.swneumarkt.jKabeltrommel.dispalyAS.LieferantAuswahlAS.LieferantenAuswahlAAS;
-import de.swneumarkt.jKabeltrommel.dispalyAS.TrommelAuswahlAS.TrommelAuswahlAAS;
+import de.swneumarkt.jKabeltrommel.dispalyAS.bearbeiten.LieferantAuswahlAS.LieferantenAuswahlAAS;
+import de.swneumarkt.jKabeltrommel.dispalyAS.bearbeiten.TrommelAuswahlAS.TrommelAuswahlAAS;
 
 import javax.swing.*;
 import java.awt.*;

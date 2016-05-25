@@ -1,8 +1,8 @@
-package de.swneumarkt.jKabeltrommel.dispalyAS.LieferantAuswahlAS;
+package de.swneumarkt.jKabeltrommel.dispalyAS.bearbeiten.LieferantAuswahlAS;
 
 import de.swneumarkt.jKabeltrommel.dbauswahlAS.IDBWrapper;
 import de.swneumarkt.jKabeltrommel.dbauswahlAS.enitys.ILieferantE;
-import de.swneumarkt.jKabeltrommel.dispalyAS.LieferantCreateAS.LieferantCreateAAS;
+import de.swneumarkt.jKabeltrommel.dispalyAS.bearbeiten.LieferantCreateAS.LieferantCreateAAS;
 
 import javax.swing.*;
 import java.awt.*;
