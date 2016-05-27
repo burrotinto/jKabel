@@ -38,4 +38,13 @@ class KabeltypE implements IKabeltypE {
     public int getMaterialNummer() {
         return materialNummer;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        try {
+            return getMaterialNummer() == ((IKabeltypE) obj).getMaterialNummer();
+        } catch (Exception e) {
+            return false;
+        }
+    }
 }

@@ -23,7 +23,10 @@ public class DisplayAAS extends JFrame implements ItemListener, ActionListener {
     private JMenuItem edit = new JMenuItem("Bearbeiten");
     private JMenuItem search = new JMenuItem("Suchen");
     private JMenuItem exit = new JMenuItem("Ende");
+    private JMenuItem auchf = new JCheckBoxMenuItem("Zeige freigemeldete");
     private JScrollPane center = new JScrollPane();
+
+    private TrommelAuswahlAAS tommelAAs = null;
 
     private IDBWrapper db = null;
 
@@ -35,10 +38,14 @@ public class DisplayAAS extends JFrame implements ItemListener, ActionListener {
         JMenu menue = new JMenu("File");
         menue.add(edit);
         menue.add(search);
+
+        menue.add(auchf);
         menue.add(exit);
+
         edit.addActionListener(this);
         search.addActionListener(this);
         exit.addActionListener(this);
+        auchf.addActionListener(this);
         menuBar.add(menue);
         setJMenuBar(menuBar);
 
@@ -74,21 +81,21 @@ public class DisplayAAS extends JFrame implements ItemListener, ActionListener {
 
     public JPanel getBearbeitenPanel() {
         KabelTypAuswahlAAS k = new KabelTypAuswahlAAS(db);
-        TrommelAuswahlAAS t = new TrommelAuswahlAAS(db);
+        tommelAAs = new TrommelAuswahlAAS(db, auchf.isSelected());
         HashSet<JPanel> updateSet = new HashSet<>();
         updateSet.add(k);
-        updateSet.add(t);
+        updateSet.add(tommelAAs);
         StreckenAAS s = new StreckenAAS(db, updateSet);
 
-        k.addKabelTypListner(t);
+        k.addKabelTypListner(tommelAAs);
         k.addKabelTypListner(s);
 
-        t.addTrommelListner(s);
+        tommelAAs.addTrommelListner(s);
 
         JPanel l = new JPanel(new GridLayout(1, 2));
         JPanel all = new JPanel(new GridLayout(1, 2));
         l.add(new JScrollPane(k));
-        l.add(new JScrollPane(t));
+        l.add(new JScrollPane(tommelAAs));
         all.add(l);
         JScrollPane sc = new JScrollPane(s);
         sc.setPreferredSize(new Dimension(680, 680));
@@ -102,6 +109,7 @@ public class DisplayAAS extends JFrame implements ItemListener, ActionListener {
             System.out.println("EDIT");
         } else if (e.getSource() == search) {
             System.out.println("Suchen");
+
         }
     }
 
@@ -120,6 +128,8 @@ public class DisplayAAS extends JFrame implements ItemListener, ActionListener {
                 remove(center);
                 center = new JScrollPane(new SearchAAS(db));
                 getContentPane().add(center, BorderLayout.CENTER);
+            } else if (e.getSource() == auchf && tommelAAs != null) {
+                tommelAAs.setAuchFreigemeldete(auchf.isSelected());
             }
             repaint();
             revalidate();

@@ -1,9 +1,11 @@
 package de.swneumarkt.jKabeltrommel.dbauswahlAS.enitys;
 
+import java.io.Serializable;
+
 /**
  * Created by derduke on 25.05.16.
  */
-public interface ITrommelE {
+public interface ITrommelE extends Serializable {
     int getStart();
 
     void setStart(int start);
@@ -24,6 +26,10 @@ public interface ITrommelE {
 
     void setTrommelnummer(String trommelnummer);
 
+    boolean isFreigemeldet();
+
     @Override
     String toString();
+
+    void setFreimeldung(boolean freigemeldet);
 }

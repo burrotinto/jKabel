@@ -20,6 +20,7 @@ public class StreckenAAS extends JPanel implements ITrommelListner, ActionListen
     private final StreckenK kontroller;
     private final Set<JPanel> updateOnChange;
     private JTextField trommelnummerField, datumField, laengeField, typField, matNrField, baField, startField, endField, ortField, lagerplatzField,trommelstartField;
+    private JCheckBox freiCheckBox;
     private List<Abgang> abgaenge;
     private JButton create = new JButton("Eintragen");
     private JButton update = new JButton("Ändern");
@@ -53,7 +54,7 @@ public class StreckenAAS extends JPanel implements ITrommelListner, ActionListen
         this.trommel = trommel;
         List<IStreckeE> strecken = kontroller.getStreckenForTrommel(trommel);
         JPanel p = new JPanel();
-        p.setLayout(new GridLayout(strecken.size() + 12, 1));
+        p.setLayout(new GridLayout(strecken.size() + 13, 1));
 
         // Überschrift
         JPanel uebers = new JPanel(new FlowLayout());
@@ -130,6 +131,13 @@ public class StreckenAAS extends JPanel implements ITrommelListner, ActionListen
         matNr.add(matNrField);
         matNrField.setEditable(false);
         p.add(matNr);
+
+        //Freimeldung
+        JPanel frei = new JPanel(new FlowLayout());
+        frei.add(new JLabel("Freimeldung:"));
+        freiCheckBox = new JCheckBox("", trommel.isFreigemeldet());
+        frei.add(freiCheckBox);
+        p.add(frei);
 
         // Beschriftung
         JPanel bes = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -263,6 +271,7 @@ public class StreckenAAS extends JPanel implements ITrommelListner, ActionListen
                 trommel.setTrommelnummer(trommelnummerField.getText());
                 trommel.setLagerPlatz(lagerplatzField.getText());
                 trommel.setStart(Integer.parseInt(trommelstartField.getText()));
+                trommel.setFreimeldung(freiCheckBox.isSelected());
                 kontroller.update(trommel);
 
                 IGeliefertE g = kontroller.getLiefer(trommel);

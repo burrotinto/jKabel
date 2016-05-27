@@ -23,15 +23,17 @@ public class TrommelAuswahlAAS extends JPanel implements IKabelTypListner, Actio
     private JButton addNewButt = new JButton("Neue Trommel");
     private IKabeltypE typ = null;
     private IDBWrapper db;
+    private boolean auchFreigemeldete;
 
     private HashMap<JButton, ITrommelE> buttonTrommelMap;
 
     private Set<ITrommelListner> trommelListners = new HashSet<>();
 
-    public TrommelAuswahlAAS(IDBWrapper db) {
+    public TrommelAuswahlAAS(IDBWrapper db, boolean auchFreigemeldete) {
         kontroll = new TommelAuswahlK(db);
         this.db = db;
         addNewButt.addActionListener(this);
+        this.auchFreigemeldete = auchFreigemeldete;
     }
 
     public void addTrommelListner(ITrommelListner listner) {
@@ -44,22 +46,36 @@ public class TrommelAuswahlAAS extends JPanel implements IKabelTypListner, Actio
             buttonTrommelMap = new HashMap<>();
             JPanel panel = new JPanel(new GridLayout(kontroll.getAllTrommelForMatNr(typ).size() + 1, 1));
             JPanel p = new JPanel();
+
+//            JPanel tLP = new JPanel(new FlowLayout(FlowLayout.CENTER));
+//            JLabel tL = new JLabel(typ.toString());
+//            tLP.setBorder(new LineBorder(Color.BLACK));
+//            tLP.add(tL);
+//            tLP.setBackground(Color.BLUE);
+//            panel.add(tLP);
+
             p.add(addNewButt);
             panel.add(p);
 
             for (ITrommelE t : kontroll.getAllTrommelForMatNr(typ)) {
-                p = new JPanel(new FlowLayout(FlowLayout.LEFT));
-                JButton b = new JButton(t.getTrommelnummer() + "");
-                buttonTrommelMap.put(b, t);
-                p.add(b);
-                if (!kontroll.isAusserHaus(t)) {
-                    p.add(new JLabel("Noch: " + kontroll.getRestMeter(t) + " m"));
-                } else {
-                    p.add(new JLabel("Bei: " + kontroll.getBaustelle(t)));
-                }
+                if (auchFreigemeldete || !t.isFreigemeldet()) {
+                    p = new JPanel(new FlowLayout(FlowLayout.LEFT));
+                    JButton b = new JButton(t.getTrommelnummer() + "");
+                    buttonTrommelMap.put(b, t);
+                    p.add(b);
+                    if (!kontroll.isAusserHaus(t)) {
+                        p.add(new JLabel("Noch: " + kontroll.getRestMeter(t) + " m"));
+                    } else {
+                        p.add(new JLabel("Bei: " + kontroll.getBaustelle(t)));
+                        p.setBackground(Color.ORANGE);
+                    }
+                    if (t.isFreigemeldet()) {
+                        p.setBackground(Color.RED);
+                    }
 
-                b.addActionListener(this);
-                panel.add(p);
+                    b.addActionListener(this);
+                    panel.add(p);
+                }
             }
             add(panel);
         }
@@ -96,5 +112,9 @@ public class TrommelAuswahlAAS extends JPanel implements IKabelTypListner, Actio
         super.repaint();
         removeAll();
         buildPanel(typ);
+    }
+
+    public void setAuchFreigemeldete(boolean auchFreigemeldete) {
+        this.auchFreigemeldete = auchFreigemeldete;
     }
 }

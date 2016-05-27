@@ -21,6 +21,7 @@ public class KabelTypAuswahlAAS extends JPanel implements ActionListener, IKabel
     private HashMap<JButton, Integer> buttonsMatNr = new HashMap<>();
     private Set<IKabelTypListner> kabelTypLIstners = new HashSet<IKabelTypListner>();
     private JButton addNewButt = new JButton("Neuer Kabeltyp");
+    private IKabeltypE selected = null;
 
     public KabelTypAuswahlAAS(IDBWrapper db) {
         kontroll = new KabelTypAuswahlK(db);
@@ -31,7 +32,7 @@ public class KabelTypAuswahlAAS extends JPanel implements ActionListener, IKabel
     }
 
     private void buildPanel() {
-        if(kontroll != null) {
+        if (kontroll != null) {
             List<IKabeltypE> list = kontroll.getTypen();
             buttonsMatNr = new HashMap<>();
             JPanel panel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
@@ -56,10 +57,14 @@ public class KabelTypAuswahlAAS extends JPanel implements ActionListener, IKabel
                     p.add(new JLabel(iKabeltypE.getTyp()));
                     p.add(b);
                     b.addActionListener(kta);
+                    if (iKabeltypE.equals(selected)) {
+                        b.setBackground(Color.YELLOW);
+                    } else {
+                        b.setBackground(Color.LIGHT_GRAY);
+                    }
                     panel.add(p);
                 }
             });
-
             panel.add(addNewButt);
             add(panel);
         }
@@ -76,6 +81,14 @@ public class KabelTypAuswahlAAS extends JPanel implements ActionListener, IKabel
             new KabelTypCreateAAS(db, this);
         } else {
             IKabeltypE typ = kontroll.getTyp(buttonsMatNr.get(e.getSource()));
+            buttonsMatNr.keySet().forEach(new Consumer<JButton>() {
+                @Override
+                public void accept(JButton jButton) {
+                    jButton.setBackground(Color.LIGHT_GRAY);
+                }
+            });
+            ((JButton) e.getSource()).setBackground(Color.YELLOW);
+
             kabelTypLIstners.forEach(new Consumer<IKabelTypListner>() {
                 @Override
                 public void accept(IKabelTypListner IKabelTypListner) {
@@ -88,7 +101,7 @@ public class KabelTypAuswahlAAS extends JPanel implements ActionListener, IKabel
 
     @Override
     public void typSelected(IKabeltypE typ) {
-
+        selected = typ;
     }
 
     @Override

@@ -6,6 +6,7 @@ import de.swneumarkt.jKabeltrommel.dbauswahlAS.enitys.*;
 
 import java.io.File;
 import java.io.IOException;
+import java.rmi.server.UnicastRemoteObject;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +14,7 @@ import java.util.List;
 /**
  * Wrapper für eine HSQLDB
  */
-public class HSQLDBWrapper implements IDBWrapper {
+public class HSQLDBWrapper extends UnicastRemoteObject implements IDBWrapper {
     private final String path;
     private Statement stmnt = null;
 
@@ -44,6 +45,11 @@ public class HSQLDBWrapper implements IDBWrapper {
                 stmnt.execute("ALTER TABLE trommel ADD kabelstart INTEGER;");
             } catch (SQLException e) {
             }
+            //Update zu freimeldung
+            try {
+                stmnt.execute("ALTER TABLE trommel ADD freigemeldet BOOLEAN;");
+            } catch (SQLException e) {
+            }
         } catch (SQLException e) {
             // Create DB
             stmnt.execute("create table kabeltyp(materialnummer integer not null PRIMARY KEY , typ VARCHAR (64) );");
@@ -56,6 +62,16 @@ public class HSQLDBWrapper implements IDBWrapper {
 
             stmnt.execute("create TABLE strecke(sid IDENTITY, trommelid integer not null, ba INTEGER, ort VARCHAR(64), verlegedatum BIGINT , start INTEGER , ende INTEGER , FOREIGN KEY(trommelid) REFERENCES trommel(id));");
         }
+//        try {
+//            java.rmi.registry.LocateRegistry.createRegistry(1099);
+//            Naming.rebind("HSQLDBWrapper",this);
+//            System.out.println("RMI registry ready.");
+//            IDBWrapper w = (IDBWrapper) Naming.lookup("rmi://127.0.0.1:1099/HSQLDBWrapper");
+//            System.out.println(w.getAllKabeltypen().get(0).toString());
+//        } catch (Exception e) {
+//            System.out.println("Exception starting RMI registry:");
+//            e.printStackTrace();
+//        }
     }
 
     public static String getResultSetAsStringTable(ResultSet rs) throws SQLException {
@@ -118,7 +134,7 @@ public class HSQLDBWrapper implements IDBWrapper {
             Statement stmnt = getStatement();
             ResultSet rs = stmnt.executeQuery("Select * FROM kabeltyp JOIN trommel ON kabeltyp.materialnummer = trommel.materialnummer Where kabeltyp.materialnummer = " + kabeltyp.getMaterialNummer() + ";");
             while (rs.next()) {
-                list.add(new TrommelE(kabeltyp, rs.getInt("id"), rs.getString("trommelnummer"), rs.getInt("gesamtlaenge"), rs.getString("lagerplatz"), rs.getInt("kabelstart")));
+                list.add(new TrommelE(kabeltyp, rs.getInt("id"), rs.getString("trommelnummer"), rs.getInt("gesamtlaenge"), rs.getString("lagerplatz"), rs.getInt("kabelstart"), rs.getBoolean("freigemeldet")));
             }
             rs.close();
         } catch (SQLException e) {
@@ -255,7 +271,7 @@ public class HSQLDBWrapper implements IDBWrapper {
 
     @Override
     public boolean update(ITrommelE trommel) {
-        return execute("UPDATE trommel SET trommelnummer='" + trommel.getTrommelnummer() + "',gesamtlaenge=" + trommel.getGesamtlaenge() + ",lagerplatz='" + trommel.getLagerPlatz() + "', kabelstart=" + trommel.getStart() + "  WHERE id=" + trommel.getId() + ";");
+        return execute("UPDATE trommel SET trommelnummer='" + trommel.getTrommelnummer() + "',gesamtlaenge=" + trommel.getGesamtlaenge() + ",lagerplatz='" + trommel.getLagerPlatz() + "', kabelstart=" + trommel.getStart() + ",freigemeldet=" + trommel.isFreigemeldet() + "  WHERE id=" + trommel.getId() + ";");
     }
 
     public boolean update(IGeliefertE geliefert) {

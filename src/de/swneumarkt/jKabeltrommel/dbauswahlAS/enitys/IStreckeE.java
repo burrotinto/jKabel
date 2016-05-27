@@ -1,9 +1,11 @@
 package de.swneumarkt.jKabeltrommel.dbauswahlAS.enitys;
 
+import java.io.Serializable;
+
 /**
  * Created by derduke on 25.05.16.
  */
-public interface IStreckeE {
+public interface IStreckeE extends Serializable {
     @Override
     String toString();
 
