@@ -90,7 +90,9 @@ public class DisplayAAS extends JFrame implements ItemListener, ActionListener {
         l.add(new JScrollPane(k));
         l.add(new JScrollPane(t));
         all.add(l);
-        all.add(new JScrollPane(s));
+        JScrollPane sc = new JScrollPane(s);
+        sc.setPreferredSize(new Dimension(680, 680));
+        all.add(new JScrollPane(sc));
         return all;
     }
 
