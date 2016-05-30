@@ -19,9 +19,9 @@ public class DBAuswahlAAS {
     public DBAuswahlAAS() {
     }
 
-    private String getPath() {
+    private String getPath(String pfad) {
         JFileChooser chooser = new JFileChooser();
-        chooser.setCurrentDirectory(new java.io.File("."));
+        chooser.setCurrentDirectory(new java.io.File(pfad));
         chooser.setDialogTitle("DB Pfad");
         chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         chooser.setAcceptAllFileFilterUsed(false);
@@ -37,10 +37,7 @@ public class DBAuswahlAAS {
     public IDBWrapper getDBWrapper() {
         IDBWrapper db = null;
         try {
-
-            if (!new File(pfad).exists()) {
-                pfad = getPath();
-            }
+            pfad = getPath(pfad);
             db = new HSQLDBWrapper(pfad);
             startServer(db);
         } catch (OnlyOneUserExeption oOUE) {
