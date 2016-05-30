@@ -14,7 +14,7 @@ import java.net.InetAddress;
  */
 public class DBAuswahlAAS {
     public final int REMOTEPORT = 4242;
-    private String pfad = "O:\\KFM-Verwaltung\\Materialwirtschaft\\Lager\\jKabelDB";
+    private String pfad = "O:\\KFM-Verwaltung\\Materialwirtschaft\\Lager\\jKabelDB\\";
 
     public DBAuswahlAAS() {
     }
