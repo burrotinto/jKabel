@@ -49,7 +49,7 @@ public class ClientHandler implements Runnable {
                 List<Object> list = new ArrayList<>();
                 for (int i = 0; i < anzahl; i++) {
                     list.add(in.readObject());
-                    System.out.println("Read " + (i + 1) + "/" + anzahl);
+                    System.out.println("Read " + (i + 1) + "/" + anzahl + " " + list.get(i).toString());
                 }
                 oOS.writeObject(getObject(b, list));
                 oOS.flush();
@@ -66,6 +66,7 @@ public class ClientHandler implements Runnable {
         Object ret = null;
         switch (r) {
             case "getTrommelnForTyp":
+                System.out.println("trommel");
                 ret = db.getTrommelnForTyp((IKabeltypE) list.get(0));
                 break;
             case "getStreckenForTrommel":
@@ -114,7 +115,7 @@ public class ClientHandler implements Runnable {
                 //Für ohne Parameter benutzen wir die Reflections
                 ret = db.getClass().getMethod(r).invoke(db);
         }
-
+        System.out.println(ret.toString());
         return ret;
     }
 }
