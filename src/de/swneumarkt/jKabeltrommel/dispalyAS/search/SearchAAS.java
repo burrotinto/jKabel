@@ -1,7 +1,5 @@
 package de.swneumarkt.jKabeltrommel.dispalyAS.search;
 
-import de.swneumarkt.jKabeltrommel.dbauswahlAS.HSQLDB.HSQLDBWrapper;
-import de.swneumarkt.jKabeltrommel.dbauswahlAS.HSQLDB.OnlyOneUserExeption;
 import de.swneumarkt.jKabeltrommel.dbauswahlAS.IDBWrapper;
 import de.swneumarkt.jKabeltrommel.dbauswahlAS.enitys.IKabeltypE;
 import de.swneumarkt.jKabeltrommel.dbauswahlAS.enitys.ITrommelE;
@@ -11,8 +9,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.IOException;
-import java.sql.SQLException;
 import java.util.List;
 
 /**
@@ -32,12 +28,6 @@ public class SearchAAS extends JPanel implements ActionListener {
         this.db = db;
         add(getEingabePanel());
 
-    }
-
-    public static void main(String[] args) throws ClassNotFoundException, SQLException, OnlyOneUserExeption, IOException {
-        JFrame f = new JFrame();
-        f.add(new SearchAAS(new HSQLDBWrapper("/home/derduke/GIT-Projekte/jKabeltrommel/")));
-        f.setVisible(true);
     }
 
     private JPanel getEingabePanel() {

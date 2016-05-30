@@ -2,7 +2,6 @@ package de.swneumarkt.jKabeltrommel.dispalyAS;
 
 import de.swneumarkt.jKabeltrommel.dbauswahlAS.DBAuswahlAAS;
 import de.swneumarkt.jKabeltrommel.dbauswahlAS.IDBWrapper;
-import de.swneumarkt.jKabeltrommel.dbauswahlAS.RemoteDB.RemoteDBWrapper;
 import de.swneumarkt.jKabeltrommel.dispalyAS.bearbeiten.KabelTypAuswahlAS.KabelTypAuswahlAAS;
 import de.swneumarkt.jKabeltrommel.dispalyAS.bearbeiten.StreckenAS.StreckenAAS;
 import de.swneumarkt.jKabeltrommel.dispalyAS.bearbeiten.TrommelAuswahlAS.TrommelAuswahlAAS;
@@ -142,7 +141,8 @@ public class DisplayAAS extends JFrame implements ItemListener, ActionListener {
     }
 
     private boolean isRemoteDB() {
-        return db instanceof RemoteDBWrapper;
+        //todo
+        return false;
     }
 
     private JPanel getSouth() {

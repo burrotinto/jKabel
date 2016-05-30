@@ -2,8 +2,6 @@ package de.swneumarkt.jKabeltrommel.dbauswahlAS;
 
 import de.swneumarkt.jKabeltrommel.dbauswahlAS.HSQLDB.HSQLDBWrapper;
 import de.swneumarkt.jKabeltrommel.dbauswahlAS.HSQLDB.OnlyOneUserExeption;
-import de.swneumarkt.jKabeltrommel.dbauswahlAS.RemoteDB.DBServer;
-import de.swneumarkt.jKabeltrommel.dbauswahlAS.RemoteDB.RemoteDBWrapper;
 
 import javax.swing.*;
 import java.io.*;
@@ -38,7 +36,7 @@ public class DBAuswahlAAS {
         IDBWrapper db = null;
         try {
             pfad = getPath(pfad);
-            db = new HSQLDBWrapper(pfad);
+            db = new HSQLDBWrapper(pfad, "localhost");
             startServer(db);
         } catch (OnlyOneUserExeption oOUE) {
             db = connectRemoteDB(pfad);
@@ -55,7 +53,7 @@ public class DBAuswahlAAS {
             String next = null;
             while ((next = br.readLine()) != null && db == null) {
                 try {
-                    db = new RemoteDBWrapper(next, REMOTEPORT);
+                    db = new HSQLDBWrapper(pfad, next);
                 } catch (IOException e) {
                     db = null;
                 }
@@ -72,7 +70,6 @@ public class DBAuswahlAAS {
             ip.createNewFile();
             ip.deleteOnExit();
         }
-        new Thread(new DBServer(db, REMOTEPORT)).start();
         BufferedWriter fw = new BufferedWriter(new FileWriter(ip));
         for (InetAddress ia : InetAddress.getAllByName(InetAddress.getLocalHost().getHostName())) {
             System.out.println(ia.getHostAddress());
@@ -81,6 +78,5 @@ public class DBAuswahlAAS {
         }
         fw.flush();
         fw.close();
-
     }
 }

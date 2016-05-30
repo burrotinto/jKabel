@@ -3,9 +3,12 @@ package de.swneumarkt.jKabeltrommel.dbauswahlAS.HSQLDB;
 
 import de.swneumarkt.jKabeltrommel.dbauswahlAS.IDBWrapper;
 import de.swneumarkt.jKabeltrommel.dbauswahlAS.enitys.*;
+import org.hsqldb.Server;
+import org.hsqldb.persist.HsqlProperties;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.rmi.server.UnicastRemoteObject;
 import java.sql.*;
 import java.util.ArrayList;
@@ -15,20 +18,55 @@ import java.util.List;
  * Wrapper für eine HSQLDB
  */
 public class HSQLDBWrapper extends UnicastRemoteObject implements IDBWrapper {
-    private final String path;
+    public final int SERVERPORT = 9001;
     private Statement stmnt = null;
+    private String ip = "localhost";
 
-    public HSQLDBWrapper(String path) throws ClassNotFoundException, SQLException, OnlyOneUserExeption, IOException {
+    public HSQLDBWrapper(String path, String ip) throws ClassNotFoundException, SQLException, OnlyOneUserExeption, IOException {
         File lck = new File(path + "lock.lck");
         if (lck.exists()) {
-            throw new OnlyOneUserExeption();
+            this.ip = ip;
         } else {
+            System.out.println("DB CREATE");
             lck.createNewFile();
             lck.deleteOnExit();
-        }
-        this.path = path;
-        Statement stmnt = getStatement();
 
+            HsqlProperties p = new HsqlProperties();
+            p.setProperty("server.database.0", "file:" + path + "jKabeltrommelHSQLDB");
+            p.setProperty("server.dbname.0", "jKabeltrommelHSQLDB");
+            p.setProperty("server.port", SERVERPORT + "");
+            Server server = new Server();
+            server.setProperties(p);
+            server.setLogWriter(new PrintWriter(System.out));  // can use custom writer
+            server.setErrWriter(new PrintWriter(System.err));  // can use custom writer
+            server.start();
+        }
+        Statement stmnt = getStatement();
+    }
+
+    public static String getResultSetAsStringTable(ResultSet rs) throws SQLException {
+        if (rs != null) {
+            StringBuilder sb = new StringBuilder();
+            ResultSetMetaData md = rs.getMetaData();
+            //Tabellen Kopf erzeugen
+            for (int i = 1; i <= md.getColumnCount(); i++) {
+                sb.append(md.getTableName(i) + "." + md.getColumnName(i) + " || ");
+            }
+            sb.append("\n");
+            // Tabbeleneintäge
+            while (rs.next()) {
+                for (int i = 1; i <= md.getColumnCount(); i++) {
+                    sb.append(rs.getString(i) + " || ");
+                }
+                sb.append("\n");
+            }
+            return sb.toString();
+        } else {
+            return null;
+        }
+    }
+
+    private void initDB() throws SQLException {
         try {
             stmnt.execute("SET WRITE_DELAY 0;");
             stmnt.executeQuery("Select * FROM kabeltyp;");
@@ -62,45 +100,13 @@ public class HSQLDBWrapper extends UnicastRemoteObject implements IDBWrapper {
 
             stmnt.execute("create TABLE strecke(sid IDENTITY, trommelid integer not null, ba INTEGER, ort VARCHAR(64), verlegedatum BIGINT , start INTEGER , ende INTEGER , FOREIGN KEY(trommelid) REFERENCES trommel(id));");
         }
-//        try {
-//            java.rmi.registry.LocateRegistry.createRegistry(1099);
-//            Naming.rebind("HSQLDBWrapper",this);
-//            System.out.println("RMI registry ready.");
-//            IDBWrapper w = (IDBWrapper) Naming.lookup("rmi://127.0.0.1:1099/HSQLDBWrapper");
-//            System.out.println(w.getAllKabeltypen().get(0).toString());
-//        } catch (Exception e) {
-//            System.out.println("Exception starting RMI registry:");
-//            e.printStackTrace();
-//        }
-    }
-
-    public static String getResultSetAsStringTable(ResultSet rs) throws SQLException {
-        if (rs != null) {
-            StringBuilder sb = new StringBuilder();
-            ResultSetMetaData md = rs.getMetaData();
-            //Tabellen Kopf erzeugen
-            for (int i = 1; i <= md.getColumnCount(); i++) {
-                sb.append(md.getTableName(i) + "." + md.getColumnName(i) + " || ");
-            }
-            sb.append("\n");
-            // Tabbeleneintäge
-            while (rs.next()) {
-                for (int i = 1; i <= md.getColumnCount(); i++) {
-                    sb.append(rs.getString(i) + " || ");
-                }
-                sb.append("\n");
-            }
-            return sb.toString();
-        } else {
-            return null;
-        }
     }
 
     Statement getStatement() {
         if (stmnt == null) {
             try {
                 Class.forName("org.hsqldb.jdbcDriver");
-                Connection con = DriverManager.getConnection("jdbc:hsqldb:file:" + path + "jKabeltrommelHSQLDB;shutdown=true", "sa", "");
+                Connection con = DriverManager.getConnection("jdbc:hsqldb:hsql://" + ip + "/jKabeltrommelHSQLDB;shutdown=true;default_schema=true;", "sa", "");
                 stmnt = con.createStatement();
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();
