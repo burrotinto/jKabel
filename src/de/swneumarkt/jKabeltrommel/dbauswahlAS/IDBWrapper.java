@@ -16,11 +16,14 @@ public interface IDBWrapper {
 
     List<ILieferantE> getAllLieferanten();
 
+    List<String> getAllTexteForBA(int ba);
+
     IGeliefertE getLiefer(ITrommelE trommel);
 
     ILieferantE getLieferant(IGeliefertE liefert);
 
     IKabeltypE getTyp(ITrommelE trommel);
+
 
     boolean update(IKabeltypE kabeltyp);
 
@@ -41,4 +44,5 @@ public interface IDBWrapper {
     boolean update(ILieferantE lieferantE);
 
     boolean update(IGeliefertE geliefert);
+
 }

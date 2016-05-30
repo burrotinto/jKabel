@@ -180,6 +180,24 @@ public class HSQLDBWrapper extends UnicastRemoteObject implements IDBWrapper {
     }
 
     @Override
+    public List<String> getAllTexteForBA(int ba) {
+        ArrayList<String> list = new ArrayList<>();
+        try {
+            Statement stmnt = getStatement();
+            ResultSet rs = stmnt.executeQuery("Select * FROM strecke Where ba= " + ba + ";");
+            while (rs.next()) {
+                //KabeltypE kabelTyp, int id, String trommelnummer, long date, int gesamtlaenge
+                list.add(rs.getString("ort"));
+            }
+            rs.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+
+    @Override
     public IGeliefertE getLiefer(ITrommelE trommel) {
         try {
             ResultSet rs = getStatement().executeQuery("SELECT * FROM geliefert JOIN trommel ON trommel.id = geliefert.id WHERE id =" + trommel.getId() + ";");

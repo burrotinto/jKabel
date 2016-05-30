@@ -9,6 +9,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.util.*;
 import java.util.List;
 import java.util.function.Consumer;
@@ -16,7 +18,7 @@ import java.util.function.Consumer;
 /**
  * Created by derduke on 22.05.16.
  */
-public class StreckenAAS extends JPanel implements ITrommelListner, ActionListener, IKabelTypListner {
+public class StreckenAAS extends JPanel implements ITrommelListner, ActionListener, IKabelTypListner, KeyListener {
     private final StreckenK kontroller;
     private final Set<JPanel> updateOnChange;
     private JTextField trommelnummerField, datumField, laengeField, typField, matNrField, baField, startField, endField, ortField, lagerplatzField,trommelstartField;
@@ -197,6 +199,7 @@ public class StreckenAAS extends JPanel implements ITrommelListner, ActionListen
         startField = new JTextField(last, 4);
         endField = new JTextField("", 4);
         ortField = new JTextField("", 16);
+        baField.addKeyListener(this);
         panel.add(baField);
         panel.add(startField);
         panel.add(endField);
@@ -313,6 +316,26 @@ public class StreckenAAS extends JPanel implements ITrommelListner, ActionListen
 
         this.typ = typ;
         kontroller.setTyp(typ);
+    }
+
+    @Override
+    public void keyTyped(KeyEvent e) {
+
+    }
+
+    @Override
+    public void keyPressed(KeyEvent e) {
+
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
+        if (ortField.getText().equals("")) {
+            try {
+                ortField.setText(kontroller.getTextForBA(Integer.parseInt(((JTextField) e.getSource()).getText())));
+            } catch (Exception ex) {
+            }
+        }
     }
 
     private class Abgang {

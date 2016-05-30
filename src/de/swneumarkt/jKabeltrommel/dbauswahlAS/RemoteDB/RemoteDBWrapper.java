@@ -86,6 +86,13 @@ public class RemoteDBWrapper implements IDBWrapper {
     }
 
     @Override
+    public List<String> getAllTexteForBA(int ba) {
+        //todo
+
+        return new ArrayList<>();
+    }
+
+    @Override
     public IGeliefertE getLiefer(ITrommelE trommel) {
         List<Object> list = new ArrayList<>();
         list.add(trommel);

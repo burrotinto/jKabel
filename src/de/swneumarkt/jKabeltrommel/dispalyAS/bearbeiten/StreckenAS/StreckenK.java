@@ -12,7 +12,7 @@ class StreckenK {
     private final IDBWrapper db;
     private IKabeltypE typ = null;
 
-    public StreckenK(IDBWrapper db) {
+    StreckenK(IDBWrapper db) {
         this.db = db;
     }
 
@@ -98,4 +98,10 @@ class StreckenK {
     public void eintragenStrecke(int ba, String text, long l, int start, int ende, ITrommelE trommel) {
         db.createStrecke(ba, text, l, start, ende, trommel);
     }
+
+    public String getTextForBA(int ba) {
+        List<String> list = db.getAllTexteForBA(ba);
+        return list == null ? "" : list.get(0);
+    }
+
 }
