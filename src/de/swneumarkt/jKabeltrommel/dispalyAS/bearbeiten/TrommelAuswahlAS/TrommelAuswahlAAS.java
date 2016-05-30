@@ -47,13 +47,6 @@ public class TrommelAuswahlAAS extends JPanel implements IKabelTypListner, Actio
             JPanel panel = new JPanel(new GridLayout(kontroll.getAllTrommelForMatNr(typ).size() + 1, 1));
             JPanel p = new JPanel();
 
-//            JPanel tLP = new JPanel(new FlowLayout(FlowLayout.CENTER));
-//            JLabel tL = new JLabel(typ.toString());
-//            tLP.setBorder(new LineBorder(Color.BLACK));
-//            tLP.add(tL);
-//            tLP.setBackground(Color.BLUE);
-//            panel.add(tLP);
-
             p.add(addNewButt);
             panel.add(p);
 

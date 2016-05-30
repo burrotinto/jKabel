@@ -117,17 +117,3 @@ public class ClientHandler implements Runnable {
         return ret;
     }
 }
-
-
-//
-
-//
-//    boolean update(IStreckeE strecke);
-//
-//    boolean update(ITrommelE trommel);
-//
-//    boolean remove(IStreckeE strecke);
-//
-//    boolean update(ILieferantE lieferantE);
-//
-//    boolean update(IGeliefertE geliefert);

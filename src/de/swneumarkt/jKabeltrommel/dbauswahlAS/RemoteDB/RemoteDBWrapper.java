@@ -14,6 +14,10 @@ import java.util.List;
 public class RemoteDBWrapper implements IDBWrapper {
     private final String host;
     private final int port;
+    private Socket so = null;
+    private BufferedWriter bw = null;
+    private ObjectOutputStream objectOutputStream = null;
+    private ObjectInputStream oi = null;
 
     public RemoteDBWrapper(String host, int port) throws IOException {
         this.host = host;
@@ -28,10 +32,12 @@ public class RemoteDBWrapper implements IDBWrapper {
 
     private Object makeServerRequset(String r, List<? extends Object> parameters) {
         try {
-            Socket so = new Socket(host, port);
-            BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(so.getOutputStream()));
-            ObjectOutputStream objectOutputStream = new ObjectOutputStream(so.getOutputStream());
-            ObjectInputStream oi = new ObjectInputStream(so.getInputStream());
+            if (so == null) {
+                so = new Socket(host, port);
+                bw = new BufferedWriter(new OutputStreamWriter(so.getOutputStream()));
+                objectOutputStream = new ObjectOutputStream(so.getOutputStream());
+                oi = new ObjectInputStream(so.getInputStream());
+            }
             bw.write(r + " " + parameters.size() + "\n");
             bw.flush();
 
@@ -43,14 +49,10 @@ public class RemoteDBWrapper implements IDBWrapper {
 
             // Rückgabe warten
             Object rO = oi.readObject();
-            bw.close();
-            objectOutputStream.close();
-            oi.close();
-            so.close();
             return rO;
 
         } catch (Exception e) {
-            e.printStackTrace();
+            so = null;
             return null;
         }
     }

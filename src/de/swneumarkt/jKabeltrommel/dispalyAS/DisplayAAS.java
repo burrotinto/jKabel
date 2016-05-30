@@ -2,6 +2,7 @@ package de.swneumarkt.jKabeltrommel.dispalyAS;
 
 import de.swneumarkt.jKabeltrommel.dbauswahlAS.DBAuswahlAAS;
 import de.swneumarkt.jKabeltrommel.dbauswahlAS.IDBWrapper;
+import de.swneumarkt.jKabeltrommel.dbauswahlAS.RemoteDB.RemoteDBWrapper;
 import de.swneumarkt.jKabeltrommel.dispalyAS.bearbeiten.KabelTypAuswahlAS.KabelTypAuswahlAAS;
 import de.swneumarkt.jKabeltrommel.dispalyAS.bearbeiten.StreckenAS.StreckenAAS;
 import de.swneumarkt.jKabeltrommel.dispalyAS.bearbeiten.TrommelAuswahlAS.TrommelAuswahlAAS;
@@ -32,7 +33,7 @@ public class DisplayAAS extends JFrame implements ItemListener, ActionListener {
 
     public DisplayAAS() {
         getContentPane().setLayout(new BorderLayout());
-        getContentPane().add(new JLabel("proudly made by Florian Klinger"), BorderLayout.SOUTH);
+        getContentPane().add(getSouth(), BorderLayout.SOUTH);
 
         JMenuBar menuBar = new JMenuBar();
         JMenu menue = new JMenu("File");
@@ -58,7 +59,7 @@ public class DisplayAAS extends JFrame implements ItemListener, ActionListener {
         IDBWrapper db = new DBAuswahlAAS().getDBWrapper();
         if (db == null) {
             JPanel p = new JPanel();
-            p.add(new JLabel("Es wurde bereits eine Instanz auf einem anderen Rechner geöffnet. Mehrbenutzerbetrieb ist aktuell nicht möglich.(Es steht kein Server zur verfügung)."));
+            p.add(new JLabel("Es konnte keine Verbindung zur DB hergestellt werden."));
             p.add(new JLabel("Wenn !!!sicher!!! ist das kein anderer auf dedr DB arbeitet die lock.lck Datei löschen"));
             f.getContentPane().add(p, BorderLayout.CENTER);
         } else {
@@ -73,11 +74,11 @@ public class DisplayAAS extends JFrame implements ItemListener, ActionListener {
 
     public void setDb(IDBWrapper db) {
         this.db = db;
-
         // Zuerst mal Bearbeiten öffnen
         remove(center);
         center = getBearbeitenPanel();
         getContentPane().add(center, BorderLayout.CENTER);
+        getContentPane().add(getSouth(), BorderLayout.SOUTH);
     }
 
     public JPanel getBearbeitenPanel() {
@@ -104,7 +105,6 @@ public class DisplayAAS extends JFrame implements ItemListener, ActionListener {
         JScrollPane sc = new JScrollPane(s);
         sc.setPreferredSize(new Dimension(680, 680));
         all.add(sc);
-        all.setBackground(Color.WHITE);
         return all;
     }
 
@@ -139,5 +139,24 @@ public class DisplayAAS extends JFrame implements ItemListener, ActionListener {
             repaint();
             revalidate();
         }
+    }
+
+    private boolean isRemoteDB() {
+        return db instanceof RemoteDBWrapper;
+    }
+
+    private JPanel getSouth() {
+        JPanel p = new JPanel();
+        if (isRemoteDB()) {
+            JPanel rPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+            rPanel.add(new JLabel("Achtung! Experimentelle Server/Client modus"));
+            p.add(rPanel);
+        }
+
+        JPanel prodlyPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        prodlyPanel.add(new JLabel("proudly made by Florian Klinger"));
+        p.add(prodlyPanel);
+        return p;
+
     }
 }
