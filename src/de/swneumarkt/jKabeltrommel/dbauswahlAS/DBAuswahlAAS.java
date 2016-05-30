@@ -1,15 +1,20 @@
 package de.swneumarkt.jKabeltrommel.dbauswahlAS;
 
 import de.swneumarkt.jKabeltrommel.dbauswahlAS.HSQLDB.HSQLDBWrapper;
+import de.swneumarkt.jKabeltrommel.dbauswahlAS.HSQLDB.OnlyOneUserExeption;
+import de.swneumarkt.jKabeltrommel.dbauswahlAS.RemoteDB.DBServer;
+import de.swneumarkt.jKabeltrommel.dbauswahlAS.RemoteDB.RemoteDBWrapper;
 
 import javax.swing.*;
-import java.io.File;
+import java.io.*;
+import java.net.InetAddress;
 
 /**
  * Created by derduke on 19.05.2016.
  */
 public class DBAuswahlAAS {
-    private final String selectedPath = ".";
+    public final int REMOTEPORT = 4242;
+    private String pfad = "O:\\KFM-Verwaltung\\Materialwirtschaft\\Lager\\jKabelDB";
 
     public DBAuswahlAAS() {
     }
@@ -24,15 +29,61 @@ public class DBAuswahlAAS {
 
     }
 
+    /**
+     * Gibt eine Datenbank zurück
+     *
+     * @return
+     */
     public IDBWrapper getDBWrapper() {
+        IDBWrapper db = null;
         try {
-            if(new File("O:\\KFM-Verwaltung\\Materialwirtschaft\\Lager\\jKabelDB").exists()){
-                return new HSQLDBWrapper("O:\\KFM-Verwaltung\\Materialwirtschaft\\Lager\\jKabelDB\\");
-            } else {
-                return new HSQLDBWrapper(getPath());
+
+            if (!new File(pfad).exists()) {
+                pfad = getPath();
             }
+            db = new HSQLDBWrapper(pfad);
+            startServer(db);
+        } catch (OnlyOneUserExeption oOUE) {
+            db = connectRemoteDB(pfad);
         } catch (Exception e){
             return null;
         }
+        return db;
+    }
+
+    private IDBWrapper connectRemoteDB(String pfad) {
+        IDBWrapper db = null;
+        try {
+            BufferedReader br = new BufferedReader(new FileReader(new File(pfad + "serverIp.txt")));
+            String next = null;
+            while ((next = br.readLine()) != null && db == null) {
+                try {
+                    db = new RemoteDBWrapper(next, REMOTEPORT);
+                } catch (IOException e) {
+                    db = null;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return db;
+    }
+
+    private void startServer(IDBWrapper db) throws IOException {
+        File ip = new File(pfad + "serverIp.txt");
+        if (!ip.exists()) {
+            ip.createNewFile();
+            ip.deleteOnExit();
+        }
+        new Thread(new DBServer(db, REMOTEPORT)).start();
+        BufferedWriter fw = new BufferedWriter(new FileWriter(ip));
+        for (InetAddress ia : InetAddress.getAllByName(InetAddress.getLocalHost().getHostName())) {
+            System.out.println(ia.getHostAddress());
+            fw.write(ia.getHostAddress());
+            fw.write(System.lineSeparator());
+        }
+        fw.flush();
+        fw.close();
+
     }
 }

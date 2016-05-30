@@ -24,7 +24,7 @@ public class DisplayAAS extends JFrame implements ItemListener, ActionListener {
     private JMenuItem search = new JMenuItem("Suchen");
     private JMenuItem exit = new JMenuItem("Ende");
     private JMenuItem auchf = new JCheckBoxMenuItem("Zeige freigemeldete");
-    private JScrollPane center = new JScrollPane();
+    private JPanel center = new JPanel();
 
     private TrommelAuswahlAAS tommelAAs = null;
 
@@ -48,6 +48,7 @@ public class DisplayAAS extends JFrame implements ItemListener, ActionListener {
         auchf.addActionListener(this);
         menuBar.add(menue);
         setJMenuBar(menuBar);
+        setBackground(Color.WHITE);
 
     }
 
@@ -75,7 +76,7 @@ public class DisplayAAS extends JFrame implements ItemListener, ActionListener {
 
         // Zuerst mal Bearbeiten öffnen
         remove(center);
-        center = new JScrollPane(getBearbeitenPanel());
+        center = getBearbeitenPanel();
         getContentPane().add(center, BorderLayout.CENTER);
     }
 
@@ -94,12 +95,16 @@ public class DisplayAAS extends JFrame implements ItemListener, ActionListener {
 
         JPanel l = new JPanel(new GridLayout(1, 2));
         JPanel all = new JPanel(new GridLayout(1, 2));
-        l.add(new JScrollPane(k));
+
+        JScrollPane kSP = new JScrollPane(k);
+        kSP.setBackground(Color.WHITE);
+        l.add(kSP);
         l.add(new JScrollPane(tommelAAs));
         all.add(l);
         JScrollPane sc = new JScrollPane(s);
         sc.setPreferredSize(new Dimension(680, 680));
-        all.add(new JScrollPane(sc));
+        all.add(sc);
+        all.setBackground(Color.WHITE);
         return all;
     }
 
@@ -121,12 +126,12 @@ public class DisplayAAS extends JFrame implements ItemListener, ActionListener {
         if (db != null) {
             if (e.getSource() == edit) {
                 remove(center);
-                center = new JScrollPane(getBearbeitenPanel());
+                center = getBearbeitenPanel();
                 getContentPane().add(center, BorderLayout.CENTER);
 
             } else if (e.getSource() == search) {
                 remove(center);
-                center = new JScrollPane(new SearchAAS(db));
+                center = new SearchAAS(db);
                 getContentPane().add(center, BorderLayout.CENTER);
             } else if (e.getSource() == auchf && tommelAAs != null) {
                 tommelAAs.setAuchFreigemeldete(auchf.isSelected());
