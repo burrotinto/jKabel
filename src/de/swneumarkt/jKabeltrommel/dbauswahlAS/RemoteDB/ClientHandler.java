@@ -42,18 +42,30 @@ public class ClientHandler implements Runnable {
             ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
             ObjectOutputStream oOS = new ObjectOutputStream(socket.getOutputStream());
             String befehl = null;
-            while ((befehl = br.readLine()) != null) {
-                Scanner scanner = new Scanner(befehl);
-                String b = scanner.next();
-                int anzahl = scanner.nextInt();
-                List<Object> list = new ArrayList<>();
-                for (int i = 0; i < anzahl; i++) {
-                    list.add(in.readObject());
-                    System.out.println("Read " + (i + 1) + "/" + anzahl + " " + list.get(i).toString());
-                }
-                oOS.writeObject(getObject(b, list));
-                oOS.flush();
+//            while ((befehl = br.readLine()) != null) {
+//                Scanner scanner = new Scanner(befehl);
+//                String b = scanner.next();
+//                int anzahl = scanner.nextInt();
+//                List<Object> list = new ArrayList<>();
+//                for (int i = 0; i < anzahl; i++) {
+//                    list.add(in.readObject());
+//                    System.out.println("Read " + (i + 1) + "/" + anzahl + " " + list.get(i).toString());
+//                }
+//                oOS.writeObject(getObject(b, list));
+//                oOS.flush();
+//            }
+            befehl = br.readLine();
+            Scanner scanner = new Scanner(befehl);
+            String b = scanner.next();
+            int anzahl = scanner.nextInt();
+            List<Object> list = new ArrayList<>();
+            for (int i = 0; i < anzahl; i++) {
+                list.add(in.readObject());
+                System.out.println("Read " + (i + 1) + "/" + anzahl + " " + list.get(i).toString());
             }
+            oOS.writeObject(getObject(b, list));
+            oOS.flush();
+            socket.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -66,7 +78,6 @@ public class ClientHandler implements Runnable {
         Object ret = null;
         switch (r) {
             case "getTrommelnForTyp":
-                System.out.println("trommel");
                 ret = db.getTrommelnForTyp((IKabeltypE) list.get(0));
                 break;
             case "getStreckenForTrommel":

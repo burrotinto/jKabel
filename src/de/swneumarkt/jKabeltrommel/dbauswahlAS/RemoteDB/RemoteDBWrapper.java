@@ -49,6 +49,8 @@ public class RemoteDBWrapper implements IDBWrapper {
 
             // Rückgabe warten
             Object rO = oi.readObject();
+            so.close();
+            so = null;
             return rO;
 
         } catch (Exception e) {
