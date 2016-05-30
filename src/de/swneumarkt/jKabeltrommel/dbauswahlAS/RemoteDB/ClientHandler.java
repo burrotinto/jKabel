@@ -125,7 +125,7 @@ public class ClientHandler implements Runnable {
                 //Für ohne Parameter benutzen wir die Reflections
                 ret = db.getClass().getMethod(r).invoke(db);
         }
-        System.out.println(ret.toString());
+        System.out.println("RETURN " + ret.toString());
         return ret;
     }
 }
