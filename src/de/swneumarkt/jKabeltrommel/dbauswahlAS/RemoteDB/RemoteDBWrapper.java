@@ -38,7 +38,7 @@ public class RemoteDBWrapper implements IDBWrapper {
                 objectOutputStream = new ObjectOutputStream(so.getOutputStream());
                 oi = new ObjectInputStream(so.getInputStream());
             }
-            bw.write(r + " " + parameters.size() + "\n");
+            bw.write(r + " " + parameters.size() + System.lineSeparator());
             bw.flush();
 
             // Parameter nachsenden
@@ -49,11 +49,13 @@ public class RemoteDBWrapper implements IDBWrapper {
 
             // Rückgabe warten
             Object rO = oi.readObject();
+
             so.close();
             so = null;
             return rO;
 
         } catch (Exception e) {
+            e.printStackTrace();
             so = null;
             return null;
         }

@@ -65,7 +65,6 @@ public class ClientHandler implements Runnable {
             }
             oOS.writeObject(getObject(b, list));
             oOS.flush();
-            socket.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
