@@ -15,7 +15,11 @@ public class ScanAAS extends JDialog implements ActionListener, AutoCloseable {
         setLayout(new FlowLayout(FlowLayout.CENTER));
         add(new ScanPanel(ba + ""));
         add(new JLabel(m + " m"));
-        add(new ScanPanel(lagerplatz + " " + materialnummer));
+        if (lagerplatz == null || lagerplatz.equals("")) {
+            add(new ScanPanel("" + materialnummer));
+        } else {
+            add(new ScanPanel(lagerplatz + " " + materialnummer));
+        }
         pack();
 
     }
