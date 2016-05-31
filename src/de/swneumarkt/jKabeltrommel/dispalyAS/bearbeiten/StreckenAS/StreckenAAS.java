@@ -4,6 +4,7 @@ import de.swneumarkt.jKabeltrommel.dbauswahlAS.IDBWrapper;
 import de.swneumarkt.jKabeltrommel.dbauswahlAS.enitys.*;
 import de.swneumarkt.jKabeltrommel.dispalyAS.bearbeiten.KabelTypAuswahlAS.IKabelTypListner;
 import de.swneumarkt.jKabeltrommel.dispalyAS.bearbeiten.TrommelAuswahlAS.ITrommelListner;
+import de.swneumarkt.jKabeltrommel.dispalyAS.bearbeiten.scanAS.ScanAAS;
 import de.swneumarkt.jKabeltrommel.dispalyAS.lookAndFeel.MinimalisticButton;
 
 import javax.swing.*;
@@ -184,6 +185,13 @@ public class StreckenAAS extends JPanel implements ITrommelListner, ActionListen
             panel.add(a.ende);
             panel.add(a.text);
             panel.add(del);
+            try (ScanAAS scanAAS = new ScanAAS(trommel.getMaterialNummer(), s.getMeter(), s.getBa(), trommel.getLagerPlatz())) {
+                JButton button = new MinimalisticButton("scan");
+                button.addActionListener(scanAAS);
+                panel.add(button);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
 
             // Wenn Trommel ausser haus
             if (a.ende.getText().equals(Abgang.platzHalter)) {

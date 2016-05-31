@@ -8,5 +8,6 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" exported="" name="hsqldb:hsqldb:1.8.0.10" level="project" />
+    <orderEntry type="library" name="barcode" level="project" />
   </component>
 </module>
