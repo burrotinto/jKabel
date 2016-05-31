@@ -165,10 +165,11 @@ public class StreckenAAS extends JPanel implements ITrommelListner, ActionListen
         String last = trommel.getStart() + "";
         abgaenge = new ArrayList<>();
 
-        boolean next = true;
+        boolean next = false;
         for (IStreckeE s : strecken) {
             JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-            if (next) panel.setBackground(Color.LIGHT_GRAY);
+            if (next) panel.setBackground(Color.GRAY);
+
             next = !next;
             MinimalisticButton del = new MinimalisticButton("Löschen");
             del.addActionListener(this);
@@ -190,7 +191,7 @@ public class StreckenAAS extends JPanel implements ITrommelListner, ActionListen
         }
 
         // Neuer Eintrag
-        if (!kontroller.istAusserHaus(trommel)) {
+        if (!kontroller.istAusserHaus(trommel) && kontroller.getRestMeter(trommel) > 0) {
             JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
             panel.setBackground(Color.white);
             JTextField dT = new JTextField(kontroller.getTimeString(System.currentTimeMillis()), 10);
@@ -347,9 +348,9 @@ public class StreckenAAS extends JPanel implements ITrommelListner, ActionListen
         private Abgang(IStreckeE strecke, MinimalisticButton butt) {
             this.butt = butt;
             this.strecke = strecke;
-            bA = new JTextField((strecke.getBa() <= 0 ? "" : strecke.getBa()) + "", 8);
-            start = new JTextField((strecke.getStart() <= 0 ? "" : strecke.getStart()) + "", 4);
-            ende = new JTextField((strecke.getEnde() <= 0 ? platzHalter : strecke.getEnde()) + "", 4);
+            bA = new JTextField((strecke.getBa() < 0 ? "" : strecke.getBa()) + "", 8);
+            start = new JTextField((strecke.getStart() < 0 ? "" : strecke.getStart()) + "", 4);
+            ende = new JTextField((strecke.getEnde() < 0 ? platzHalter : strecke.getEnde()) + "", 4);
             text = new JTextField(strecke.getOrt() + "", 16);
             ende.addFocusListener(this);
             bA.addKeyListener(this);

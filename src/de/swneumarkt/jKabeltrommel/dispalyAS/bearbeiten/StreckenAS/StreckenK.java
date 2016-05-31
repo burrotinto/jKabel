@@ -112,4 +112,12 @@ class StreckenK {
         }
         return false;
     }
+
+    public int getRestMeter(ITrommelE trommel) {
+        int laenge = trommel.getGesamtlaenge();
+        for (IStreckeE s : db.getStreckenForTrommel(trommel)) {
+            laenge -= s.getMeter();
+        }
+        return laenge;
+    }
 }

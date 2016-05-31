@@ -36,7 +36,7 @@ public class DBAuswahlAAS {
         IDBWrapper db = null;
         try {
             pfad = getPath(pfad);
-            db = new HSQLDBWrapper(pfad, "localhost");
+            db = new HSQLDBWrapper(pfad);
             startServer(db);
         } catch (OnlyOneUserExeption oOUE) {
             db = connectRemoteDB(pfad);
@@ -53,7 +53,7 @@ public class DBAuswahlAAS {
             String next = null;
             while ((next = br.readLine()) != null && db == null) {
                 try {
-                    db = new HSQLDBWrapper(pfad, next);
+                    db = new HSQLDBWrapper(InetAddress.getByName(next));
                 } catch (Exception e) {
                     db = null;
                 }

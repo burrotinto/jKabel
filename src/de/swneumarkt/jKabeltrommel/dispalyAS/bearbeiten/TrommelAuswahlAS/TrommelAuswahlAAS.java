@@ -61,6 +61,9 @@ public class TrommelAuswahlAAS extends JPanel implements IKabelTypListner, Actio
                     p.add(b);
                     if (!kontroll.isAusserHaus(t)) {
                         p.add(new JLabel("Noch: " + kontroll.getRestMeter(t) + " m"));
+                        if (kontroll.getRestMeter(t) == 0) {
+                            p.setBackground(Color.GRAY);
+                        }
                     } else {
                         p.add(new JLabel("Bei: " + kontroll.getBaustelle(t)));
                         p.setBackground(Color.ORANGE);

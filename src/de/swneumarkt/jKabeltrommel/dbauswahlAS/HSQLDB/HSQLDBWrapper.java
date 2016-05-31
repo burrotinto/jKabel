@@ -9,24 +9,36 @@ import org.hsqldb.persist.HsqlProperties;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.rmi.server.UnicastRemoteObject;
+import java.net.InetAddress;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Wrapper für eine HSQLDB
+ * Wrapper für eine HSQLDB startet gleichzeitig als Server und setzt eine Sperrdatei in das Verzeichniss der DB.
+ *
+ *
  */
-public class HSQLDBWrapper extends UnicastRemoteObject implements IDBWrapper {
+public class HSQLDBWrapper implements IDBWrapper {
     public final int SERVERPORT = 9001;
     private Statement stmnt = null;
-    private String ip = "localhost";
+    private InetAddress ip;
 
-    public HSQLDBWrapper(String path, String ip) throws ClassNotFoundException, SQLException, OnlyOneUserExeption, IOException {
+    /**
+     * Constuctor zum Starten und gleichzeitigen Verbinden mit HSQLDB
+     *
+     * @param path Pfad wo die DB liegt/liegen soll
+     * @throws ClassNotFoundException
+     * @throws SQLException
+     * @throws OnlyOneUserExeption
+     * @throws IOException
+     */
+    public HSQLDBWrapper(String path) throws ClassNotFoundException, SQLException, OnlyOneUserExeption, IOException {
         File lck = new File(path + "lock.lck");
         if (lck.exists()) {
-            this.ip = ip;
+            throw new OnlyOneUserExeption();
         } else {
+            ip = InetAddress.getByName("localhost");
             System.out.println("DB CREATE");
             lck.createNewFile();
             lck.deleteOnExit();
@@ -42,6 +54,13 @@ public class HSQLDBWrapper extends UnicastRemoteObject implements IDBWrapper {
             server.start();
         }
         Statement stmnt = getStatement();
+        initDB();
+    }
+
+    public HSQLDBWrapper(InetAddress ip) throws SQLException {
+        this.ip = ip;
+        getStatement();
+        initDB();
     }
 
     public static String getResultSetAsStringTable(ResultSet rs) throws SQLException {
@@ -106,7 +125,7 @@ public class HSQLDBWrapper extends UnicastRemoteObject implements IDBWrapper {
         if (stmnt == null) {
             try {
                 Class.forName("org.hsqldb.jdbcDriver");
-                Connection con = DriverManager.getConnection("jdbc:hsqldb:hsql://" + ip + "/jKabeltrommelHSQLDB;shutdown=true;default_schema=true;", "sa", "");
+                Connection con = DriverManager.getConnection("jdbc:hsqldb:hsql://" + ip.getHostAddress() + "/jKabeltrommelHSQLDB;shutdown=true;default_schema=true;", "sa", "");
                 stmnt = con.createStatement();
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();
