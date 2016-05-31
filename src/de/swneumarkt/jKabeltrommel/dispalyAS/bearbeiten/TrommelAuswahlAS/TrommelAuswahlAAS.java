@@ -5,6 +5,7 @@ import de.swneumarkt.jKabeltrommel.dbauswahlAS.enitys.IKabeltypE;
 import de.swneumarkt.jKabeltrommel.dbauswahlAS.enitys.ITrommelE;
 import de.swneumarkt.jKabeltrommel.dispalyAS.bearbeiten.KabelTypAuswahlAS.IKabelTypListner;
 import de.swneumarkt.jKabeltrommel.dispalyAS.bearbeiten.TrommelCreateAS.TrommelCreateAAS;
+import de.swneumarkt.jKabeltrommel.dispalyAS.lookAndFeel.MinimalisticButton;
 
 import javax.swing.*;
 import java.awt.*;
@@ -20,12 +21,13 @@ import java.util.function.Consumer;
  */
 public class TrommelAuswahlAAS extends JPanel implements IKabelTypListner, ActionListener {
     private TommelAuswahlK kontroll;
-    private JButton addNewButt = new JButton("Neue Trommel");
+    private MinimalisticButton addNewButt = new MinimalisticButton("Neue Trommel");
     private IKabeltypE typ = null;
     private IDBWrapper db;
     private boolean auchFreigemeldete;
+    private MinimalisticButton ausgewaehlt = null;
 
-    private HashMap<JButton, ITrommelE> buttonTrommelMap;
+    private HashMap<MinimalisticButton, ITrommelE> buttonTrommelMap;
 
     private Set<ITrommelListner> trommelListners = new HashSet<>();
 
@@ -53,7 +55,8 @@ public class TrommelAuswahlAAS extends JPanel implements IKabelTypListner, Actio
             for (ITrommelE t : kontroll.getAllTrommelForMatNr(typ)) {
                 if (auchFreigemeldete || !t.isFreigemeldet()) {
                     p = new JPanel(new FlowLayout(FlowLayout.LEFT));
-                    JButton b = new JButton(t.getTrommelnummer() + "");
+                    MinimalisticButton b = new MinimalisticButton(t.getTrommelnummer() + "");
+                    b.setSelected(b.equals(ausgewaehlt));
                     buttonTrommelMap.put(b, t);
                     p.add(b);
                     if (!kontroll.isAusserHaus(t)) {
@@ -65,6 +68,7 @@ public class TrommelAuswahlAAS extends JPanel implements IKabelTypListner, Actio
                     if (t.isFreigemeldet()) {
                         p.setBackground(Color.RED);
                     }
+
 
                     b.addActionListener(this);
                     panel.add(p);
@@ -87,10 +91,18 @@ public class TrommelAuswahlAAS extends JPanel implements IKabelTypListner, Actio
     @Override
     public void actionPerformed(ActionEvent e) {
         if (buttonTrommelMap.containsKey(e.getSource())) {
+            ausgewaehlt = (MinimalisticButton) e.getSource();
+            buttonTrommelMap.keySet().forEach(new Consumer<MinimalisticButton>() {
+                @Override
+                public void accept(MinimalisticButton minimalisticButton) {
+                    minimalisticButton.setSelected(minimalisticButton == ausgewaehlt);
+                }
+            });
             trommelListners.forEach(new Consumer<ITrommelListner>() {
                 @Override
                 public void accept(ITrommelListner iTrommelListner) {
                     iTrommelListner.trommelAusgewaehlt(buttonTrommelMap.get(e.getSource()));
+
                 }
             });
         } else {

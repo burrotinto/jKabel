@@ -74,10 +74,14 @@ public class DisplayAAS extends JFrame implements ItemListener, ActionListener {
     public void setDb(IDBWrapper db) {
         this.db = db;
         // Zuerst mal Bearbeiten öffnen
-        remove(center);
-        center = getBearbeitenPanel();
-        getContentPane().add(center, BorderLayout.CENTER);
-        getContentPane().add(getSouth(), BorderLayout.SOUTH);
+        if (db != null) {
+            remove(center);
+            center = getBearbeitenPanel();
+            getContentPane().add(center, BorderLayout.CENTER);
+            getContentPane().add(getSouth(), BorderLayout.SOUTH);
+        } else {
+
+        }
     }
 
     public JPanel getBearbeitenPanel() {

@@ -3,6 +3,7 @@ package de.swneumarkt.jKabeltrommel.dispalyAS.bearbeiten.LieferantAuswahlAS;
 import de.swneumarkt.jKabeltrommel.dbauswahlAS.IDBWrapper;
 import de.swneumarkt.jKabeltrommel.dbauswahlAS.enitys.ILieferantE;
 import de.swneumarkt.jKabeltrommel.dispalyAS.bearbeiten.LieferantCreateAS.LieferantCreateAAS;
+import de.swneumarkt.jKabeltrommel.dispalyAS.lookAndFeel.MinimalisticButton;
 
 import javax.swing.*;
 import java.awt.*;
@@ -15,7 +16,7 @@ import java.awt.event.ActionListener;
 public class LieferantenAuswahlAAS extends JPanel implements ActionListener {
     private final IDBWrapper db;
     private JComboBox<ILieferantE> cBox;
-    private JButton neuButt = new JButton("Neuer Lieferant");
+    private JButton neuButt = new MinimalisticButton("Neuer Lieferant");
     private LieferantenAuswahlK kontroll;
 
     public LieferantenAuswahlAAS(IDBWrapper db){

@@ -104,4 +104,12 @@ class StreckenK {
         return list == null ? "" : list.get(0);
     }
 
+    public boolean istAusserHaus(ITrommelE trommel) {
+        for (IStreckeE s : getStreckenForTrommel(trommel)) {
+            if (s.getEnde() < 0 || s.getStart() < 0) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

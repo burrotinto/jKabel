@@ -14,39 +14,49 @@ import java.util.List;
  */
 class TommelAuswahlK {
     private final IDBWrapper db;
+    private Comparator<ITrommelE> comperator = null;
+
+
     public TommelAuswahlK(IDBWrapper db) {
         this.db = db;
+        comperator = new Comparator<ITrommelE>() {
+            @Override
+            public int compare(ITrommelE o1, ITrommelE o2) {
+                return db.getLiefer(o2).getDatum() < db.getLiefer(o2).getDatum() ? -1 : 1;
+            }
+        };
     }
 
     public List<ITrommelE> getAllTrommelForMatNr(IKabeltypE typ) {
         List<ITrommelE> list = db.getTrommelnForTyp(typ);
-        Collections.sort(list, new Comparator<ITrommelE>() {
-            @Override
-            public int compare(ITrommelE o1, ITrommelE o2) {
-                return getRestMeter(o2) - getRestMeter(o1);
-            }
-        });
+        Collections.sort(list, comperator);
         return list;
     }
 
     public int getRestMeter(ITrommelE trommel) {
         int laenge = trommel.getGesamtlaenge();
         for (IStreckeE s : db.getStreckenForTrommel(trommel)) {
-           laenge-= s.getMeter();
+            laenge -= s.getMeter();
         }
-        return  laenge;
+        return laenge;
     }
 
     public boolean isAusserHaus(ITrommelE t) {
-       return getBaustelle(t) != null;
+        return getBaustelle(t) != null;
     }
 
     public String getBaustelle(ITrommelE t) {
         for (IStreckeE s : db.getStreckenForTrommel(t)) {
-            if(s.getEnde() <0 || s.getStart() < 0){
+            if (s.getEnde() < 0 || s.getStart() < 0) {
                 return s.getOrt();
             }
         }
         return null;
+    }
+
+    public void setSortierReihenfolge(Comparator<ITrommelE> comperator) {
+        if (comperator != null) {
+            this.comperator = comperator;
+        }
     }
 }

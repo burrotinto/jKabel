@@ -2,6 +2,7 @@ package de.swneumarkt.jKabeltrommel.dispalyAS.bearbeiten.KabeltypCreateAS;
 
 import de.swneumarkt.jKabeltrommel.dbauswahlAS.IDBWrapper;
 import de.swneumarkt.jKabeltrommel.dispalyAS.bearbeiten.KabelTypAuswahlAS.KabelTypAuswahlAAS;
+import de.swneumarkt.jKabeltrommel.dispalyAS.lookAndFeel.MinimalisticButton;
 
 import javax.swing.*;
 import java.awt.*;
@@ -15,8 +16,8 @@ public class KabelTypCreateAAS extends JDialog implements ActionListener {
     private final IDBWrapper db;
     private JTextField matNummer = new JTextField();
     private JTextField typ = new JTextField();
-    private JButton cancel = new JButton("Abbruch");
-    private JButton create = new JButton("Erstellen");
+    private JButton cancel = new MinimalisticButton("Abbruch");
+    private JButton create = new MinimalisticButton("Erstellen");
     private KabelTypAuswahlAAS kabelTypAuswahlAAS;
 
     public KabelTypCreateAAS(IDBWrapper db, KabelTypAuswahlAAS kabelTypAuswahlAAS) {

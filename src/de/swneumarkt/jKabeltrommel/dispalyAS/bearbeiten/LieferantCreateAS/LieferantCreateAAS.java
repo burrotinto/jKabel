@@ -2,6 +2,7 @@ package de.swneumarkt.jKabeltrommel.dispalyAS.bearbeiten.LieferantCreateAS;
 
 import de.swneumarkt.jKabeltrommel.dbauswahlAS.IDBWrapper;
 import de.swneumarkt.jKabeltrommel.dispalyAS.bearbeiten.LieferantAuswahlAS.LieferantenAuswahlAAS;
+import de.swneumarkt.jKabeltrommel.dispalyAS.lookAndFeel.MinimalisticButton;
 
 import javax.swing.*;
 import java.awt.*;
@@ -16,8 +17,8 @@ public class LieferantCreateAAS extends JDialog implements ActionListener {
     private final LieferantenAuswahlAAS lAAS;
 
     private JTextField name = new JTextField();
-    private JButton cancel = new JButton("Abbruch");
-    private JButton create = new JButton("Erstellen");
+    private JButton cancel = new MinimalisticButton("Abbruch");
+    private JButton create = new MinimalisticButton("Erstellen");
 
 
     public LieferantCreateAAS(IDBWrapper db, LieferantenAuswahlAAS lAAS) {

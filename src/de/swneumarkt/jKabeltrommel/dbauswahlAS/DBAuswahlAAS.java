@@ -54,7 +54,7 @@ public class DBAuswahlAAS {
             while ((next = br.readLine()) != null && db == null) {
                 try {
                     db = new HSQLDBWrapper(pfad, next);
-                } catch (IOException e) {
+                } catch (Exception e) {
                     db = null;
                 }
             }
