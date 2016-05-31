@@ -187,7 +187,7 @@ public class StreckenAAS extends JPanel implements ITrommelListner, ActionListen
             panel.add(a.text);
             panel.add(del);
             try (ScanAAS scanAAS = new ScanAAS(trommel.getMaterialNummer(), s.getMeter(), s.getBa(), trommel.getLagerPlatz())) {
-                scanAAS.setLocationRelativeTo(panel);
+                scanAAS.setLocationRelativeTo(null);
                 JButton button = new MinimalisticButton("scan");
                 button.addActionListener(scanAAS);
                 panel.add(button);
