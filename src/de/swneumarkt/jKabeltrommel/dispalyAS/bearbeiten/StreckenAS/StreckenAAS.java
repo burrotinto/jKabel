@@ -28,6 +28,7 @@ public class StreckenAAS extends JPanel implements ITrommelListner, ActionListen
     private ITrommelE trommel = null;
     private IKabeltypE typ = null;
     private JComboBox<ILieferantE> cBox;
+    private List<JDialog> scanDialoge = new ArrayList<>();
 
 
     public StreckenAAS(IDBWrapper db, Set<JPanel> updateOnChange) {
@@ -186,9 +187,11 @@ public class StreckenAAS extends JPanel implements ITrommelListner, ActionListen
             panel.add(a.text);
             panel.add(del);
             try (ScanAAS scanAAS = new ScanAAS(trommel.getMaterialNummer(), s.getMeter(), s.getBa(), trommel.getLagerPlatz())) {
+                scanAAS.setLocationRelativeTo(panel);
                 JButton button = new MinimalisticButton("scan");
                 button.addActionListener(scanAAS);
                 panel.add(button);
+                scanDialoge.add(scanAAS);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -353,6 +356,18 @@ public class StreckenAAS extends JPanel implements ITrommelListner, ActionListen
             } catch (Exception ex) {
             }
         }
+    }
+
+    @Override
+    public void removeAll() {
+        super.removeAll();
+        scanDialoge.forEach(new Consumer<JDialog>() {
+            @Override
+            public void accept(JDialog jDialog) {
+                jDialog.dispose();
+            }
+        });
+        scanDialoge = new ArrayList<>();
     }
 
     private class Abgang implements FocusListener, IStreckeE, KeyListener {
