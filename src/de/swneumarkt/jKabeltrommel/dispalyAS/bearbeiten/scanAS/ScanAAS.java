@@ -24,10 +24,6 @@ public class ScanAAS extends JDialog implements ActionListener, AutoCloseable {
 
     }
 
-    public static void main(String[] args) throws Exception {
-        new ScanAAS(123, 12, 808080, "FLBS 12");
-    }
-
     @Override
     public void actionPerformed(ActionEvent e) {
         setVisible(!isVisible());
