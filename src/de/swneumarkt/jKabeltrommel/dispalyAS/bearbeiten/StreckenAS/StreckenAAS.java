@@ -176,16 +176,24 @@ public class StreckenAAS extends JPanel implements ITrommelListner, ActionListen
             Abgang a = new Abgang(s, del);
             abgaenge.add(a);
             JTextField dT = new JTextField(kontroller.getTimeString(s.getVerlegedatum()), 10);
-            dT.setEditable(false);
             panel.add(dT);
             JTextField tF = new JTextField(s.getMeter() + "", 4);
-            tF.setEditable(false);
             panel.add(tF);
             panel.add(a.bA);
             panel.add(a.start);
             panel.add(a.ende);
             panel.add(a.text);
             panel.add(del);
+
+            // Wenn Trommel ausser haus
+            if (a.ende.getText().equals(Abgang.platzHalter)) {
+                panel.setBackground(Color.ORANGE);
+                tF.setText(Abgang.platzHalter);
+            }
+
+            dT.setEditable(false);
+            tF.setEditable(false);
+
             p.add(panel);
             last = a.ende.getText();
         }
