@@ -1,5 +1,6 @@
 package de.swneumarkt.jKabeltrommel.dispalyAS;
 
+import de.swneumarkt.jKabeltrommel.config.Reader;
 import de.swneumarkt.jKabeltrommel.dbauswahlAS.DBAuswahlAAS;
 import de.swneumarkt.jKabeltrommel.dbauswahlAS.IDBWrapper;
 import de.swneumarkt.jKabeltrommel.dispalyAS.bearbeiten.KabelTypAuswahlAS.KabelTypAuswahlAAS;
@@ -54,8 +55,8 @@ public class DisplayAAS extends JFrame implements ItemListener, ActionListener {
 
     public static void main(String[] args) {
         DisplayAAS f = new DisplayAAS();
-        f.setTitle("jKabeltrommel");
-        IDBWrapper db = new DBAuswahlAAS().getDBWrapper();
+        f.setTitle("jKabel");
+        IDBWrapper db = new DBAuswahlAAS().getDBWrapper(Reader.getInstance().getPath());
         if (db == null) {
             JPanel p = new JPanel();
             p.add(new JLabel("Es konnte keine Verbindung zur DB hergestellt werden."));
@@ -65,9 +66,10 @@ public class DisplayAAS extends JFrame implements ItemListener, ActionListener {
             f.setDb(db);
 
         }
-        f.setSize(1400, 640);
-        f.setMinimumSize(new Dimension(480, 480));
+        f.setSize(1500, 640);
+        f.setMinimumSize(new Dimension(1580, 480));
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        f.pack();
         f.setVisible(true);
     }
 
@@ -163,4 +165,6 @@ public class DisplayAAS extends JFrame implements ItemListener, ActionListener {
         return p;
 
     }
+
+
 }
