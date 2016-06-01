@@ -6,6 +6,7 @@ import de.swneumarkt.jKabeltrommel.dispalyAS.bearbeiten.KabelTypAuswahlAS.IKabel
 import de.swneumarkt.jKabeltrommel.dispalyAS.bearbeiten.TrommelAuswahlAS.ITrommelListner;
 import de.swneumarkt.jKabeltrommel.dispalyAS.bearbeiten.scanAS.ScanAAS;
 import de.swneumarkt.jKabeltrommel.dispalyAS.lookAndFeel.MinimalisticButton;
+import de.swneumarkt.jKabeltrommel.dispalyAS.lookAndFeel.MinimalisticFormattetTextField;
 
 import javax.swing.*;
 import java.awt.*;
@@ -100,14 +101,14 @@ public class StreckenAAS extends JPanel implements ITrommelListner, ActionListen
         //Länge
         JPanel laenge = new JPanel(new FlowLayout());
         laenge.add(new JLabel("Gesamtlänge:"));
-        laengeField = new JTextField(trommel.getGesamtlaenge() + "", 6);
+        laengeField = new MinimalisticFormattetTextField(trommel.getGesamtlaenge() + "", 6);
         laenge.add(laengeField);
         p.add(laenge);
 
         //Trommelanfang
         JPanel trommelP = new JPanel(new FlowLayout());
         trommelP.add(new JLabel("Trommelanfang:"));
-        trommelstartField = new JTextField(trommel.getStart() + "", 6);
+        trommelstartField = new MinimalisticFormattetTextField(trommel.getStart() + "", 6);
         trommelP.add(trommelstartField);
         p.add(trommelP);
 
@@ -129,7 +130,7 @@ public class StreckenAAS extends JPanel implements ITrommelListner, ActionListen
         //MatNr
         JPanel matNr = new JPanel(new FlowLayout());
         matNr.add(new JLabel("MaterialNummer:"));
-        matNrField = new JTextField(kontroller.getTyp(trommel).getMaterialNummer() + "");
+        matNrField = new MinimalisticFormattetTextField(kontroller.getTyp(trommel).getMaterialNummer() + "");
         matNr.add(matNrField);
         matNrField.setEditable(false);
         p.add(matNr);
@@ -219,9 +220,9 @@ public class StreckenAAS extends JPanel implements ITrommelListner, ActionListen
             JTextField tF = new JTextField(4);
             tF.setEditable(false);
             panel.add(tF);
-            baField = new JTextField("", 8);
-            startField = new JTextField(last, 4);
-            endField = new JTextField("", 4);
+            baField = new MinimalisticFormattetTextField("", 8);
+            startField = new MinimalisticFormattetTextField(last, 4);
+            endField = new MinimalisticFormattetTextField("", 4);
             ortField = new JTextField("", 16);
             baField.addKeyListener(this);
             panel.add(baField);
@@ -374,15 +375,16 @@ public class StreckenAAS extends JPanel implements ITrommelListner, ActionListen
     private class Abgang implements FocusListener, IStreckeE, KeyListener {
         public static final String platzHalter = "---";
         private final IStreckeE strecke;
-        private JTextField bA, start, ende, text;
+        private MinimalisticFormattetTextField bA, start, ende;
+        private JTextField text;
         private MinimalisticButton butt;
 
         private Abgang(IStreckeE strecke, MinimalisticButton butt) {
             this.butt = butt;
             this.strecke = strecke;
-            bA = new JTextField((strecke.getBa() < 0 ? "" : strecke.getBa()) + "", 8);
-            start = new JTextField((strecke.getStart() < 0 ? "" : strecke.getStart()) + "", 4);
-            ende = new JTextField((strecke.getEnde() < 0 ? platzHalter : strecke.getEnde()) + "", 4);
+            bA = new MinimalisticFormattetTextField((strecke.getBa() < 0 ? "" : strecke.getBa()) + "", 8);
+            start = new MinimalisticFormattetTextField((strecke.getStart() < 0 ? "" : strecke.getStart()) + "", 4);
+            ende = new MinimalisticFormattetTextField((strecke.getEnde() < 0 ? platzHalter : strecke.getEnde()) + "", 4);
             text = new JTextField(strecke.getOrt() + "", 16);
             ende.addFocusListener(this);
             bA.addKeyListener(this);

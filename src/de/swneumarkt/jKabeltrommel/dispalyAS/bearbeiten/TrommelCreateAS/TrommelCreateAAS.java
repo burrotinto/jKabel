@@ -4,6 +4,7 @@ import de.swneumarkt.jKabeltrommel.dbauswahlAS.IDBWrapper;
 import de.swneumarkt.jKabeltrommel.dbauswahlAS.enitys.IKabeltypE;
 import de.swneumarkt.jKabeltrommel.dispalyAS.bearbeiten.LieferantAuswahlAS.LieferantenAuswahlAAS;
 import de.swneumarkt.jKabeltrommel.dispalyAS.bearbeiten.TrommelAuswahlAS.TrommelAuswahlAAS;
+import de.swneumarkt.jKabeltrommel.dispalyAS.lookAndFeel.MinimalisticFormattetTextField;
 
 import javax.swing.*;
 import java.awt.*;
@@ -16,10 +17,10 @@ import java.awt.event.ActionListener;
 public class TrommelCreateAAS extends JDialog implements ActionListener {
     private final IDBWrapper db;
     private JTextField trommelNummer = new JTextField();
-    private JTextField laenge = new JTextField();
+    private JTextField laenge = new MinimalisticFormattetTextField();
     private JTextField lieferscheinNr = new JTextField();
     private JTextField lagerPlatz = new JTextField();
-    private JTextField start = new JTextField();
+    private JTextField start = new MinimalisticFormattetTextField();
 
     private JButton cancel = new JButton("Abbruch");
     private JButton create = new JButton("Erstellen");
