@@ -257,10 +257,11 @@ public class StreckenAAS extends JPanel implements ITrommelListner, ActionListen
                 ende = Integer.parseInt(endField.getText());
             } catch (NumberFormatException ex) {
             }
-            if (!kontroller.richtigeRichtung(trommel, start, ende)) {
+            if (ende >= 0 && !kontroller.richtigeRichtung(trommel, start, ende)) {
 
                 // Dialog
                 JDialog dialog = new JDialog();
+                dialog.setTitle("Da stimmt was nicht");
                 dialog.setLayout(new FlowLayout());
                 dialog.add(new JLabel("Fasche Größen"));
                 JButton butt = new JButton("OK");
