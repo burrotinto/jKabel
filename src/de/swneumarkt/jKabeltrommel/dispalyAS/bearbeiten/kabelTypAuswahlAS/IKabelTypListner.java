@@ -1,4 +1,4 @@
-package de.swneumarkt.jKabeltrommel.dispalyAS.bearbeiten.KabelTypAuswahlAS;
+package de.swneumarkt.jKabeltrommel.dispalyAS.bearbeiten.kabelTypAuswahlAS;
 
 import de.swneumarkt.jKabeltrommel.dbauswahlAS.enitys.IKabeltypE;
 

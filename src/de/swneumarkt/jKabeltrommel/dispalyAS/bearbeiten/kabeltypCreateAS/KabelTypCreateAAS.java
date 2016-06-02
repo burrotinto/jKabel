@@ -1,7 +1,7 @@
-package de.swneumarkt.jKabeltrommel.dispalyAS.bearbeiten.KabeltypCreateAS;
+package de.swneumarkt.jKabeltrommel.dispalyAS.bearbeiten.kabeltypCreateAS;
 
 import de.swneumarkt.jKabeltrommel.dbauswahlAS.IDBWrapper;
-import de.swneumarkt.jKabeltrommel.dispalyAS.bearbeiten.KabelTypAuswahlAS.KabelTypAuswahlAAS;
+import de.swneumarkt.jKabeltrommel.dispalyAS.bearbeiten.kabelTypAuswahlAS.KabelTypAuswahlAAS;
 import de.swneumarkt.jKabeltrommel.dispalyAS.lookAndFeel.MinimalisticButton;
 import de.swneumarkt.jKabeltrommel.dispalyAS.lookAndFeel.MinimalisticFormattetTextField;
 

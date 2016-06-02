@@ -1,4 +1,4 @@
-package de.swneumarkt.jKabeltrommel.dispalyAS.bearbeiten.TrommelAuswahlAS;
+package de.swneumarkt.jKabeltrommel.dispalyAS.bearbeiten.trommelAuswahlAS;
 
 import de.swneumarkt.jKabeltrommel.dbauswahlAS.enitys.ITrommelE;
 

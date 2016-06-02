@@ -3,7 +3,7 @@ package de.swneumarkt.jKabeltrommel.dispalyAS.search;
 import de.swneumarkt.jKabeltrommel.dbauswahlAS.IDBWrapper;
 import de.swneumarkt.jKabeltrommel.dbauswahlAS.enitys.IKabeltypE;
 import de.swneumarkt.jKabeltrommel.dbauswahlAS.enitys.ITrommelE;
-import de.swneumarkt.jKabeltrommel.dispalyAS.bearbeiten.StreckenAS.StreckenAAS;
+import de.swneumarkt.jKabeltrommel.dispalyAS.bearbeiten.streckenAS.StreckenAAS;
 
 import javax.swing.*;
 import java.awt.*;

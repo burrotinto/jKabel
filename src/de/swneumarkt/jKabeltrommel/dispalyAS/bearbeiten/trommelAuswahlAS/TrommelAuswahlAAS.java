@@ -1,10 +1,10 @@
-package de.swneumarkt.jKabeltrommel.dispalyAS.bearbeiten.TrommelAuswahlAS;
+package de.swneumarkt.jKabeltrommel.dispalyAS.bearbeiten.trommelAuswahlAS;
 
 import de.swneumarkt.jKabeltrommel.dbauswahlAS.IDBWrapper;
 import de.swneumarkt.jKabeltrommel.dbauswahlAS.enitys.IKabeltypE;
 import de.swneumarkt.jKabeltrommel.dbauswahlAS.enitys.ITrommelE;
-import de.swneumarkt.jKabeltrommel.dispalyAS.bearbeiten.KabelTypAuswahlAS.IKabelTypListner;
-import de.swneumarkt.jKabeltrommel.dispalyAS.bearbeiten.TrommelCreateAS.TrommelCreateAAS;
+import de.swneumarkt.jKabeltrommel.dispalyAS.bearbeiten.kabelTypAuswahlAS.IKabelTypListner;
+import de.swneumarkt.jKabeltrommel.dispalyAS.bearbeiten.trommelCreateAS.TrommelCreateAAS;
 import de.swneumarkt.jKabeltrommel.dispalyAS.lookAndFeel.MinimalisticButton;
 
 import javax.swing.*;
@@ -24,18 +24,18 @@ public class TrommelAuswahlAAS extends JPanel implements IKabelTypListner, Actio
     private MinimalisticButton addNewButt = new MinimalisticButton("Neue Trommel");
     private IKabeltypE typ = null;
     private IDBWrapper db;
-    private boolean auchFreigemeldete;
+    private boolean zeiheAlle;
     private MinimalisticButton ausgewaehlt = null;
 
     private HashMap<MinimalisticButton, ITrommelE> buttonTrommelMap;
 
     private Set<ITrommelListner> trommelListners = new HashSet<>();
 
-    public TrommelAuswahlAAS(IDBWrapper db, boolean auchFreigemeldete) {
+    public TrommelAuswahlAAS(IDBWrapper db, boolean zeiheAlle) {
         kontroll = new TommelAuswahlK(db);
         this.db = db;
         addNewButt.addActionListener(this);
-        this.auchFreigemeldete = auchFreigemeldete;
+        this.zeiheAlle = zeiheAlle;
     }
 
     public void addTrommelListner(ITrommelListner listner) {
@@ -53,21 +53,26 @@ public class TrommelAuswahlAAS extends JPanel implements IKabelTypListner, Actio
             panel.add(p);
 
             for (ITrommelE t : kontroll.getAllTrommelForMatNr(typ)) {
-                if (auchFreigemeldete || !t.isFreigemeldet()) {
+                if (zeiheAlle || !(t.isFreigemeldet() && kontroll.getRestMeter(t) == 0)) {
                     p = new JPanel(new FlowLayout(FlowLayout.LEFT));
                     MinimalisticButton b = new MinimalisticButton(t.getTrommelnummer() + "");
                     b.setSelected(b.equals(ausgewaehlt));
                     buttonTrommelMap.put(b, t);
                     p.add(b);
-                    if (!kontroll.isAusserHaus(t)) {
-                        p.add(new JLabel("Noch: " + kontroll.getRestMeter(t) + " m"));
+                    JLabel label;
+                    if (t.isFreigemeldet() && kontroll.getRestMeter(t) == 0) {
+                        label = new JLabel("Beendet");
+                    } else if (!kontroll.isAusserHaus(t)) {
+                        label = new JLabel("Noch: " + kontroll.getRestMeter(t) + " m");
                         if (kontroll.getRestMeter(t) == 0) {
                             p.setBackground(Color.GRAY);
                         }
+
                     } else {
-                        p.add(new JLabel("Bei: " + kontroll.getBaustelle(t)));
+                        label = new JLabel("Bei: " + kontroll.getBaustelle(t));
                         p.setBackground(Color.ORANGE);
                     }
+                    p.add(label);
                     if (t.isFreigemeldet()) {
                         p.setBackground(Color.RED);
                     }
@@ -122,7 +127,7 @@ public class TrommelAuswahlAAS extends JPanel implements IKabelTypListner, Actio
         buildPanel(typ);
     }
 
-    public void setAuchFreigemeldete(boolean auchFreigemeldete) {
-        this.auchFreigemeldete = auchFreigemeldete;
+    public void setZeiheAlle(boolean zeiheAlle) {
+        this.zeiheAlle = zeiheAlle;
     }
 }

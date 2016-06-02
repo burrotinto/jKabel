@@ -1,10 +1,11 @@
-package de.swneumarkt.jKabeltrommel.dispalyAS.bearbeiten.StreckenAS;
+package de.swneumarkt.jKabeltrommel.dispalyAS.bearbeiten.streckenAS;
 
+import com.onbarcode.barcode.Code128;
 import de.swneumarkt.jKabeltrommel.dbauswahlAS.IDBWrapper;
 import de.swneumarkt.jKabeltrommel.dbauswahlAS.enitys.*;
-import de.swneumarkt.jKabeltrommel.dispalyAS.bearbeiten.KabelTypAuswahlAS.IKabelTypListner;
-import de.swneumarkt.jKabeltrommel.dispalyAS.bearbeiten.TrommelAuswahlAS.ITrommelListner;
+import de.swneumarkt.jKabeltrommel.dispalyAS.bearbeiten.kabelTypAuswahlAS.IKabelTypListner;
 import de.swneumarkt.jKabeltrommel.dispalyAS.bearbeiten.scanAS.ScanAAS;
+import de.swneumarkt.jKabeltrommel.dispalyAS.bearbeiten.trommelAuswahlAS.ITrommelListner;
 import de.swneumarkt.jKabeltrommel.dispalyAS.lookAndFeel.MinimalisticButton;
 import de.swneumarkt.jKabeltrommel.dispalyAS.lookAndFeel.MinimalisticFormattetTextField;
 
@@ -237,7 +238,7 @@ public class StreckenAAS extends JPanel implements ITrommelListner, ActionListen
         p.add(butt);
 
         add(p);
-
+//        printBarcode((Graphics2D) p.getGraphics());
     }
 
     @Override
@@ -370,6 +371,20 @@ public class StreckenAAS extends JPanel implements ITrommelListner, ActionListen
             }
         });
         scanDialoge = new ArrayList<>();
+    }
+
+    private void printBarcode(Graphics2D g) {
+        Code128 baCode = new Code128();
+        String s = matNrField.getText();
+        if (!(lagerplatzField.getText() == null || lagerplatzField.getText().equals(""))) {
+            s = lagerplatzField.getText() + s;
+        }
+        baCode.setData(s);
+        try {
+            baCode.drawBarcode(g, new Rectangle(matNrField.getX() + matNrField.getWidth(), matNrField.getY(), 20, 20));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private class Abgang implements FocusListener, IStreckeE, KeyListener {

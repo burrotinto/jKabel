@@ -1,9 +1,9 @@
-package de.swneumarkt.jKabeltrommel.dispalyAS.bearbeiten.TrommelCreateAS;
+package de.swneumarkt.jKabeltrommel.dispalyAS.bearbeiten.trommelCreateAS;
 
 import de.swneumarkt.jKabeltrommel.dbauswahlAS.IDBWrapper;
 import de.swneumarkt.jKabeltrommel.dbauswahlAS.enitys.IKabeltypE;
-import de.swneumarkt.jKabeltrommel.dispalyAS.bearbeiten.LieferantAuswahlAS.LieferantenAuswahlAAS;
-import de.swneumarkt.jKabeltrommel.dispalyAS.bearbeiten.TrommelAuswahlAS.TrommelAuswahlAAS;
+import de.swneumarkt.jKabeltrommel.dispalyAS.bearbeiten.lieferantAuswahlAS.LieferantenAuswahlAAS;
+import de.swneumarkt.jKabeltrommel.dispalyAS.bearbeiten.trommelAuswahlAS.TrommelAuswahlAAS;
 import de.swneumarkt.jKabeltrommel.dispalyAS.lookAndFeel.MinimalisticFormattetTextField;
 
 import javax.swing.*;

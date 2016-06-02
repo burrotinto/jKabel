@@ -54,4 +54,5 @@ public class ScanAAS extends JDialog implements ActionListener, AutoCloseable {
             }
         }
     }
+
 }

@@ -1,8 +1,8 @@
-package de.swneumarkt.jKabeltrommel.dispalyAS.bearbeiten.LieferantAuswahlAS;
+package de.swneumarkt.jKabeltrommel.dispalyAS.bearbeiten.lieferantAuswahlAS;
 
 import de.swneumarkt.jKabeltrommel.dbauswahlAS.IDBWrapper;
 import de.swneumarkt.jKabeltrommel.dbauswahlAS.enitys.ILieferantE;
-import de.swneumarkt.jKabeltrommel.dispalyAS.bearbeiten.LieferantCreateAS.LieferantCreateAAS;
+import de.swneumarkt.jKabeltrommel.dispalyAS.bearbeiten.lieferantCreateAS.LieferantCreateAAS;
 import de.swneumarkt.jKabeltrommel.dispalyAS.lookAndFeel.MinimalisticButton;
 
 import javax.swing.*;

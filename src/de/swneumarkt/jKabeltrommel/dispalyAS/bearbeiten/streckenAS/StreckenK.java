@@ -1,4 +1,4 @@
-package de.swneumarkt.jKabeltrommel.dispalyAS.bearbeiten.StreckenAS;
+package de.swneumarkt.jKabeltrommel.dispalyAS.bearbeiten.streckenAS;
 
 import de.swneumarkt.jKabeltrommel.dbauswahlAS.IDBWrapper;
 import de.swneumarkt.jKabeltrommel.dbauswahlAS.enitys.*;

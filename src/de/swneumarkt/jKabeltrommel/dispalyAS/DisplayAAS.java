@@ -3,9 +3,9 @@ package de.swneumarkt.jKabeltrommel.dispalyAS;
 import de.swneumarkt.jKabeltrommel.config.Reader;
 import de.swneumarkt.jKabeltrommel.dbauswahlAS.DBAuswahlAAS;
 import de.swneumarkt.jKabeltrommel.dbauswahlAS.IDBWrapper;
-import de.swneumarkt.jKabeltrommel.dispalyAS.bearbeiten.KabelTypAuswahlAS.KabelTypAuswahlAAS;
-import de.swneumarkt.jKabeltrommel.dispalyAS.bearbeiten.StreckenAS.StreckenAAS;
-import de.swneumarkt.jKabeltrommel.dispalyAS.bearbeiten.TrommelAuswahlAS.TrommelAuswahlAAS;
+import de.swneumarkt.jKabeltrommel.dispalyAS.bearbeiten.kabelTypAuswahlAS.KabelTypAuswahlAAS;
+import de.swneumarkt.jKabeltrommel.dispalyAS.bearbeiten.streckenAS.StreckenAAS;
+import de.swneumarkt.jKabeltrommel.dispalyAS.bearbeiten.trommelAuswahlAS.TrommelAuswahlAAS;
 import de.swneumarkt.jKabeltrommel.dispalyAS.search.SearchAAS;
 
 import javax.swing.*;
@@ -24,7 +24,7 @@ public class DisplayAAS extends JFrame implements ItemListener, ActionListener {
     private JMenuItem edit = new JMenuItem("Bearbeiten");
     private JMenuItem search = new JMenuItem("Suchen");
     private JMenuItem exit = new JMenuItem("Ende");
-    private JMenuItem auchf = new JCheckBoxMenuItem("Zeige freigemeldete");
+    private JMenuItem auchf = new JCheckBoxMenuItem("Zeige alle Trommeln");
     private JPanel center = new JPanel();
 
     private TrommelAuswahlAAS tommelAAs = null;
@@ -139,7 +139,7 @@ public class DisplayAAS extends JFrame implements ItemListener, ActionListener {
                 center = new SearchAAS(db);
                 getContentPane().add(center, BorderLayout.CENTER);
             } else if (e.getSource() == auchf && tommelAAs != null) {
-                tommelAAs.setAuchFreigemeldete(auchf.isSelected());
+                tommelAAs.setZeiheAlle(auchf.isSelected());
             }
             repaint();
             revalidate();
