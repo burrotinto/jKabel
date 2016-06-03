@@ -1,6 +1,5 @@
 package de.swneumarkt.jKabeltrommel.config;
 
-import javax.swing.*;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -8,53 +7,67 @@ import java.io.IOException;
 import java.util.Properties;
 
 /**
+ * Einfacher Propertysreader. ISt ein Singelton
  * Created by derduke on 01.06.16.
  */
 public class Reader {
-    private static final String SWNPFAD = "O:\\KFM-Verwaltung\\Materialwirtschaft\\Lager\\jKabelDB\\";
+    public static final String SWNPFAD = "O:\\KFM-Verwaltung\\Materialwirtschaft\\Lager\\jKabelDB\\";
     private static final String DBPFADPROP = "DB.PFAD";
     private static Reader instance = new Reader();
+
+    private final File propFile = new File(System.getProperty("user.home") + File.separator + "jKabel.prop");
+    private Properties prop = null;
 
 
     private Reader() {
     }
 
+    /**
+     * Gibt die Reader Instanz zurück
+     *
+     * @return den Reader
+     */
     public static Reader getInstance() {
         return instance;
     }
 
+    /**
+     * Gibt den Pfad zur DB zurück
+     *
+     * @return Pfad zu der zu benutzenden DB ODER NULL  wenn nicht gestetzt
+     */
     public String getPath() {
-        String path = SWNPFAD;
+        String path = null;
         try {
-            Properties prop = new Properties();
-            System.out.println(System.getProperty("user.home") + File.separator + "jKabel.prop");
-            File propFile = new File(System.getProperty("user.home") + File.separator + "jKabel.prop");
-            if (!propFile.exists()) propFile.createNewFile();
-            prop.load(new FileReader(propFile));
-
-
-            if (prop.getProperty(DBPFADPROP) == null) {
-                path = choosePath(path);
-                prop.setProperty(DBPFADPROP, path);
-                prop.store(new FileWriter(propFile), "Konfigurationsdatei des JKabel");
-            } else {
+            Properties prop = getProperties();
+            if (prop.getProperty(DBPFADPROP) != null) {
                 path = prop.getProperty(DBPFADPROP);
             }
-
-
         } catch (IOException e) {
-            path = choosePath(".");
+            return null;
         }
         return path;
     }
 
-    private String choosePath(String pfad) {
-        JFileChooser chooser = new JFileChooser();
-        chooser.setCurrentDirectory(new java.io.File(pfad));
-        chooser.setDialogTitle("DB Pfad");
-        chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-        chooser.setAcceptAllFileFilterUsed(false);
-        return chooser.showOpenDialog(null) != JFileChooser.APPROVE_OPTION ? null : chooser.getSelectedFile().getPath() + File.separator;
-
+    private Properties getProperties() throws IOException {
+        // lazy implementation
+        if (prop == null) {
+            prop = new Properties();
+            if (!propFile.exists()) propFile.createNewFile();
+            prop.load(new FileReader(propFile));
+        }
+        return prop;
     }
+
+    /**
+     * Zum Speichern des Pfades
+     *
+     * @param path wo die DB liegt
+     * @throws IOException
+     */
+    public void savePath(String path) throws IOException {
+        prop.setProperty(DBPFADPROP, path);
+        prop.store(new FileWriter(propFile), "Konfigurationsdatei des JKabel");
+    }
+
 }

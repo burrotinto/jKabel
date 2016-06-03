@@ -1,6 +1,5 @@
 package de.swneumarkt.jKabeltrommel.dispalyAS;
 
-import de.swneumarkt.jKabeltrommel.config.Reader;
 import de.swneumarkt.jKabeltrommel.dbauswahlAS.DBAuswahlAAS;
 import de.swneumarkt.jKabeltrommel.dbauswahlAS.IDBWrapper;
 import de.swneumarkt.jKabeltrommel.dispalyAS.bearbeiten.kabelTypAuswahlAS.KabelTypAuswahlAAS;
@@ -29,12 +28,17 @@ public class DisplayAAS extends JFrame implements ItemListener, ActionListener {
 
     private TrommelAuswahlAAS tommelAAs = null;
 
+    private DBAuswahlAAS dbAuswahlAAS = new DBAuswahlAAS();
     private IDBWrapper db = null;
 
     public DisplayAAS() {
+
+        setTitle("jKabel");
+
         getContentPane().setLayout(new BorderLayout());
         getContentPane().add(getSouth(), BorderLayout.SOUTH);
 
+        // MenueBar
         JMenuBar menuBar = new JMenuBar();
         JMenu menue = new JMenu("File");
         menue.add(edit);
@@ -49,28 +53,29 @@ public class DisplayAAS extends JFrame implements ItemListener, ActionListener {
         auchf.addActionListener(this);
         menuBar.add(menue);
         setJMenuBar(menuBar);
-        setBackground(Color.WHITE);
 
-    }
 
-    public static void main(String[] args) {
-        DisplayAAS f = new DisplayAAS();
-        f.setTitle("jKabel");
-        IDBWrapper db = new DBAuswahlAAS().getDBWrapper(Reader.getInstance().getPath());
+        IDBWrapper db = dbAuswahlAAS.getDBWrapper();
+
         if (db == null) {
             JPanel p = new JPanel();
             p.add(new JLabel("Es konnte keine Verbindung zur DB hergestellt werden."));
             p.add(new JLabel("Wenn !!!sicher!!! ist das kein anderer auf dedr DB arbeitet die lock.lck Datei löschen"));
-            f.getContentPane().add(p, BorderLayout.CENTER);
+            getContentPane().add(p, BorderLayout.CENTER);
         } else {
-            f.setDb(db);
-
+            setDb(db);
         }
-        f.setSize(1500, 640);
-        f.setMinimumSize(new Dimension(1580, 480));
-        f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        f.pack();
-        f.setVisible(true);
+
+
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        pack();
+        setVisible(true);
+    }
+
+    public static void main(String[] args) {
+        DisplayAAS f = new DisplayAAS();
+
+
     }
 
     public void setDb(IDBWrapper db) {
@@ -147,17 +152,20 @@ public class DisplayAAS extends JFrame implements ItemListener, ActionListener {
     }
 
     private boolean isRemoteDB() {
-        //todo
-        return false;
+        return !dbAuswahlAAS.hasServer();
     }
 
     private JPanel getSouth() {
         JPanel p = new JPanel();
-        if (isRemoteDB()) {
-            JPanel rPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-            rPanel.add(new JLabel("Achtung! Experimentelle Server/Client modus"));
-            p.add(rPanel);
+        JPanel rPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        if (dbAuswahlAAS.getServerIP() != null) {
+            if (isRemoteDB()) {
+                rPanel.add(new JLabel("Running as Client. Connected with Server: " + dbAuswahlAAS.getServerIP().getHostAddress() + " \"" + dbAuswahlAAS.getServerIP().getHostName() + "\""));
+            } else {
+                rPanel.add(new JLabel("Running as Server"));
+            }
         }
+        p.add(rPanel);
 
         JPanel prodlyPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         prodlyPanel.add(new JLabel("proudly made by Florian Klinger"));

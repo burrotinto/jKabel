@@ -5,6 +5,7 @@ import de.swneumarkt.jKabeltrommel.dbauswahlAS.enitys.*;
 import java.util.List;
 
 /**
+ * Regelt wie eine DB zu benutzen ist. Die Methodennamen sollten selbserklärend sein
  * Created by derduke on 19.05.2016.
  */
 public interface IDBWrapper {

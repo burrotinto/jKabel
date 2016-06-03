@@ -3,12 +3,7 @@ package de.swneumarkt.jKabeltrommel.dbauswahlAS.HSQLDB;
 
 import de.swneumarkt.jKabeltrommel.dbauswahlAS.IDBWrapper;
 import de.swneumarkt.jKabeltrommel.dbauswahlAS.enitys.*;
-import org.hsqldb.Server;
-import org.hsqldb.persist.HsqlProperties;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.sql.*;
 import java.util.ArrayList;
@@ -20,43 +15,15 @@ import java.util.List;
  *
  */
 public class HSQLDBWrapper implements IDBWrapper {
-    public final int SERVERPORT = 9001;
     private Statement stmnt = null;
     private InetAddress ip;
 
+
     /**
-     * Constuctor zum Starten und gleichzeitigen Verbinden mit HSQLDB
-     *
-     * @param path Pfad wo die DB liegt/liegen soll
-     * @throws ClassNotFoundException
+     * Verbindet sich mit einem HypersqlDB server.
+     * @param ip
      * @throws SQLException
-     * @throws OnlyOneUserExeption
-     * @throws IOException
      */
-    public HSQLDBWrapper(String path) throws ClassNotFoundException, SQLException, OnlyOneUserExeption, IOException {
-        File lck = new File(path + "lock.lck");
-        if (lck.exists()) {
-            throw new OnlyOneUserExeption();
-        } else {
-            ip = InetAddress.getByName("localhost");
-            System.out.println("DB CREATE");
-            lck.createNewFile();
-            lck.deleteOnExit();
-
-            HsqlProperties p = new HsqlProperties();
-            p.setProperty("server.database.0", "file:" + path + "jKabeltrommelHSQLDB");
-            p.setProperty("server.dbname.0", "jKabeltrommelHSQLDB");
-            p.setProperty("server.port", SERVERPORT + "");
-            Server server = new Server();
-            server.setProperties(p);
-            server.setLogWriter(new PrintWriter(System.out));  // can use custom writer
-            server.setErrWriter(new PrintWriter(System.err));  // can use custom writer
-            server.start();
-        }
-        Statement stmnt = getStatement();
-        initDB();
-    }
-
     public HSQLDBWrapper(InetAddress ip) throws SQLException {
         this.ip = ip;
         getStatement();
