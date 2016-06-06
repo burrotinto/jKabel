@@ -88,6 +88,7 @@ public class DBAuswahlAAS {
                     db = null;
                 }
             }
+            br.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
