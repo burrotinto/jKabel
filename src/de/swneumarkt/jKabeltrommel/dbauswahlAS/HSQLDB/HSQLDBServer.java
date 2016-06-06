@@ -4,8 +4,10 @@ import org.hsqldb.Server;
 import org.hsqldb.persist.HsqlProperties;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.InetAddress;
 import java.sql.SQLException;
 
 /**
@@ -33,6 +35,9 @@ public class HSQLDBServer {
             throw new OnlyOneUserExeption();
         } else {
             lck.createNewFile();
+            FileWriter fw = new FileWriter(lck);
+            fw.write(InetAddress.getByName(InetAddress.getLocalHost().getHostName()).toString());
+            fw.flush();
             lck.deleteOnExit();
 
             HsqlProperties p = new HsqlProperties();
