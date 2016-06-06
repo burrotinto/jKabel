@@ -16,7 +16,6 @@ import java.sql.SQLException;
  * Created by derduke on 19.05.2016.
  */
 public class DBAuswahlAAS {
-    public final int REMOTEPORT = 4242;
     private String pfad;
     private HSQLDBServer server = null;
     private InetAddress serverIP = null;
@@ -67,6 +66,10 @@ public class DBAuswahlAAS {
 
 
         return db;
+    }
+
+    public IDBWrapper connectRemoteDB(InetAddress ip) throws SQLException {
+        return new HSQLDBWrapper(ip);
     }
 
     private IDBWrapper connectRemoteDB() {
