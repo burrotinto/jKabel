@@ -96,19 +96,23 @@ public class DBAuswahlAAS {
     }
 
     private HSQLDBServer getServer() throws IOException, OnlyOneUserExeption, SQLException, ClassNotFoundException {
+        HSQLDBServer server = new HSQLDBServer(pfad);
+
         File ip = new File(pfad + "serverIp.txt");
         if (!ip.exists()) {
             ip.createNewFile();
             ip.deleteOnExit();
+
+            BufferedWriter fw = new BufferedWriter(new FileWriter(ip));
+            for (InetAddress ia : InetAddress.getAllByName(InetAddress.getLocalHost().getHostName())) {
+                fw.write(ia.getHostAddress());
+                fw.write(System.lineSeparator());
+            }
+            fw.flush();
+            fw.close();
         }
-        BufferedWriter fw = new BufferedWriter(new FileWriter(ip));
-        for (InetAddress ia : InetAddress.getAllByName(InetAddress.getLocalHost().getHostName())) {
-            fw.write(ia.getHostAddress());
-            fw.write(System.lineSeparator());
-        }
-        fw.flush();
-        fw.close();
-        return new HSQLDBServer(pfad);
+
+        return server;
     }
 
     public boolean hasServer() {

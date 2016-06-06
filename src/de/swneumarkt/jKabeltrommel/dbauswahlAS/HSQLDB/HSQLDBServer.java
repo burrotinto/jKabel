@@ -38,6 +38,7 @@ public class HSQLDBServer {
             FileWriter fw = new FileWriter(lck);
             fw.write(InetAddress.getByName(InetAddress.getLocalHost().getHostName()).toString());
             fw.flush();
+            fw.close();
             lck.deleteOnExit();
 
             HsqlProperties p = new HsqlProperties();
