@@ -4,6 +4,7 @@ import de.swneumarkt.jKabeltrommel.config.Reader;
 import de.swneumarkt.jKabeltrommel.dbauswahlAS.HSQLDB.HSQLDBServer;
 import de.swneumarkt.jKabeltrommel.dbauswahlAS.HSQLDB.HSQLDBWrapper;
 import de.swneumarkt.jKabeltrommel.dbauswahlAS.HSQLDB.OnlyOneUserExeption;
+import de.swneumarkt.jKabeltrommel.dbauswahlAS.serverStatus.StatusServer;
 
 import javax.swing.*;
 import java.io.*;
@@ -51,6 +52,13 @@ public class DBAuswahlAAS {
         try {
             server = getServer();
             server.start();
+            new Thread(new StatusServer()).start();
+            try {
+                new Thread(new StatusServer()).start();
+            } catch (IOException ioE) {
+                //todo
+            }
+
         } catch (Exception e) {
             // Server kann nur gestartet werden wenn er der einzige ist der auf die DB dateien zugreift
             db = null;
@@ -69,9 +77,11 @@ public class DBAuswahlAAS {
             while ((next = br.readLine()) != null && db == null) {
                 try {
                     InetAddress ip = InetAddress.getByName(next);
+                    System.out.println(ip.getHostAddress());
                     db = new HSQLDBWrapper(ip);
                     serverIP = ip;
                 } catch (Exception e) {
+                    System.out.println(next);
                     db = null;
                 }
             }
