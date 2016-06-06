@@ -70,7 +70,6 @@ public class DisplayAAS extends JFrame implements ItemListener, ActionListener {
             tf.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    System.out.println("aa");
                     try {
                         IDBWrapper db = dbAuswahlAAS.connectRemoteDB(InetAddress.getByName(tf.getText()));
                         if (db != null) {
