@@ -105,12 +105,10 @@ public class KabelTypAuswahlAAS extends JPanel implements ActionListener, IKabel
     @Override
     public void typSelected(IKabeltypE typ) {
         selected = typ;
-    }
-
-    @Override
-    public void repaint() {
-        super.repaint();
         removeAll();
         buildPanel();
+        repaint();
+        revalidate();
     }
+
 }

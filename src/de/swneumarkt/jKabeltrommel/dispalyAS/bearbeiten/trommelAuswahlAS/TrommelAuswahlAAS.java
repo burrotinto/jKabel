@@ -89,11 +89,12 @@ public class TrommelAuswahlAAS extends JPanel implements IKabelTypListner, Actio
 
     @Override
     public void typSelected(IKabeltypE typ) {
-        removeAll();
-        buildPanel(typ);
-        repaint();
-        revalidate();
-
+        if (this.typ == null || !this.typ.equals(typ)) {
+            removeAll();
+            buildPanel(typ);
+            repaint();
+            revalidate();
+        }
     }
 
     @Override
@@ -120,14 +121,14 @@ public class TrommelAuswahlAAS extends JPanel implements IKabelTypListner, Actio
         }
     }
 
-    @Override
-    public void repaint() {
-        super.repaint();
-        removeAll();
-        buildPanel(typ);
-    }
 
     public void setZeiheAlle(boolean zeiheAlle) {
         this.zeiheAlle = zeiheAlle;
+    }
+
+    @Override
+    public void removeAll() {
+        super.removeAll();
+        ausgewaehlt = null;
     }
 }
