@@ -100,17 +100,21 @@ public class DisplayAAS extends JFrame implements ItemListener, ActionListener {
     }
 
     public void setDb(IDBWrapper db) {
-        this.db = db;
-        // Zuerst mal Bearbeiten öffnen
-        if (db != null) {
-            center.removeAll();
-            remove(center);
-            center = getBearbeitenPanel();
-            getContentPane().add(center, BorderLayout.CENTER);
-            getContentPane().add(getSouth(), BorderLayout.SOUTH);
-            revalidate();
-        } else {
+        if (this.db != db) {
+            this.db = db;
+            // Zuerst mal Bearbeiten öffnen
+            if (db != null) {
+                center.removeAll();
+                remove(center);
+                center = getBearbeitenPanel();
+                getContentPane().add(center, BorderLayout.CENTER);
+                getContentPane().add(getSouth(), BorderLayout.SOUTH);
+                revalidate();
+                new Thread(new DBConectionTester(this, db, dbAuswahlAAS)).start();
 
+            } else {
+
+            }
         }
     }
 
@@ -198,4 +202,28 @@ public class DisplayAAS extends JFrame implements ItemListener, ActionListener {
     }
 
 
+}
+
+class DBConectionTester implements Runnable {
+    private final DisplayAAS display;
+    private final IDBWrapper db;
+    private final DBAuswahlAAS dbAuswahlAAS;
+
+    DBConectionTester(DisplayAAS display, IDBWrapper db, DBAuswahlAAS dbAuswahlAAS) {
+        this.display = display;
+        this.db = db;
+        this.dbAuswahlAAS = dbAuswahlAAS;
+    }
+
+    @Override
+    public void run() {
+        while (!db.isClosed()) {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        display.setDb(dbAuswahlAAS.getDBWrapper());
+    }
 }

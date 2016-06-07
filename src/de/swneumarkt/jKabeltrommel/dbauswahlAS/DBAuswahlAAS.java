@@ -75,7 +75,16 @@ public class DBAuswahlAAS {
     private IDBWrapper connectRemoteDB() {
         IDBWrapper db = null;
         try {
-            BufferedReader br = new BufferedReader(new FileReader(new File(pfad + "serverIp.txt")));
+            BufferedReader br = null;
+
+            while (br == null) {
+                try {
+                    br = new BufferedReader(new FileReader(new File(pfad + "serverIp.txt")));
+                    Thread.sleep(100);
+                } catch (Exception fnf) {
+
+                }
+            }
             String next = null;
             while ((next = br.readLine()) != null && db == null) {
                 try {

@@ -94,10 +94,8 @@ public class HSQLDBWrapper implements IDBWrapper {
                 Class.forName("org.hsqldb.jdbcDriver");
                 Connection con = DriverManager.getConnection("jdbc:hsqldb:hsql://" + ip.getHostAddress() + "/jKabeltrommelHSQLDB;shutdown=true;default_schema=true;", "sa", "");
                 stmnt = con.createStatement();
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
-            } catch (SQLException e) {
-                e.printStackTrace();
+            } catch (Exception e) {
+                stmnt = null;
             }
         }
         return stmnt;
@@ -114,6 +112,7 @@ public class HSQLDBWrapper implements IDBWrapper {
             }
             rs.close();
         } catch (SQLException e) {
+            stmnt = null;
             e.printStackTrace();
         }
         return list;
@@ -130,6 +129,7 @@ public class HSQLDBWrapper implements IDBWrapper {
             }
             rs.close();
         } catch (SQLException e) {
+            stmnt = null;
             e.printStackTrace();
         }
         return list;
@@ -150,6 +150,7 @@ public class HSQLDBWrapper implements IDBWrapper {
             }
             rs.close();
         } catch (SQLException e) {
+            stmnt = null;
             e.printStackTrace();
         }
         return list;
@@ -166,6 +167,7 @@ public class HSQLDBWrapper implements IDBWrapper {
             }
             rs.close();
         } catch (SQLException e) {
+            stmnt = null;
             e.printStackTrace();
         }
         return list;
@@ -183,6 +185,7 @@ public class HSQLDBWrapper implements IDBWrapper {
             }
             rs.close();
         } catch (SQLException e) {
+            stmnt = null;
             e.printStackTrace();
         }
         return list;
@@ -200,6 +203,7 @@ public class HSQLDBWrapper implements IDBWrapper {
                 return null;
             }
         } catch (SQLException e) {
+            stmnt = null;
             e.printStackTrace();
             return null;
         }
@@ -214,6 +218,7 @@ public class HSQLDBWrapper implements IDBWrapper {
                 return null;
             }
         } catch (SQLException e) {
+            stmnt = null;
             e.printStackTrace();
             return null;
         }
@@ -229,6 +234,7 @@ public class HSQLDBWrapper implements IDBWrapper {
                 return null;
             }
         } catch (SQLException e) {
+            stmnt = null;
             e.printStackTrace();
             return null;
         }
@@ -244,6 +250,7 @@ public class HSQLDBWrapper implements IDBWrapper {
                 return null;
             }
         } catch (SQLException e) {
+            stmnt = null;
             e.printStackTrace();
             return null;
         }
@@ -253,6 +260,7 @@ public class HSQLDBWrapper implements IDBWrapper {
         try {
             getStatement().executeUpdate(ex);
         } catch (SQLException e) {
+            stmnt = null;
             e.printStackTrace();
             return false;
         }
@@ -302,6 +310,7 @@ public class HSQLDBWrapper implements IDBWrapper {
 
             rs.close();
         } catch (SQLException e) {
+            stmnt = null;
             e.printStackTrace();
             return out;
         }
@@ -321,5 +330,14 @@ public class HSQLDBWrapper implements IDBWrapper {
     @Override
     public boolean update(ILieferantE lieferantE) {
         return execute("UPDATE lieferant SET name='" + lieferantE.getName() + "' WHERE hid=" + lieferantE.getId() + ";");
+    }
+
+    @Override
+    public boolean isClosed() {
+        try {
+            return stmnt == null || DriverManager.getConnection("jdbc:hsqldb:hsql://" + ip.getHostAddress() + "/jKabeltrommelHSQLDB;shutdown=true;default_schema=true;", "sa", "").isClosed();
+        } catch (SQLException e) {
+            return true;
+        }
     }
 }

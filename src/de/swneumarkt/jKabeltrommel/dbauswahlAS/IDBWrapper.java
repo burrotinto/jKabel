@@ -46,4 +46,5 @@ public interface IDBWrapper {
 
     boolean update(IGeliefertE geliefert);
 
+    boolean isClosed();
 }
