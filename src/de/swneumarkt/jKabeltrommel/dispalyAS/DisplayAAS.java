@@ -28,6 +28,7 @@ public class DisplayAAS extends JFrame implements ItemListener, ActionListener {
     private JMenuItem exit = new JMenuItem("Ende");
     private JMenuItem auchf = new JCheckBoxMenuItem("Zeige alle Trommeln");
     private JPanel center = new JPanel();
+    private JPanel south = new JPanel();
 
     private TrommelAuswahlAAS tommelAAs = null;
 
@@ -39,7 +40,7 @@ public class DisplayAAS extends JFrame implements ItemListener, ActionListener {
         setTitle("jKabel");
 
         getContentPane().setLayout(new BorderLayout());
-        getContentPane().add(getSouth(), BorderLayout.SOUTH);
+        getContentPane().add(south = getSouth(), BorderLayout.SOUTH);
 
         // MenueBar
         JMenuBar menuBar = new JMenuBar();
@@ -105,10 +106,11 @@ public class DisplayAAS extends JFrame implements ItemListener, ActionListener {
             // Zuerst mal Bearbeiten öffnen
             if (db != null) {
                 center.removeAll();
+                south.removeAll();
                 remove(center);
-                center = getBearbeitenPanel();
-                getContentPane().add(center, BorderLayout.CENTER);
-                getContentPane().add(getSouth(), BorderLayout.SOUTH);
+                remove(south);
+                getContentPane().add(center = getBearbeitenPanel(), BorderLayout.CENTER);
+                getContentPane().add(south = getSouth(), BorderLayout.SOUTH);
                 revalidate();
                 new Thread(new DBConectionTester(this, db, dbAuswahlAAS)).start();
 
@@ -182,6 +184,11 @@ public class DisplayAAS extends JFrame implements ItemListener, ActionListener {
         return !dbAuswahlAAS.hasServer();
     }
 
+    /**
+     * Erstellt den "Footer"
+     *
+     * @return ein Panel...-
+     */
     private JPanel getSouth() {
         JPanel p = new JPanel();
         JPanel rPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -201,29 +208,32 @@ public class DisplayAAS extends JFrame implements ItemListener, ActionListener {
 
     }
 
+    /**
+     * Soll die Verbindung zur Datenbank prüfen. Wenn diese geschlossen wurde soll eine neue Verbindung hergestellt werden.
+     */
+    private class DBConectionTester implements Runnable {
+        private final DisplayAAS display;
+        private final IDBWrapper db;
+        private final DBAuswahlAAS dbAuswahlAAS;
 
-}
-
-class DBConectionTester implements Runnable {
-    private final DisplayAAS display;
-    private final IDBWrapper db;
-    private final DBAuswahlAAS dbAuswahlAAS;
-
-    DBConectionTester(DisplayAAS display, IDBWrapper db, DBAuswahlAAS dbAuswahlAAS) {
-        this.display = display;
-        this.db = db;
-        this.dbAuswahlAAS = dbAuswahlAAS;
-    }
-
-    @Override
-    public void run() {
-        while (!db.isClosed()) {
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+        DBConectionTester(DisplayAAS display, IDBWrapper db, DBAuswahlAAS dbAuswahlAAS) {
+            this.display = display;
+            this.db = db;
+            this.dbAuswahlAAS = dbAuswahlAAS;
         }
-        display.setDb(dbAuswahlAAS.getDBWrapper());
+
+        @Override
+        public void run() {
+            while (!db.isClosed()) {
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+            display.setDb(dbAuswahlAAS.getDBWrapper());
+        }
     }
+
 }
+
