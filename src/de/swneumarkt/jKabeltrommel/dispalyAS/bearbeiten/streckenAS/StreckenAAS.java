@@ -307,6 +307,8 @@ public class StreckenAAS extends JPanel implements ITrommelListner, ActionListen
 
                 typ.setTyp(typField.getText());
                 kontroller.update(typ);
+
+
             } else {
                 IStreckeE s = null;
                 for (Abgang a : abgaenge) {

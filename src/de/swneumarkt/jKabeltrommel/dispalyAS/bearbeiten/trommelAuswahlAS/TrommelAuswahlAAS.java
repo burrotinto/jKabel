@@ -98,6 +98,14 @@ public class TrommelAuswahlAAS extends JPanel implements IKabelTypListner, Actio
     }
 
     @Override
+    public void revalidate() {
+        removeAll();
+        buildPanel(typ);
+        repaint();
+        super.revalidate();
+    }
+
+    @Override
     public void actionPerformed(ActionEvent e) {
         if (buttonTrommelMap.containsKey(e.getSource())) {
             ausgewaehlt = (MinimalisticButton) e.getSource();
