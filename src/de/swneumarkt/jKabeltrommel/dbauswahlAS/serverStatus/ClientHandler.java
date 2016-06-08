@@ -1,5 +1,8 @@
 package de.swneumarkt.jKabeltrommel.dbauswahlAS.serverStatus;
 
+import de.swneumarkt.jKabeltrommel.dbauswahlAS.serverStatus.entities.IServerStatus;
+import de.swneumarkt.jKabeltrommel.dbauswahlAS.serverStatus.entities.ServerStatus;
+
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -31,8 +34,9 @@ class ClientHandler implements Runnable {
                 if (o instanceof String) {
                     String string = (String) o;
                     switch (string) {
-                        case "Clients":
-                            objectOutputStream.writeObject("" + statusServer.getAnzahlClients());
+                        case "Status":
+                            IServerStatus iss = new ServerStatus(statusServer.getAnzahlClients());
+                            objectOutputStream.writeObject(iss);
                     }
                 }
             }
@@ -47,3 +51,4 @@ class ClientHandler implements Runnable {
         return socket.isClosed();
     }
 }
+

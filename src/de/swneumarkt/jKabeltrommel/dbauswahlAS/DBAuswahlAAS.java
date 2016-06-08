@@ -4,11 +4,14 @@ import de.swneumarkt.jKabeltrommel.config.Reader;
 import de.swneumarkt.jKabeltrommel.dbauswahlAS.HSQLDB.HSQLDBServer;
 import de.swneumarkt.jKabeltrommel.dbauswahlAS.HSQLDB.HSQLDBWrapper;
 import de.swneumarkt.jKabeltrommel.dbauswahlAS.HSQLDB.OnlyOneUserExeption;
+import de.swneumarkt.jKabeltrommel.dbauswahlAS.serverStatus.IStatusClient;
+import de.swneumarkt.jKabeltrommel.dbauswahlAS.serverStatus.StatusClient;
 import de.swneumarkt.jKabeltrommel.dbauswahlAS.serverStatus.StatusServer;
 
 import javax.swing.*;
 import java.io.*;
 import java.net.InetAddress;
+import java.net.Socket;
 import java.sql.SQLException;
 
 /**
@@ -69,9 +72,13 @@ public class DBAuswahlAAS {
     }
 
     public IDBWrapper connectRemoteDB(InetAddress ip) throws SQLException {
+        serverIP = ip;
         return new HSQLDBWrapper(ip);
     }
 
+    public IStatusClient getStatusClient() throws IOException {
+        return new StatusClient(new Socket(serverIP, StatusServer.PORT));
+    }
     private IDBWrapper connectRemoteDB() {
         IDBWrapper db = null;
         try {

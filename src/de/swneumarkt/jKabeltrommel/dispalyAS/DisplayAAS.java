@@ -2,6 +2,7 @@ package de.swneumarkt.jKabeltrommel.dispalyAS;
 
 import de.swneumarkt.jKabeltrommel.dbauswahlAS.DBAuswahlAAS;
 import de.swneumarkt.jKabeltrommel.dbauswahlAS.IDBWrapper;
+import de.swneumarkt.jKabeltrommel.dbauswahlAS.serverStatus.IStatusClient;
 import de.swneumarkt.jKabeltrommel.dispalyAS.bearbeiten.kabelTypAuswahlAS.KabelTypAuswahlAAS;
 import de.swneumarkt.jKabeltrommel.dispalyAS.bearbeiten.streckenAS.StreckenAAS;
 import de.swneumarkt.jKabeltrommel.dispalyAS.bearbeiten.trommelAuswahlAS.TrommelAuswahlAAS;
@@ -13,6 +14,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.sql.SQLException;
@@ -34,6 +36,8 @@ public class DisplayAAS extends JFrame implements ItemListener, ActionListener {
 
     private DBAuswahlAAS dbAuswahlAAS = new DBAuswahlAAS();
     private IDBWrapper db = null;
+    private IStatusClient sClient = null;
+    private JLabel anZClients = new JLabel("Insgesamt 0 angemeldet");
 
     public DisplayAAS() {
 
@@ -105,6 +109,14 @@ public class DisplayAAS extends JFrame implements ItemListener, ActionListener {
             this.db = db;
             // Zuerst mal Bearbeiten öffnen
             if (db != null) {
+                //StatusClient
+                try {
+                    sClient = dbAuswahlAAS.getStatusClient();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    sClient = null;
+                }
+
                 center.removeAll();
                 south.removeAll();
                 remove(center);
@@ -194,15 +206,18 @@ public class DisplayAAS extends JFrame implements ItemListener, ActionListener {
         JPanel rPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         if (dbAuswahlAAS.getServerIP() != null) {
             if (isRemoteDB()) {
-                rPanel.add(new JLabel("Running as Client. Connected with Server: " + dbAuswahlAAS.getServerIP().getHostAddress() + " \"" + dbAuswahlAAS.getServerIP().getHostName() + "\""));
+                rPanel.add(new JLabel("Running as Client. Connected with Server: " + dbAuswahlAAS.getServerIP().getHostAddress() + " \"" + dbAuswahlAAS.getServerIP().getHostName() + "\" |"));
             } else {
-                rPanel.add(new JLabel("Running as Server"));
+                rPanel.add(new JLabel("Running as Server |"));
             }
         }
         p.add(rPanel);
 
+        if (sClient != null) {
+            p.add(anZClients);
+        }
         JPanel prodlyPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        prodlyPanel.add(new JLabel("proudly made by Florian Klinger"));
+        prodlyPanel.add(new JLabel("| proudly made by Florian Klinger"));
         p.add(prodlyPanel);
         return p;
 
@@ -227,6 +242,12 @@ public class DisplayAAS extends JFrame implements ItemListener, ActionListener {
             while (!db.isClosed()) {
                 try {
                     Thread.sleep(1000);
+                    try {
+                        anZClients.setText("| Insgesamt " + sClient.getAnzahlClients() + " angemeldet |");
+                        anZClients.revalidate();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }

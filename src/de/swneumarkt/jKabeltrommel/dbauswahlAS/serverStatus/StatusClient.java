@@ -1,12 +1,14 @@
 package de.swneumarkt.jKabeltrommel.dbauswahlAS.serverStatus;
 
+import de.swneumarkt.jKabeltrommel.dbauswahlAS.serverStatus.entities.IServerStatus;
+
 import java.io.*;
 import java.net.Socket;
 
 /**
  * Created by derduke on 07.06.16.
  */
-public class StatusClient {
+public class StatusClient implements IStatusClient {
 
     private final Socket socket;
     private final ObjectInputStream objectInputStream;
@@ -24,12 +26,17 @@ public class StatusClient {
     }
 
     public int getAnzahlClients() throws IOException {
-        objectOutputStream.writeObject("CLIENTS");
-        objectOutputStream.flush();
+        sendObject("Status");
         try {
-            return Integer.parseInt((String) objectInputStream.readObject());
+            return ((IServerStatus) objectInputStream.readObject()).anzahlClients();
         } catch (ClassNotFoundException e) {
             return -1;
         }
+    }
+
+    @Override
+    public void sendObject(Object o) throws IOException {
+        objectOutputStream.writeObject(o);
+        objectOutputStream.flush();
     }
 }
