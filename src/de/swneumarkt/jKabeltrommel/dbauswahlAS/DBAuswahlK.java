@@ -3,7 +3,9 @@ package de.swneumarkt.jKabeltrommel.dbauswahlAS;
 import java.io.*;
 import java.net.InetAddress;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Kontrollklasse
@@ -38,6 +40,12 @@ class DBAuswahlK {
         return inetAddressList;
     }
 
+    /**
+     * Erweitert im endeffekt die IPliste um die eigenen IP
+     *
+     * @param file
+     * @throws IOException
+     */
     void handleIPFile(File file) throws IOException {
         if (!file.exists()) {
             file.createNewFile();
@@ -45,15 +53,13 @@ class DBAuswahlK {
 
         // Datei einlesen
         BufferedReader br = new BufferedReader(new FileReader(file));
-        List<InetAddress> inetAddressList = getAllIPfromFile(file);
+        Set<InetAddress> inetAddressList = new HashSet<>(getAllIPfromFile(file));
 
         BufferedWriter fw = new BufferedWriter(new FileWriter(file));
         for (InetAddress ia : InetAddress.getAllByName(InetAddress.getLocalHost().getHostName())) {
-            if (!inetAddressList.contains(ia)) {
-                fw.write(ia.getHostAddress());
-                fw.write(System.lineSeparator());
-            }
+            inetAddressList.add(ia);
         }
+
         for (InetAddress ia : inetAddressList) {
             fw.write(ia.getHostAddress());
             fw.write(System.lineSeparator());
