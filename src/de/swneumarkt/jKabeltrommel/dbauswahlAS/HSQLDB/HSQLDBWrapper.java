@@ -95,6 +95,7 @@ public class HSQLDBWrapper implements IDBWrapper {
                 Connection con = DriverManager.getConnection("jdbc:hsqldb:hsql://" + ip.getHostAddress() + "/jKabeltrommelHSQLDB;shutdown=true;default_schema=true;", "sa", "");
                 stmnt = con.createStatement();
             } catch (Exception e) {
+                e.printStackTrace();
                 stmnt = null;
             }
         }
@@ -340,4 +341,5 @@ public class HSQLDBWrapper implements IDBWrapper {
             return true;
         }
     }
+
 }

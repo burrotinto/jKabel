@@ -15,9 +15,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.IOException;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.sql.SQLException;
 import java.util.HashSet;
 
 /**
@@ -66,27 +63,9 @@ public class DisplayAAS extends JFrame implements ItemListener, ActionListener {
         IDBWrapper db = dbAuswahlAAS.getDBWrapper();
 
         if (db == null) {
-
             center.add(new JLabel("Es konnte keine Verbindung zur DB hergestellt werden."));
             center.add(new JLabel("Wenn !!!sicher!!! ist das kein anderer auf dedr DB arbeitet die lock.lck Datei löschen"));
-            JTextField tf = new JTextField(20);
-            center.add(tf);
             DisplayAAS d = this;
-            tf.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    try {
-                        IDBWrapper db = dbAuswahlAAS.connectRemoteDB(InetAddress.getByName(tf.getText()));
-                        if (db != null) {
-                            d.setDb(db);
-                        }
-                    } catch (SQLException e1) {
-                        e1.printStackTrace();
-                    } catch (UnknownHostException e1) {
-                        e1.printStackTrace();
-                    }
-                }
-            });
             getContentPane().add(center, BorderLayout.CENTER);
         } else {
             setDb(db);

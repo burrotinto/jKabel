@@ -11,7 +11,7 @@ import java.util.Set;
  * Created by derduke on 03.06.16.
  */
 public class StatusServer implements Runnable {
-    public static int PORT = 9089;
+    public static int PORT = 12345;
     private ServerSocket ssO;
     private List<ClientHandler> sockets = new LinkedList<>();
     private Set<IConnectionListner> connectionListners = new HashSet<IConnectionListner>();

@@ -9,19 +9,26 @@ import de.swneumarkt.jKabeltrommel.dbauswahlAS.serverStatus.StatusClient;
 import de.swneumarkt.jKabeltrommel.dbauswahlAS.serverStatus.StatusServer;
 
 import javax.swing.*;
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.sql.SQLException;
+import java.util.List;
 
 /**
  * Startet den Akteursanwendungsfall der DB auswahl.
  * Created by derduke on 19.05.2016.
  */
 public class DBAuswahlAAS {
+    private final DBAuswahlK kontroll;
     private String pfad;
     private HSQLDBServer server = null;
     private InetAddress serverIP = null;
+
+    public DBAuswahlAAS() {
+        kontroll = new DBAuswahlK();
+    }
 
     private String choosePath(String pfad) {
         JFileChooser chooser = new JFileChooser();
@@ -42,7 +49,6 @@ public class DBAuswahlAAS {
         IDBWrapper db = null;
 
         pfad = de.swneumarkt.jKabeltrommel.config.Reader.getInstance().getPath();
-
         if (pfad == null) {
             pfad = choosePath(Reader.SWNPFAD);
             try {
@@ -54,79 +60,59 @@ public class DBAuswahlAAS {
         try {
             server = getServer();
             server.start();
-            new Thread(new StatusServer()).start();
             try {
                 new Thread(new StatusServer()).start();
             } catch (IOException ioE) {
+                ioE.printStackTrace();
                 //todo
             }
 
         } catch (Exception e) {
             // Server kann nur gestartet werden wenn er der einzige ist der auf die DB dateien zugreift
-            db = null;
         }
         db = connectRemoteDB();
-
-
         return db;
     }
 
-    public IDBWrapper connectRemoteDB(InetAddress ip) throws SQLException {
-        serverIP = ip;
-        return new HSQLDBWrapper(ip);
+    /**
+     * Versucht sich mit der entfernten Datenbank zu verbinden
+     *
+     * @param ip Adresse der DB
+     * @return Wrapper zur angeforderten DB, Null wenn keine Verbindung möglich war.
+     */
+    private IDBWrapper connectRemoteDB(InetAddress ip) {
+        try {
+            if (ip.isReachable(100))
+                try {
+                    HSQLDBWrapper idbWrapper = new HSQLDBWrapper(ip);
+                    serverIP = ip;
+                    return idbWrapper;
+                } catch (Exception e) {
+                    return null;
+                }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public IStatusClient getStatusClient() throws IOException {
         return new StatusClient(new Socket(serverIP, StatusServer.PORT));
     }
+
     private IDBWrapper connectRemoteDB() {
         IDBWrapper db = null;
-        try {
-            BufferedReader br = null;
-
-            while (br == null) {
-                try {
-                    br = new BufferedReader(new FileReader(new File(pfad + "serverIp.txt")));
-                    Thread.sleep(100);
-                } catch (Exception fnf) {
-
-                }
-            }
-            String next = null;
-            while ((next = br.readLine()) != null && db == null) {
-                try {
-                    InetAddress ip = InetAddress.getByName(next);
-                    System.out.println(ip.getHostAddress());
-                    db = new HSQLDBWrapper(ip);
-                    serverIP = ip;
-                } catch (Exception e) {
-                    System.out.println(next);
-                    db = null;
-                }
-            }
-            br.close();
-        } catch (Exception e) {
-            e.printStackTrace();
+        List<InetAddress> inetAddressList = kontroll.getAllIPfromFile(new File(pfad + "serverIp.txt"));
+        int i = 0;
+        while (i < inetAddressList.size() && db == null) {
+            db = connectRemoteDB(inetAddressList.get(i++));
         }
         return db;
     }
 
     private HSQLDBServer getServer() throws IOException, OnlyOneUserExeption, SQLException, ClassNotFoundException {
         HSQLDBServer server = new HSQLDBServer(pfad);
-
-        File ip = new File(pfad + "serverIp.txt");
-        if (!ip.exists()) {
-            ip.createNewFile();
-            ip.deleteOnExit();
-
-            BufferedWriter fw = new BufferedWriter(new FileWriter(ip));
-            for (InetAddress ia : InetAddress.getAllByName(InetAddress.getLocalHost().getHostName())) {
-                fw.write(ia.getHostAddress());
-                fw.write(System.lineSeparator());
-            }
-            fw.flush();
-            fw.close();
-        }
+        kontroll.handleIPFile(new File(pfad + "serverIp.txt"));
 
         return server;
     }
