@@ -53,12 +53,17 @@ public class TrommelCreateAAS extends JDialog implements ActionListener {
         p.setLayout(new GridLayout(5, 2));
         p.add(new JLabel("Trommelnummer:"));
         p.add(trommelNummer);
+
         p.add(new JLabel("Gesamtlänge:"));
         p.add(laenge);
+
         p.add(new JLabel("Anfang:"));
         p.add(start);
+        start.setText("0");
+
         p.add(new JLabel("Lagerplatz:"));
         p.add(lagerPlatz);
+        
         p.add(new JLabel("Lieferscheinnummer:"));
         p.add(lieferscheinNr);
 
@@ -77,9 +82,6 @@ public class TrommelCreateAAS extends JDialog implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-
-
-//                KabeltypE kabelTyp, String trommelnummer, long date, int gesamtlaenge
         int startW = 0;
         try {
             startW = Integer.parseInt(start.getText());
