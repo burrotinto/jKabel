@@ -12,7 +12,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 /**
- * Created by derduke on 23.05.16.
+ *  Startet den Anwendungsfall zum erstellen einer Trommel
+ *
+ * Created by Florian Klinger on 23.05.16.
  */
 public class TrommelCreateAAS extends JDialog implements ActionListener {
     private final IDBWrapper db;
@@ -63,7 +65,7 @@ public class TrommelCreateAAS extends JDialog implements ActionListener {
 
         p.add(new JLabel("Lagerplatz:"));
         p.add(lagerPlatz);
-        
+
         p.add(new JLabel("Lieferscheinnummer:"));
         p.add(lieferscheinNr);
 
@@ -82,15 +84,14 @@ public class TrommelCreateAAS extends JDialog implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        int startW = 0;
+        int startW;
         try {
             startW = Integer.parseInt(start.getText());
         } catch (NumberFormatException nE) {
+            startW = 0;
         }
         try {
-            if (!db.createTrommel(typ, trommelNummer.getText(), Integer.parseInt(laenge.getText()), lagerPlatz.getText(), startW, lieferantenAuswahlAAS.getAuswahl(), System.currentTimeMillis(), lieferscheinNr.getText())) {
-                throw new Exception();
-            } else {
+            if (db.createTrommel(typ, trommelNummer.getText(), Integer.parseInt(laenge.getText()), lagerPlatz.getText(), startW, lieferantenAuswahlAAS.getAuswahl(), System.currentTimeMillis(), lieferscheinNr.getText())) {
                 auswahlAAS.repaint();
                 auswahlAAS.revalidate();
                 dispose();
@@ -100,10 +101,6 @@ public class TrommelCreateAAS extends JDialog implements ActionListener {
             laenge.setText("ERROR");
             laenge.setSelectionStart(0);
             laenge.setSelectionEnd(laenge.getText().length() - 1);
-        } catch (Exception x) {
-
         }
-
-
     }
 }
