@@ -28,6 +28,13 @@ public interface IDBWrapper {
 
     boolean update(IKabeltypE kabeltyp);
 
+    /**
+     * Erstellt einen Kabeltypen
+     *
+     * @param name
+     * @param materialnummer
+     * @return
+     */
     boolean createKabeltyp(String name, int materialnummer);
 
     boolean update(IStreckeE strecke);

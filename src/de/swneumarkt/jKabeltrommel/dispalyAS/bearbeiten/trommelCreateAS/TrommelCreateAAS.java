@@ -67,7 +67,7 @@ public class TrommelCreateAAS extends JDialog implements ActionListener {
         lieferantenAuswahlAAS = new LieferantenAuswahlAAS(db);
         auswahl.add(lieferantenAuswahlAAS);
 
-        add(auswahl,BorderLayout.CENTER);
+        add(auswahl, BorderLayout.CENTER);
 
         JPanel south = new JPanel(new FlowLayout());
         south.add(cancel);
@@ -77,18 +77,31 @@ public class TrommelCreateAAS extends JDialog implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == create) {
-            try {
-//                KabeltypE kabelTyp, String trommelnummer, long date, int gesamtlaenge
-                db.createTrommel(typ, trommelNummer.getText(), Integer.parseInt(laenge.getText()), lagerPlatz.getText(), Integer.parseInt(start.getText()), lieferantenAuswahlAAS.getAuswahl(), System.currentTimeMillis(), lieferscheinNr.getText());
-            } catch (Exception x) {
-                //TODO
-            }
-        }
-        auswahlAAS.repaint();
-        auswahlAAS.revalidate();
 
-        dispose();
+
+//                KabeltypE kabelTyp, String trommelnummer, long date, int gesamtlaenge
+        int startW = 0;
+        try {
+            startW = Integer.parseInt(start.getText());
+        } catch (NumberFormatException nE) {
+        }
+        try {
+            if (!db.createTrommel(typ, trommelNummer.getText(), Integer.parseInt(laenge.getText()), lagerPlatz.getText(), startW, lieferantenAuswahlAAS.getAuswahl(), System.currentTimeMillis(), lieferscheinNr.getText())) {
+                throw new Exception();
+            } else {
+                auswahlAAS.repaint();
+                auswahlAAS.revalidate();
+                dispose();
+            }
+        } catch (NumberFormatException nfe) {
+            laenge.setSelectionColor(Color.red);
+            laenge.setText("ERROR");
+            laenge.setSelectionStart(0);
+            laenge.setSelectionEnd(laenge.getText().length() - 1);
+        } catch (Exception x) {
+
+        }
+
 
     }
 }
