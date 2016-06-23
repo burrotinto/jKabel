@@ -3,10 +3,7 @@ package de.swneumarkt.jKabeltrommel.dbauswahlAS.HSQLDB;
 import org.hsqldb.Server;
 import org.hsqldb.persist.HsqlProperties;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.InetAddress;
 import java.sql.SQLException;
 
@@ -35,7 +32,11 @@ public class HSQLDBServer {
             throw new OnlyOneUserExeption();
         } else {
             lck.createNewFile();
-            FileWriter fw = new FileWriter(lck);
+            BufferedWriter fw = new BufferedWriter(new FileWriter(lck));
+            fw.write("Lock created by: ");
+            fw.write(System.getProperty("user.name"));
+            fw.newLine();
+            fw.write("From adress: ");
             fw.write(InetAddress.getByName(InetAddress.getLocalHost().getHostName()).toString());
             fw.flush();
             fw.close();
