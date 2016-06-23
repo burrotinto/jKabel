@@ -19,8 +19,8 @@ public class HSQLDBWrapper implements IDBWrapper {
         /**
          * Wrapper verbindet sich mitt einer "Mem" Datenbank. Somit ist dies nicht persistent
          */
-        public HSQLDBWrapper() {
-                connectionString = "jdbc:hsqldb:mem:jKabeltrommelHSQLDB;shutdown=true;default_schema=true;";
+        public HSQLDBWrapper(String memDBname) {
+                connectionString = "jdbc:hsqldb:mem:" + memDBname + ";shutdown=true;default_schema=true;";
                 getStatement();
                 try {
                         initDB();

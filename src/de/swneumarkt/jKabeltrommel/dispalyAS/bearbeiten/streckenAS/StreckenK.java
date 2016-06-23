@@ -22,7 +22,7 @@ class StreckenK {
         Collections.sort(strecken, new Comparator<IStreckeE>() {
             @Override
             public int compare(IStreckeE o1, IStreckeE o2) {
-                return (int) (-o2.getVerlegedatum() + o1.getVerlegedatum());
+                return new Long(o1.getVerlegedatum()).compareTo(o2.getVerlegedatum());
             }
         });
         return strecken;
@@ -48,10 +48,13 @@ class StreckenK {
         db.update(typ);
     }
 
-    String getTimeString(long t){
+    String getTimeString(long t) {
         StringBuilder sb = new StringBuilder();
         Date d = new Date(t);
-        sb.append(d.getDate()).append(".").append((d.getMonth()+1)).append(".").append(d.getYear()+1900);
+        if (d.getDate() < 10) sb.append("0");
+        sb.append(d.getDate()).append(".");
+        if (d.getMonth() + 1 < 10) sb.append("0");
+        sb.append((d.getMonth() + 1)).append(".").append(d.getYear() + 1900);
         return sb.toString();
     }
 
@@ -61,12 +64,12 @@ class StreckenK {
 
     public boolean richtigeRichtung(ITrommelE trommel, int start, int ende) {
         List<IStreckeE> list = getStreckenForTrommel(trommel);
-        if(list.size() == 0){
+        if (list.size() == 0) {
             return true;
         } else {
-            int x = list.get(0).getStart()-list.get(0).getEnde();
+            int x = list.get(0).getStart() - list.get(0).getEnde();
             int y = start - ende;
-            return (x <= 0 && y <= 0) || (x>= 0 && y >= 0);
+            return (x <= 0 && y <= 0) || (x >= 0 && y >= 0);
         }
 
     }

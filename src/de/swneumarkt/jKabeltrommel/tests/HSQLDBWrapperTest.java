@@ -5,6 +5,8 @@ import de.swneumarkt.jKabeltrommel.dbauswahlAS.enitys.IKabeltypE;
 import de.swneumarkt.jKabeltrommel.dbauswahlAS.enitys.ILieferantE;
 import org.junit.Test;
 
+import java.util.Random;
+
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -13,9 +15,8 @@ import static org.junit.Assert.assertTrue;
 public class HSQLDBWrapperTest {
 
     private HSQLDBWrapper getWrapper() {
-        HSQLDBWrapper client = new HSQLDBWrapper();
+        HSQLDBWrapper client = new HSQLDBWrapper("" + new Random().nextLong());
         return client;
-
     }
 
     @Test
