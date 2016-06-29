@@ -70,4 +70,5 @@ public class Reader {
         prop.store(new FileWriter(propFile), "Konfigurationsdatei des JKabel");
     }
 
+
 }

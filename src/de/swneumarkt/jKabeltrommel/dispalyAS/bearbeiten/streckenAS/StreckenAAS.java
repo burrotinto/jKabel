@@ -1,6 +1,5 @@
 package de.swneumarkt.jKabeltrommel.dispalyAS.bearbeiten.streckenAS;
 
-import com.onbarcode.barcode.Code128;
 import de.swneumarkt.jKabeltrommel.dbauswahlAS.IDBWrapper;
 import de.swneumarkt.jKabeltrommel.dbauswahlAS.enitys.*;
 import de.swneumarkt.jKabeltrommel.dispalyAS.bearbeiten.kabelTypAuswahlAS.IKabelTypListner;
@@ -12,6 +11,7 @@ import de.swneumarkt.jKabeltrommel.dispalyAS.lookAndFeel.MinimalisticFormattetTe
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.image.BufferedImage;
 import java.util.*;
 import java.util.List;
 import java.util.function.Consumer;
@@ -31,7 +31,7 @@ public class StreckenAAS extends JPanel implements ITrommelListner, ActionListen
     private IKabeltypE typ = null;
     private JComboBox<ILieferantE> cBox;
     private List<JDialog> scanDialoge = new ArrayList<>();
-
+    private BufferedImage logo = null;
 
     public StreckenAAS(IDBWrapper db, Set<JPanel> updateOnChange) {
         this.updateOnChange = updateOnChange == null ? new HashSet<>() : updateOnChange;
@@ -236,10 +236,23 @@ public class StreckenAAS extends JPanel implements ITrommelListner, ActionListen
         JPanel butt = new JPanel();
         butt.add(update);
         p.add(butt);
-
         add(p);
-//        printBarcode((Graphics2D) p.getGraphics());
     }
+
+    public void setLogo(BufferedImage img) {
+        logo = img;
+    }
+
+    @Override
+    protected void paintComponent(Graphics graphics) {
+        super.paintComponent(graphics);
+        if (logo != null) {
+            Graphics2D g2d = (Graphics2D) graphics;
+            g2d.drawImage(logo, null, getWidth() - logo.getWidth() - 20, getHeight() - logo.getHeight() - 20);
+        }
+    }
+
+
 
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -373,20 +386,6 @@ public class StreckenAAS extends JPanel implements ITrommelListner, ActionListen
             }
         });
         scanDialoge = new ArrayList<>();
-    }
-
-    private void printBarcode(Graphics2D g) {
-        Code128 baCode = new Code128();
-        String s = matNrField.getText();
-        if (!(lagerplatzField.getText() == null || lagerplatzField.getText().equals(""))) {
-            s = lagerplatzField.getText() + s;
-        }
-        baCode.setData(s);
-        try {
-            baCode.drawBarcode(g, new Rectangle(matNrField.getX() + matNrField.getWidth(), matNrField.getY(), 20, 20));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     private class Abgang implements FocusListener, IStreckeE, KeyListener {

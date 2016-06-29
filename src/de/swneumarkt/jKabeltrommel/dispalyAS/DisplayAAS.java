@@ -1,5 +1,6 @@
 package de.swneumarkt.jKabeltrommel.dispalyAS;
 
+import de.swneumarkt.jKabeltrommel.config.Reader;
 import de.swneumarkt.jKabeltrommel.dbauswahlAS.DBAuswahlAAS;
 import de.swneumarkt.jKabeltrommel.dbauswahlAS.IDBWrapper;
 import de.swneumarkt.jKabeltrommel.dbauswahlAS.serverStatus.IStatusClient;
@@ -8,12 +9,14 @@ import de.swneumarkt.jKabeltrommel.dispalyAS.bearbeiten.streckenAS.StreckenAAS;
 import de.swneumarkt.jKabeltrommel.dispalyAS.bearbeiten.trommelAuswahlAS.TrommelAuswahlAAS;
 import de.swneumarkt.jKabeltrommel.dispalyAS.search.SearchAAS;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
 
@@ -128,13 +131,17 @@ public class DisplayAAS extends JFrame implements ItemListener, ActionListener {
         JPanel all = new JPanel(new GridLayout(1, 2));
 
         JScrollPane kSP = new JScrollPane(k);
-        kSP.setBackground(Color.WHITE);
         l.add(kSP);
         l.add(new JScrollPane(tommelAAs));
         all.add(l);
         JScrollPane sc = new JScrollPane(s);
         sc.setPreferredSize(new Dimension(680, 680));
         all.add(sc);
+        try {
+            s.setLogo(ImageIO.read(new File(Reader.getInstance().getPath() + "logo.jpg")));
+        } catch (IOException e) {
+            s.setLogo(null);
+        }
         return all;
     }
 
@@ -234,6 +241,5 @@ public class DisplayAAS extends JFrame implements ItemListener, ActionListener {
             display.setDb(dbAuswahlAAS.getDBWrapper());
         }
     }
-
 }
 
