@@ -20,13 +20,14 @@ public class SearchAAS extends JPanel implements ActionListener {
     private JButton searchButt = new JButton("suchen");
     private JTextField baFied;
     private JComboBox<IKabeltypE> cBox;
-    private JPanel ergebnis = new JPanel();
+    private JScrollPane ergebnis = new JScrollPane();
 
     public SearchAAS(IDBWrapper db) {
         this.kontroller = new SearchK(db);
         searchButt.addActionListener(this);
         this.db = db;
-        add(getEingabePanel());
+        setLayout(new BorderLayout());
+        add(getEingabePanel(), BorderLayout.WEST);
 
     }
 
@@ -40,8 +41,9 @@ public class SearchAAS extends JPanel implements ActionListener {
         s.add(new JLabel("Kabeltyp"));
         cBox = new JComboBox<>(kontroller.getAllKAbelTypen());
         s.add(cBox);
-
-        return s;
+        JPanel p = new JPanel();
+        p.add(s);
+        return p;
     }
 
     private JPanel getErgebnisPanel(List<ITrommelE> trommeln) {
@@ -56,9 +58,8 @@ public class SearchAAS extends JPanel implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        remove(ergebnis);
-        ergebnis = getErgebnisPanel(kontroller.getAllTrommelWithBA(Integer.parseInt(baFied.getText()), (IKabeltypE) cBox.getSelectedItem()));
-        add(ergebnis);
+        ergebnis = new JScrollPane(getErgebnisPanel(kontroller.getAllTrommelWithBA(Integer.parseInt(baFied.getText()), (IKabeltypE) cBox.getSelectedItem())));
+        add(ergebnis, BorderLayout.CENTER);
         repaint();
         revalidate();
     }
