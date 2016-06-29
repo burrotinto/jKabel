@@ -24,6 +24,7 @@ import java.util.HashSet;
  * Created by derduke on 22.05.16.
  */
 public class DisplayAAS extends JFrame implements ItemListener, ActionListener {
+    public static Color BACKGROUND = Color.WHITE;
     private JPanel north = new JPanel();
     private JMenuItem edit = new JMenuItem("Bearbeiten");
     private JMenuItem search = new JMenuItem("Suchen");
@@ -40,7 +41,6 @@ public class DisplayAAS extends JFrame implements ItemListener, ActionListener {
     private JLabel anZClients = new JLabel("Insgesamt 0 angemeldet");
 
     public DisplayAAS() {
-
         setTitle("jKabel");
 
         getContentPane().setLayout(new BorderLayout());
@@ -135,13 +135,26 @@ public class DisplayAAS extends JFrame implements ItemListener, ActionListener {
         l.add(new JScrollPane(tommelAAs));
         all.add(l);
         JScrollPane sc = new JScrollPane(s);
-        sc.setPreferredSize(new Dimension(680, 680));
+        sc.setPreferredSize(new Dimension(740, 740));
         all.add(sc);
+
+        setBackground(BACKGROUND);
+
+        kSP.setOpaque(false);
+        sc.setOpaque(false);
+
+        setBackground(BACKGROUND);
+        l.setBackground(BACKGROUND);
+        k.setBackground(BACKGROUND);
+        tommelAAs.setBackground(BACKGROUND);
+        s.setBackground(BACKGROUND);
+
         try {
             s.setLogo(ImageIO.read(new File(Reader.getInstance().getPath() + "logo.jpg")));
         } catch (IOException e) {
             s.setLogo(null);
         }
+        all.setBackground(BACKGROUND);
         return all;
     }
 

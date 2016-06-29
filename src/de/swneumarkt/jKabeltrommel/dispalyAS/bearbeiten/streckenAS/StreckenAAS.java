@@ -7,6 +7,7 @@ import de.swneumarkt.jKabeltrommel.dispalyAS.bearbeiten.scanAS.ScanAAS;
 import de.swneumarkt.jKabeltrommel.dispalyAS.bearbeiten.trommelAuswahlAS.ITrommelListner;
 import de.swneumarkt.jKabeltrommel.dispalyAS.lookAndFeel.MinimalisticButton;
 import de.swneumarkt.jKabeltrommel.dispalyAS.lookAndFeel.MinimalisticFormattetTextField;
+import de.swneumarkt.jKabeltrommel.dispalyAS.lookAndFeel.MinimalisticPanel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -57,18 +58,18 @@ public class StreckenAAS extends JPanel implements ITrommelListner, ActionListen
     private void buildPanel(ITrommelE trommel) {
         this.trommel = trommel;
         List<IStreckeE> strecken = kontroller.getStreckenForTrommel(trommel);
-        JPanel p = new JPanel();
+        JPanel p = new MinimalisticPanel();
         p.setLayout(new GridLayout(strecken.size() + (kontroller.istAusserHaus(trommel) ? 12 : 13), 1));
 
         // Überschrift
-        JPanel uebers = new JPanel(new FlowLayout());
+        JPanel uebers = new MinimalisticPanel(new FlowLayout());
         uebers.add(new JLabel("Kabelnachweiß für Trommel:"));
         trommelnummerField = new JTextField(trommel.getTrommelnummer(), 16);
         uebers.add(trommelnummerField);
         p.add(uebers);
 
         //Datum
-        JPanel date = new JPanel(new FlowLayout());
+        JPanel date = new MinimalisticPanel(new FlowLayout());
         date.add(new JLabel("Datum:"));
         datumField = new JTextField(kontroller.getTimeString(kontroller.getLieferDate(trommel)));
         datumField.setEditable(false);
@@ -76,7 +77,7 @@ public class StreckenAAS extends JPanel implements ITrommelListner, ActionListen
         p.add(date);
 
         //Lieferant
-        JPanel liefer = new JPanel(new FlowLayout());
+        JPanel liefer = new MinimalisticPanel(new FlowLayout());
         liefer.add(new JLabel("Lieferant:"));
         Vector<ILieferantE> v = kontroller.getLieferanten();
         int pos = 0;
@@ -91,7 +92,7 @@ public class StreckenAAS extends JPanel implements ITrommelListner, ActionListen
         p.add(liefer);
 
         //Lieferscheinnummer
-        JPanel lNR = new JPanel(new FlowLayout());
+        JPanel lNR = new MinimalisticPanel(new FlowLayout());
         lNR.add(new JLabel("Lieferscheinnummer:"));
         JTextField lnTF = new JTextField(kontroller.getLieferscheinNR(trommel));
         lnTF.setEditable(false);
@@ -100,14 +101,14 @@ public class StreckenAAS extends JPanel implements ITrommelListner, ActionListen
 
 
         //Länge
-        JPanel laenge = new JPanel(new FlowLayout());
+        JPanel laenge = new MinimalisticPanel(new FlowLayout());
         laenge.add(new JLabel("Gesamtlänge:"));
         laengeField = new MinimalisticFormattetTextField(trommel.getGesamtlaenge() + "", 6);
         laenge.add(laengeField);
         p.add(laenge);
 
         //Trommelanfang
-        JPanel trommelP = new JPanel(new FlowLayout());
+        JPanel trommelP = new MinimalisticPanel(new FlowLayout());
         trommelP.add(new JLabel("Trommelanfang:"));
         trommelstartField = new MinimalisticFormattetTextField(trommel.getStart() + "", 6);
         trommelP.add(trommelstartField);
@@ -115,21 +116,21 @@ public class StreckenAAS extends JPanel implements ITrommelListner, ActionListen
 
 
         //Typ
-        JPanel typ = new JPanel(new FlowLayout());
+        JPanel typ = new MinimalisticPanel(new FlowLayout());
         typ.add(new JLabel("Kabelart:"));
         typField = new JTextField(kontroller.getTyp(trommel).getTyp(), 16);
         typ.add(typField);
         p.add(typ);
 
         //Lagerplatz
-        JPanel lP = new JPanel(new FlowLayout());
+        JPanel lP = new MinimalisticPanel(new FlowLayout());
         lP.add(new JLabel("Lagerplatz:"));
         lagerplatzField = new JTextField(trommel.getLagerPlatz(), 12);
         lP.add(lagerplatzField);
         p.add(lP);
 
         //MatNr
-        JPanel matNr = new JPanel(new FlowLayout());
+        JPanel matNr = new MinimalisticPanel(new FlowLayout());
         matNr.add(new JLabel("MaterialNummer:"));
         matNrField = new MinimalisticFormattetTextField(kontroller.getTyp(trommel).getMaterialNummer() + "");
         matNr.add(matNrField);
@@ -137,7 +138,7 @@ public class StreckenAAS extends JPanel implements ITrommelListner, ActionListen
         p.add(matNr);
 
         //Freimeldung
-        JPanel frei = new JPanel(new FlowLayout());
+        JPanel frei = new MinimalisticPanel(new FlowLayout());
         frei.add(new JLabel("Freimeldung:"));
         freiCheckBox = new JCheckBox("", trommel.isFreigemeldet());
         frei.add(freiCheckBox);
@@ -233,7 +234,7 @@ public class StreckenAAS extends JPanel implements ITrommelListner, ActionListen
             panel.add(create);
             p.add(panel);
         }
-        JPanel butt = new JPanel();
+        JPanel butt = new MinimalisticPanel();
         butt.add(update);
         p.add(butt);
         add(p);
@@ -248,7 +249,7 @@ public class StreckenAAS extends JPanel implements ITrommelListner, ActionListen
         super.paintComponent(graphics);
         if (logo != null) {
             Graphics2D g2d = (Graphics2D) graphics;
-            g2d.drawImage(logo, null, getWidth() - logo.getWidth() - 20, getHeight() - logo.getHeight() - 20);
+            g2d.drawImage(logo, null, getWidth() - logo.getWidth() - 20, 20);
         }
     }
 

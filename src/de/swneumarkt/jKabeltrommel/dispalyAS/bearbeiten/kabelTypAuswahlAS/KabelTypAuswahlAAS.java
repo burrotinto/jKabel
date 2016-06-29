@@ -4,6 +4,7 @@ import de.swneumarkt.jKabeltrommel.dbauswahlAS.IDBWrapper;
 import de.swneumarkt.jKabeltrommel.dbauswahlAS.enitys.IKabeltypE;
 import de.swneumarkt.jKabeltrommel.dispalyAS.bearbeiten.kabeltypCreateAS.KabelTypCreateAAS;
 import de.swneumarkt.jKabeltrommel.dispalyAS.lookAndFeel.MinimalisticButton;
+import de.swneumarkt.jKabeltrommel.dispalyAS.lookAndFeel.MinimalisticPanel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -26,18 +27,20 @@ public class KabelTypAuswahlAAS extends JPanel implements ActionListener, IKabel
 
 
     public KabelTypAuswahlAAS(IDBWrapper db) {
+        super();
         kontroll = new KabelTypAuswahlK(db);
         addKabelTypListner(this);
         buildPanel();
         this.db = db;
         addNewButt.addActionListener(this);
+
     }
 
     private void buildPanel() {
         if (kontroll != null) {
             List<IKabeltypE> list = kontroll.getTypen();
             buttonsMatNr = new HashMap<>();
-            JPanel panel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+            JPanel panel = new MinimalisticPanel(new FlowLayout(FlowLayout.RIGHT));
 
             panel.setLayout(new GridLayout(list.size() + 1, 1));
             KabelTypAuswahlAAS kta = this;
@@ -53,7 +56,7 @@ public class KabelTypAuswahlAAS extends JPanel implements ActionListener, IKabel
             list.forEach(new Consumer<IKabeltypE>() {
                 @Override
                 public void accept(IKabeltypE iKabeltypE) {
-                    JPanel p = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+                    JPanel p = new MinimalisticPanel(new FlowLayout(FlowLayout.RIGHT));
 
                     MinimalisticButton b = new MinimalisticButton(iKabeltypE.getMaterialNummer() + "");
                     buttonsMatNr.put(b, iKabeltypE.getMaterialNummer());

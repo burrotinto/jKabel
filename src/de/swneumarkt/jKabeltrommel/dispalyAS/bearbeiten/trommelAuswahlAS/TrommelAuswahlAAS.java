@@ -6,6 +6,7 @@ import de.swneumarkt.jKabeltrommel.dbauswahlAS.enitys.ITrommelE;
 import de.swneumarkt.jKabeltrommel.dispalyAS.bearbeiten.kabelTypAuswahlAS.IKabelTypListner;
 import de.swneumarkt.jKabeltrommel.dispalyAS.bearbeiten.trommelCreateAS.TrommelCreateAAS;
 import de.swneumarkt.jKabeltrommel.dispalyAS.lookAndFeel.MinimalisticButton;
+import de.swneumarkt.jKabeltrommel.dispalyAS.lookAndFeel.MinimalisticPanel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -46,15 +47,15 @@ public class TrommelAuswahlAAS extends JPanel implements IKabelTypListner, Actio
         if (typ != null) {
             this.typ = typ;
             buttonTrommelMap = new HashMap<>();
-            JPanel panel = new JPanel(new GridLayout(kontroll.getAllTrommelForMatNr(typ).size() + 1, 1));
-            JPanel p = new JPanel();
+            JPanel panel = new MinimalisticPanel(new GridLayout(kontroll.getAllTrommelForMatNr(typ).size() + 1, 1));
+            JPanel p = new MinimalisticPanel();
 
             p.add(addNewButt);
             panel.add(p);
 
             for (ITrommelE t : kontroll.getAllTrommelForMatNr(typ)) {
                 if (zeiheAlle || !(t.isFreigemeldet() && kontroll.getRestMeter(t) == 0)) {
-                    p = new JPanel(new FlowLayout(FlowLayout.LEFT));
+                    p = new MinimalisticPanel(new FlowLayout(FlowLayout.LEFT));
                     MinimalisticButton b = new MinimalisticButton(t.getTrommelnummer() + "");
                     b.setSelected(b.equals(ausgewaehlt));
                     buttonTrommelMap.put(b, t);
