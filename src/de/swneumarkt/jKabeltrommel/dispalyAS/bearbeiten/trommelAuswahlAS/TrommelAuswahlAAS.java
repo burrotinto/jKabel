@@ -67,15 +67,18 @@ public class TrommelAuswahlAAS extends JPanel implements IKabelTypListner, Actio
                         label = new JLabel("Noch: " + kontroll.getRestMeter(t) + " m" + (t.isFreigemeldet() ? " - Bund" : ""));
                         if (kontroll.getRestMeter(t) == 0) {
                             p.setBackground(Color.GRAY);
+                            p.setOpaque(true);
                         }
 
                     } else {
                         label = new JLabel("Bei: " + kontroll.getBaustelle(t));
                         p.setBackground(Color.ORANGE);
+                        p.setOpaque(true);
                     }
                     p.add(label);
                     if (t.isFreigemeldet()) {
                         p.setBackground(Color.RED);
+                        p.setOpaque(true);
                     }
 
 
