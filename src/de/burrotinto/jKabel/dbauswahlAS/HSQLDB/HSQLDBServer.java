@@ -1,0 +1,79 @@
+/*
+ * jKabel - Ein hochperfomantes, extremstanpassungsfähiges Mehrbenutzersystem zur erfassung von Kabelstrecken
+ *
+ * Copyright (C) 2016 Florian Klinger
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+package de.burrotinto.jKabel.dbauswahlAS.HSQLDB;
+
+import org.hsqldb.Server;
+import org.hsqldb.persist.HsqlProperties;
+
+import java.io.*;
+import java.net.InetAddress;
+import java.sql.SQLException;
+
+/**
+ * Ein einfacher HSQLDBServer
+ * Created by derduke on 03.06.16.
+ */
+public class HSQLDBServer {
+
+    public final int SERVERPORT = 9001;
+
+    private Server server;
+
+    /**
+     * Constuctor zum Starten und gleichzeitigen Verbinden mit HSQLDB.
+     *
+     * @param path Pfad wo die DB liegt/liegen soll
+     * @throws ClassNotFoundException
+     * @throws SQLException
+     * @throws OnlyOneUserExeption
+     * @throws IOException
+     */
+    public HSQLDBServer(String path) throws ClassNotFoundException, SQLException, OnlyOneUserExeption, IOException {
+        File lck = new File(path + "lock.lck");
+        if (lck.exists()) {
+            throw new OnlyOneUserExeption();
+        } else {
+            lck.createNewFile();
+            BufferedWriter fw = new BufferedWriter(new FileWriter(lck));
+            fw.write("Lock created by: ");
+            fw.write(System.getProperty("user.name"));
+            fw.newLine();
+            fw.write("From adress: ");
+            fw.write(InetAddress.getByName(InetAddress.getLocalHost().getHostName()).toString());
+            fw.flush();
+            fw.close();
+            lck.deleteOnExit();
+
+            HsqlProperties p = new HsqlProperties();
+            p.setProperty("server.database.0", "file:" + path + "jKabeltrommelHSQLDB");
+            p.setProperty("server.dbname.0", "jKabeltrommelHSQLDB");
+            p.setProperty("server.port", SERVERPORT + "");
+            server = new Server();
+            server.setProperties(p);
+            server.setLogWriter(new PrintWriter(System.out));  // can use custom writer
+            server.setErrWriter(new PrintWriter(System.err));  // can use custom writer
+
+        }
+    }
+
+    public void start() {
+        server.start();
+    }
+}
