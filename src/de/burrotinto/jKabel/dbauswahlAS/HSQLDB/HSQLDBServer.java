@@ -24,15 +24,17 @@ import org.hsqldb.persist.HsqlProperties;
 
 import java.io.*;
 import java.net.InetAddress;
+import java.net.ServerSocket;
 import java.sql.SQLException;
 
 /**
  * Ein einfacher HSQLDBServer
- * Created by derduke on 03.06.16.
+ * Created by Florian Klinger on 03.06.16.
  */
 public class HSQLDBServer {
 
-    public final int SERVERPORT = 9001;
+    public static final int SERVERPORT = 9001;
+    private final InetAddress ip;
 
     private Server server;
 
@@ -46,34 +48,78 @@ public class HSQLDBServer {
      * @throws IOException
      */
     public HSQLDBServer(String path) throws ClassNotFoundException, SQLException, OnlyOneUserExeption, IOException {
+        if (portInUse(SERVERPORT)) {
+            throw new IOException();
+        }
+        // Lockfile
         File lck = new File(path + "lock.lck");
-        if (lck.exists()) {
+        if (!lck.createNewFile()) {
             throw new OnlyOneUserExeption();
         } else {
-            lck.createNewFile();
+            ip = InetAddress.getByName(InetAddress.getLocalHost().getHostName());
+
+            // Lockfile beschreiben
             BufferedWriter fw = new BufferedWriter(new FileWriter(lck));
             fw.write("Lock created by: ");
             fw.write(System.getProperty("user.name"));
             fw.newLine();
             fw.write("From adress: ");
-            fw.write(InetAddress.getByName(InetAddress.getLocalHost().getHostName()).toString());
+            fw.write(getIP().toString());
             fw.flush();
             fw.close();
             lck.deleteOnExit();
 
+            //HSQLDB initialisieren
             HsqlProperties p = new HsqlProperties();
             p.setProperty("server.database.0", "file:" + path + "jKabeltrommelHSQLDB");
             p.setProperty("server.dbname.0", "jKabeltrommelHSQLDB");
             p.setProperty("server.port", SERVERPORT + "");
             server = new Server();
             server.setProperties(p);
-            server.setLogWriter(new PrintWriter(System.out));  // can use custom writer
-            server.setErrWriter(new PrintWriter(System.err));  // can use custom writer
+            server.setLogWriter(new PrintWriter(System.out));
+            server.setErrWriter(new PrintWriter(System.err));
 
         }
     }
 
+    /**
+     * Startet die HSQLDB Server Datenbank
+     */
     public void start() {
         server.start();
+    }
+
+    /**
+     * Rückgabe der Inetadresse deses Servers
+     *
+     * @return ip
+     */
+    public InetAddress getIP() {
+        return ip;
+    }
+
+    /**
+     * Testet ob der Port schon belegt ist
+     *
+     * @param port zu testend
+     * @return false wenn belegt, true sonst
+     */
+    private boolean portInUse(int port) {
+        ServerSocket ss = null;
+        try {
+            ss = new ServerSocket(port);
+            ss.setReuseAddress(true);
+            return false;
+        } catch (IOException e) {
+        } finally {
+
+            if (ss != null) {
+                try {
+                    ss.close();
+                } catch (IOException e) {
+                }
+            }
+        }
+        return true;
     }
 }

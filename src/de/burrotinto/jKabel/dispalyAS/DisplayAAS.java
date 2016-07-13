@@ -26,6 +26,8 @@ import de.burrotinto.jKabel.dbauswahlAS.serverStatus.IStatusClient;
 import de.burrotinto.jKabel.dispalyAS.bearbeiten.kabelTypAuswahlAS.KabelTypAuswahlAAS;
 import de.burrotinto.jKabel.dispalyAS.bearbeiten.streckenAS.StreckenAAS;
 import de.burrotinto.jKabel.dispalyAS.bearbeiten.trommelAuswahlAS.TrommelAuswahlAAS;
+import de.burrotinto.jKabel.dispalyAS.help.GPLAAS;
+import de.burrotinto.jKabel.dispalyAS.help.HelpAAS;
 import de.burrotinto.jKabel.dispalyAS.search.SearchAAS;
 
 import javax.imageio.ImageIO;
@@ -45,10 +47,15 @@ import java.util.HashSet;
 public class DisplayAAS extends JFrame implements ItemListener, ActionListener {
     public static Color BACKGROUND = Color.WHITE;
     private JPanel north = new JPanel();
+
     private JMenuItem edit = new JMenuItem("Bearbeiten");
     private JMenuItem search = new JMenuItem("Suchen");
     private JMenuItem exit = new JMenuItem("Ende");
     private JMenuItem auchf = new JCheckBoxMenuItem("Zeige alle Trommeln");
+
+    private JMenuItem help = new JMenuItem("Hilfe");
+    private JMenuItem gpl = new JMenuItem("Über");
+
     private JPanel center = new JPanel();
     private JPanel south = new JPanel();
 
@@ -67,6 +74,8 @@ public class DisplayAAS extends JFrame implements ItemListener, ActionListener {
 
         // MenueBar
         JMenuBar menuBar = new JMenuBar();
+
+        //File menue
         JMenu menue = new JMenu("File");
         menue.add(edit);
         menue.add(search);
@@ -78,7 +87,29 @@ public class DisplayAAS extends JFrame implements ItemListener, ActionListener {
         search.addActionListener(this);
         exit.addActionListener(this);
         auchf.addActionListener(this);
+
+        //License and more
+        JMenu lMenue = new JMenu("Hilfe");
+        lMenue.add(help);
+        lMenue.add(gpl);
+
+        help.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                new HelpAAS();
+            }
+        });
+        gpl.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                new GPLAAS();
+            }
+        });
+
+        // und zusammenbauen
         menuBar.add(menue);
+        menuBar.add(lMenue);
+
         setJMenuBar(menuBar);
 
 
@@ -86,7 +117,7 @@ public class DisplayAAS extends JFrame implements ItemListener, ActionListener {
 
         if (db == null) {
             center.add(new JLabel("Es konnte keine Verbindung zur DB hergestellt werden."));
-            center.add(new JLabel("Wenn !!!sicher!!! ist das kein anderer auf dedr DB arbeitet die lock.lck Datei löschen"));
+            center.add(new JLabel("Wenn !!!sicher!!! ist das kein anderer auf der DB arbeitet die lock.lck Datei löschen"));
             DisplayAAS d = this;
             getContentPane().add(center, BorderLayout.CENTER);
         } else {
