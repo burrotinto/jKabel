@@ -26,7 +26,7 @@ import java.awt.event.ActionListener;
 public class GPLAAS extends JDialog {
     private JPanel contentPane;
     private JButton buttonOK;
-    private JTextPane jKabelEinHochperfomantesExtremstanpassungsfähigesTextPane;
+    private JTextPane dieBenutztenBestandteileUndTextPane;
 
     public GPLAAS() {
         setContentPane(contentPane);
