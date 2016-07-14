@@ -55,7 +55,7 @@ public class HSQLDBWrapper implements IDBWrapper {
          * @throws SQLException
          */
         public HSQLDBWrapper(InetAddress ip) throws SQLException {
-                connectionString = "jdbc:hsqldb:hsql://" + ip.getHostAddress() + "/jKabeltrommelHSQLDB;shutdown=true;default_schema=true;";
+                connectionString = "jdbc:hsqldb:hsql://" + ip.getHostAddress() + "/" + HSQLDBServer.DBPREFIX + ";shutdown=true;default_schema=true;";
                 getStatement();
                 initDB();
         }

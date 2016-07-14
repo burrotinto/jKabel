@@ -107,6 +107,7 @@ public class DBAuswahlAAS {
                     serverIP = ip;
                     return idbWrapper;
                 } catch (Exception e) {
+                    serverIP = null;
                     return null;
                 }
         } catch (IOException e) {

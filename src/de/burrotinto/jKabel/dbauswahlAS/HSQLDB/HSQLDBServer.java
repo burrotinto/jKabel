@@ -33,7 +33,9 @@ import java.sql.SQLException;
  */
 public class HSQLDBServer {
 
+    public static final String DBPREFIX = "jKabelHSQLDB";
     public static final int SERVERPORT = 9001;
+
     private final InetAddress ip;
 
     private Server server;
@@ -71,8 +73,8 @@ public class HSQLDBServer {
 
             //HSQLDB initialisieren
             HsqlProperties p = new HsqlProperties();
-            p.setProperty("server.database.0", "file:" + path + "jKabeltrommelHSQLDB");
-            p.setProperty("server.dbname.0", "jKabeltrommelHSQLDB");
+            p.setProperty("server.database.0", "file:" + path + HSQLDBServer.DBPREFIX);
+            p.setProperty("server.dbname.0", HSQLDBServer.DBPREFIX);
             p.setProperty("server.port", SERVERPORT + "");
             server = new Server();
             server.setProperties(p);
