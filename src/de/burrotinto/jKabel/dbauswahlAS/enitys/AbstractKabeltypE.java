@@ -17,28 +17,47 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package de.burrotinto.jKabel.dbauswahlAS.HSQLDB;
-
-import de.burrotinto.jKabel.dbauswahlAS.enitys.AbstractKabeltypE;
-import de.burrotinto.jKabel.dbauswahlAS.enitys.ITrommelE;
-
-import java.util.List;
+package de.burrotinto.jKabel.dbauswahlAS.enitys;
 
 /**
  * Created by derduke on 19.05.2016.
  */
-class KabeltypE extends AbstractKabeltypE {
-    private final HSQLDBWrapper db;
+public abstract class AbstractKabeltypE implements IKabeltypE {
+    private final int materialNummer;
+    private String typ;
 
-    KabeltypE(String typ, int materialNummer, HSQLDBWrapper db) {
-        super(materialNummer);
-        setTyp(typ);
-        this.db = db;
+    protected AbstractKabeltypE(int materialNummer) {
+        this.materialNummer = materialNummer;
+    }
 
+
+    @Override
+    public String toString() {
+        return materialNummer + " - " + typ;
     }
 
     @Override
-    public List<ITrommelE> getTrommeln() {
-        return db.getTrommelnForTyp(this);
+    public String getTyp() {
+        return typ == null ? "" : typ;
     }
+
+    @Override
+    public void setTyp(String typ) {
+        this.typ = typ;
+    }
+
+    @Override
+    public int getMaterialNummer() {
+        return materialNummer;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        try {
+            return getMaterialNummer() == ((IKabeltypE) obj).getMaterialNummer();
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
 }

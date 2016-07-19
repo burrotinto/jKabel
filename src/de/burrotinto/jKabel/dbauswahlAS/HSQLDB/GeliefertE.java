@@ -19,47 +19,19 @@
 
 package de.burrotinto.jKabel.dbauswahlAS.HSQLDB;
 
-import de.burrotinto.jKabel.dbauswahlAS.enitys.IGeliefertE;
+import de.burrotinto.jKabel.dbauswahlAS.enitys.AbstractGeliefertE;
 import de.burrotinto.jKabel.dbauswahlAS.enitys.ILieferantE;
 import de.burrotinto.jKabel.dbauswahlAS.enitys.ITrommelE;
 
 /**
  * Created by derduke on 23.05.16.
  */
-class GeliefertE implements IGeliefertE {
-    private ILieferantE lieferant;
-    private long datum;
-    private String lieferscheinNr;
-    private ITrommelE trommel;
+class GeliefertE extends AbstractGeliefertE {
 
     GeliefertE(long datum, String lieferscheinNr, ILieferantE lieferant, ITrommelE trommel) {
-        this.lieferant = lieferant;
-        this.trommel = trommel;
-        this.lieferscheinNr = lieferscheinNr;
-        this.datum = datum;
-    }
-
-    @Override
-    public long getDatum() {
-        return datum;
-    }
-
-    @Override
-    public String getLieferscheinNr() {
-        return lieferscheinNr;
-    }
-
-    @Override
-    public ITrommelE getTrommel() {
-        return trommel;
-    }
-
-    @Override
-    public ILieferantE getLieferant() {
-        return lieferant;
-    }
-
-    public void setLieferantID(ILieferantE lieferant) {
-        this.lieferant = lieferant;
+        setDatum(datum);
+        setLieferscheinNr(lieferscheinNr);
+        setTrommel(trommel);
+        setLieferantID(lieferant);
     }
 }

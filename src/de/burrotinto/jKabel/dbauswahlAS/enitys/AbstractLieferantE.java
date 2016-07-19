@@ -17,22 +17,46 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package de.burrotinto.jKabel.dbauswahlAS.HSQLDB;
-
-import de.burrotinto.jKabel.dbauswahlAS.enitys.AbstarctStreckeE;
-import de.burrotinto.jKabel.dbauswahlAS.enitys.ITrommelE;
+package de.burrotinto.jKabel.dbauswahlAS.enitys;
 
 /**
- * Created by Florian Klinger on 20.05.16.
+ * Created by derduke on 23.05.16.
  */
-class StreckeE extends AbstarctStreckeE {
+public abstract class AbstractLieferantE implements ILieferantE {
+    private final int id;
+    private String name;
 
-    StreckeE(int id, int ba, String ort, long verlegedatum, int start, int ende, ITrommelE trommel) {
-        super(id, trommel);
-        setBa(ba);
-        setEnde(ende);
-        setOrt(ort);
-        setStart(start);
-        setVerlegedatum(verlegedatum);
+    protected AbstractLieferantE(int id) {
+        this.id = id;
     }
+
+    @Override
+    public int getId() {
+        return id;
+    }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    @Override
+    public String toString() {
+        return getName();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        try {
+            return id == ((ILieferantE) obj).getId();
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
 }

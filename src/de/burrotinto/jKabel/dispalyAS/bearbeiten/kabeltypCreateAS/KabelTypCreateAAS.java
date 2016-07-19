@@ -72,15 +72,16 @@ public class KabelTypCreateAAS extends JDialog implements ActionListener {
         if (e.getSource() == create) {
             try {
                 db.createKabeltyp(typ.getText(), Integer.parseInt(matNummer.getText()));
-
+                kabelTypAuswahlAAS.repaint();
+                kabelTypAuswahlAAS.revalidate();
             } catch (Exception x) {
                 //TODO
             }
-        }
-        kabelTypAuswahlAAS.repaint();
-        kabelTypAuswahlAAS.revalidate();
+        } else {
 
+        }
         dispose();
+
 
     }
 }

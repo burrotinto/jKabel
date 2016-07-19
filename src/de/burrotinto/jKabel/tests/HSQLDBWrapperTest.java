@@ -22,8 +22,10 @@ package de.burrotinto.jKabel.tests;
 import de.burrotinto.jKabel.dbauswahlAS.HSQLDB.HSQLDBWrapper;
 import de.burrotinto.jKabel.dbauswahlAS.enitys.IKabeltypE;
 import de.burrotinto.jKabel.dbauswahlAS.enitys.ILieferantE;
+import de.burrotinto.jKabel.dbauswahlAS.enitys.ITrommelE;
 import org.junit.Test;
 
+import java.util.List;
 import java.util.Random;
 
 import static org.junit.Assert.assertTrue;
@@ -95,6 +97,11 @@ public class HSQLDBWrapperTest {
             @Override
             public int getMaterialNummer() {
                 return 42;
+            }
+
+            @Override
+            public List<ITrommelE> getTrommeln() {
+                return null;
             }
         };
         assertTrue(db.createTrommel(kabeltypE, "123", 500, "PL 00-00-00", 500, lieferant, System.currentTimeMillis(), "LA12345"));

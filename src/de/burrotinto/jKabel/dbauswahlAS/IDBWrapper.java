@@ -25,25 +25,14 @@ import java.util.List;
 
 /**
  * Regelt wie eine DB zu benutzen ist. Die Methodennamen sollten selbserklärend sein
- * Created by derduke on 19.05.2016.
+ * Created by Florian Klinger on 19.05.2016.
  */
 public interface IDBWrapper {
     List<IKabeltypE> getAllKabeltypen();
 
-    List<ITrommelE> getTrommelnForTyp(IKabeltypE kabeltyp);
-
-    List<IStreckeE> getStreckenForTrommel(ITrommelE trommel);
-
     List<ILieferantE> getAllLieferanten();
 
     List<String> getAllTexteForBA(int ba);
-
-    IGeliefertE getLiefer(ITrommelE trommel);
-
-    ILieferantE getLieferant(IGeliefertE liefert);
-
-    IKabeltypE getTyp(ITrommelE trommel);
-
 
     boolean update(IKabeltypE kabeltyp);
 

@@ -22,7 +22,9 @@ package de.burrotinto.jKabel.dispalyAS.bearbeiten.streckenAS;
 import de.burrotinto.jKabel.dbauswahlAS.IDBWrapper;
 import de.burrotinto.jKabel.dbauswahlAS.enitys.*;
 
-import java.util.*;
+import java.util.Date;
+import java.util.List;
+import java.util.Vector;
 
 /**
  * Created by derduke on 22.05.16.
@@ -36,19 +38,20 @@ class StreckenK {
     }
 
     public List<IStreckeE> getStreckenForTrommel(ITrommelE trommel) {
-        List<IStreckeE> strecken = db.getStreckenForTrommel(trommel);
-
-        Collections.sort(strecken, new Comparator<IStreckeE>() {
-            @Override
-            public int compare(IStreckeE o1, IStreckeE o2) {
-                return new Long(o1.getVerlegedatum()).compareTo(o2.getVerlegedatum());
-            }
-        });
-        return strecken;
+//        List<IStreckeE> strecken = db.getStreckenForTrommel(trommel);
+//
+//        Collections.sort(strecken, new Comparator<IStreckeE>() {
+//            @Override
+//            public int compare(IStreckeE o1, IStreckeE o2) {
+//                return new Long(o1.getVerlegedatum()).compareTo(o2.getVerlegedatum());
+//            }
+//        });
+//        return strecken;
+        return trommel.getStrecken();
     }
 
     public IKabeltypE getTyp(ITrommelE trommel) {
-        return db.getTyp(trommel);
+        return trommel.getTyp();
     }
 
     public void setTyp(IKabeltypE typ) {
@@ -94,7 +97,7 @@ class StreckenK {
     }
 
     public IGeliefertE getLiefer(ITrommelE trommel) {
-        return db.getLiefer(trommel);
+        return trommel.getGeliefert();
     }
 
     public long getLieferDate(ITrommelE trommel) {
@@ -102,7 +105,7 @@ class StreckenK {
     }
 
     public ILieferantE getLieferant(ITrommelE trommel) {
-        return db.getLieferant(getLiefer(trommel));
+        return getLiefer(trommel).getLieferant();
     }
 
     public String getLieferscheinNR(ITrommelE trommel) {
@@ -137,7 +140,7 @@ class StreckenK {
 
     public int getRestMeter(ITrommelE trommel) {
         int laenge = trommel.getGesamtlaenge();
-        for (IStreckeE s : db.getStreckenForTrommel(trommel)) {
+        for (IStreckeE s : trommel.getStrecken()) {
             laenge -= s.getMeter();
         }
         return laenge;

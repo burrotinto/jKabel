@@ -19,99 +19,39 @@
 
 package de.burrotinto.jKabel.dbauswahlAS.HSQLDB;
 
+import de.burrotinto.jKabel.dbauswahlAS.enitys.AbstractTrommelE;
+import de.burrotinto.jKabel.dbauswahlAS.enitys.IGeliefertE;
 import de.burrotinto.jKabel.dbauswahlAS.enitys.IKabeltypE;
-import de.burrotinto.jKabel.dbauswahlAS.enitys.ITrommelE;
+import de.burrotinto.jKabel.dbauswahlAS.enitys.IStreckeE;
+
+import java.util.List;
 
 /**
  * Created by derduke on 20.05.16.
  */
-class TrommelE implements ITrommelE {
-    private final IKabeltypE kabelTyp;
-    private  int start;
-    private String lagerPlatz;
-    private int id;
-    private String trommelnummer;
-    private int gesamtlaenge;
-    private boolean freigemeldet;
+class TrommelE extends AbstractTrommelE {
 
-    TrommelE(IKabeltypE kabelTyp, int id, String trommelnummer, int gesamtlaenge, String lagerPlatz, int start, boolean freigemeldet) {
-        this.kabelTyp = kabelTyp;
-        this.lagerPlatz = lagerPlatz;
-        this.id = id;
-        this.start = start;
-        this.trommelnummer = trommelnummer;
-        this.gesamtlaenge = gesamtlaenge;
-        this.freigemeldet = freigemeldet;
-    }
 
-    @Override
-    public int getStart() {
-        return start;
-    }
+    private final HSQLDBWrapper db;
 
-    @Override
-    public void setStart(int start) {
-        this.start = start;
-    }
-
-    @Override
-    public String getLagerPlatz() {
-        return lagerPlatz;
-    }
-
-    @Override
-    public void setLagerPlatz(String lagerPlatz) {
-        this.lagerPlatz = lagerPlatz;
-    }
-
-    @Override
-    public int getMaterialNummer() {
-        return kabelTyp.getMaterialNummer();
-    }
-
-    @Override
-    public int getGesamtlaenge() {
-        return gesamtlaenge;
-    }
-
-    @Override
-    public void setGesamtlaenge(int gesamtlaenge) {
-        this.gesamtlaenge = gesamtlaenge;
-    }
-
-    @Override
-    public int getId() {
-        return id;
-    }
-
-    @Override
-    public String getTrommelnummer() {
-        return trommelnummer;
+    TrommelE(IKabeltypE kabelTyp, int id, String trommelnummer, int gesamtlaenge, String lagerPlatz, int start, boolean freigemeldet, HSQLDBWrapper db) {
+        super(id, kabelTyp);
+        setStart(start);
+        setLagerPlatz(lagerPlatz);
+        setTrommelnummer(trommelnummer);
+        setGesamtlaenge(gesamtlaenge);
+        setFreimeldung(freigemeldet);
+        this.db = db;
     }
 
 
     @Override
-    public void setTrommelnummer(String trommelnummer) {
-        this.trommelnummer = trommelnummer;
+    public List<IStreckeE> getStrecken() {
+        return db.getStreckenForTrommel(this);
     }
 
     @Override
-    public boolean isFreigemeldet() {
-        return freigemeldet;
-    }
-
-    @Override
-    public String toString() {
-        return "TrommelE{" +
-                "id=" + id +
-                ", trommelnummer='" + trommelnummer + '\'' +
-                ", gesamtlaenge=" + gesamtlaenge +
-                ", kabelTyp=" + kabelTyp.toString() +
-                '}';
-    }
-
-    @Override
-    public void setFreimeldung(boolean freigemeldet) {
-        this.freigemeldet = freigemeldet;
+    public IGeliefertE getGeliefert() {
+        return db.getLiefer(this);
     }
 }

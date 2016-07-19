@@ -197,7 +197,7 @@ public class StreckenAAS extends JPanel implements ITrommelListner, ActionListen
             next = !next;
             MinimalisticButton del = new MinimalisticButton("Löschen");
             del.addActionListener(this);
-            Abgang a = new Abgang(s, del);
+            Abgang a = new Abgang(s, del, trommel);
             abgaenge.add(a);
             JTextField dT = new JTextField(kontroller.getTimeString(s.getVerlegedatum()), 10);
             panel.add(dT);
@@ -414,8 +414,9 @@ public class StreckenAAS extends JPanel implements ITrommelListner, ActionListen
         private MinimalisticFormattetTextField bA, start, ende;
         private JTextField text;
         private MinimalisticButton butt;
+        private ITrommelE trommel;
 
-        private Abgang(IStreckeE strecke, MinimalisticButton butt) {
+        private Abgang(IStreckeE strecke, MinimalisticButton butt, ITrommelE trommel) {
             this.butt = butt;
             this.strecke = strecke;
             bA = new MinimalisticFormattetTextField((strecke.getBa() < 0 ? "" : strecke.getBa()) + "", 8);
@@ -424,6 +425,7 @@ public class StreckenAAS extends JPanel implements ITrommelListner, ActionListen
             text = new JTextField(strecke.getOrt() + "", 16);
             ende.addFocusListener(this);
             bA.addKeyListener(this);
+            this.trommel = trommel;
         }
 
         @Override
@@ -506,9 +508,10 @@ public class StreckenAAS extends JPanel implements ITrommelListner, ActionListen
         }
 
         @Override
-        public int getTrommelID() {
-            return strecke.getTrommelID();
+        public ITrommelE getTrommel() {
+            return trommel;
         }
+
 
         @Override
         public int getMeter() {

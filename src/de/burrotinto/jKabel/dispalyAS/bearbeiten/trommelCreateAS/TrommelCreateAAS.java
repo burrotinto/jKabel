@@ -103,23 +103,27 @@ public class TrommelCreateAAS extends JDialog implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        int startW;
-        try {
-            startW = Integer.parseInt(start.getText());
-        } catch (NumberFormatException nE) {
-            startW = 0;
-        }
-        try {
-            if (db.createTrommel(typ, trommelNummer.getText(), Integer.parseInt(laenge.getText()), lagerPlatz.getText(), startW, lieferantenAuswahlAAS.getAuswahl(), System.currentTimeMillis(), lieferscheinNr.getText())) {
-                auswahlAAS.repaint();
-                auswahlAAS.revalidate();
-                dispose();
+        if (e.getSource() == cancel) {
+            dispose();
+        } else {
+            int startW;
+            try {
+                startW = Integer.parseInt(start.getText());
+            } catch (NumberFormatException nE) {
+                startW = 0;
             }
-        } catch (NumberFormatException nfe) {
-            laenge.setSelectionColor(Color.red);
-            laenge.setText("ERROR");
-            laenge.setSelectionStart(0);
-            laenge.setSelectionEnd(laenge.getText().length() - 1);
+            try {
+                if (db.createTrommel(typ, trommelNummer.getText(), Integer.parseInt(laenge.getText()), lagerPlatz.getText(), startW, lieferantenAuswahlAAS.getAuswahl(), System.currentTimeMillis(), lieferscheinNr.getText())) {
+                    auswahlAAS.repaint();
+                    auswahlAAS.revalidate();
+                    dispose();
+                }
+            } catch (NumberFormatException nfe) {
+                laenge.setSelectionColor(Color.red);
+                laenge.setText("ERROR");
+                laenge.setSelectionStart(0);
+                laenge.setSelectionEnd(laenge.getText().length() - 1);
+            }
         }
     }
 }

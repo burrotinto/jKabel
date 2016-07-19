@@ -21,6 +21,7 @@
 package de.burrotinto.jKabel.dbauswahlAS.enitys;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * Created by derduke on 25.05.16.
@@ -52,4 +53,10 @@ public interface ITrommelE extends Serializable {
     String toString();
 
     void setFreimeldung(boolean freigemeldet);
+
+    IKabeltypE getTyp();
+
+    List<IStreckeE> getStrecken();
+
+    IGeliefertE getGeliefert();
 }

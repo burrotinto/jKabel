@@ -49,7 +49,7 @@ public interface IStreckeE extends Serializable {
 
     void setOrt(String ort);
 
-    int getTrommelID();
+    ITrommelE getTrommel();
 
     int getMeter();
 

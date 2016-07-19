@@ -66,13 +66,13 @@ public class TrommelAuswahlAAS extends JPanel implements IKabelTypListner, Actio
         if (typ != null) {
             this.typ = typ;
             buttonTrommelMap = new HashMap<>();
-            JPanel panel = new MinimalisticPanel(new GridLayout(kontroll.getAllTrommelForMatNr(typ).size() + 1, 1));
+            JPanel panel = new MinimalisticPanel(new GridLayout(kontroll.getAllTrommelForTyp(typ).size() + 1, 1));
             JPanel p = new MinimalisticPanel();
 
             p.add(addNewButt);
             panel.add(p);
 
-            for (ITrommelE t : kontroll.getAllTrommelForMatNr(typ)) {
+            for (ITrommelE t : kontroll.getAllTrommelForTyp(typ)) {
                 if (zeiheAlle || !(t.isFreigemeldet() && kontroll.getRestMeter(t) == 0)) {
                     p = new MinimalisticPanel(new FlowLayout(FlowLayout.LEFT));
                     MinimalisticButton b = new MinimalisticButton(t.getTrommelnummer() + "");

@@ -40,8 +40,8 @@ class SearchK {
 
     public List<ITrommelE> getAllTrommelWithBA(int ba, IKabeltypE typ) {
         List<ITrommelE> list = new ArrayList<>();
-        for (ITrommelE t : db.getTrommelnForTyp(typ)) {
-            for (IStreckeE s : db.getStreckenForTrommel(t)) {
+        for (ITrommelE t : typ.getTrommeln()) {
+            for (IStreckeE s : t.getStrecken()) {
                 if (s.getBa() == ba) {
                     list.add(t);
                     break;
@@ -52,7 +52,7 @@ class SearchK {
     }
 
     public List<IStreckeE> getAllStrecken(ITrommelE trommel) {
-        return db.getStreckenForTrommel(trommel);
+        return trommel.getStrecken();
     }
 
     public Vector<IKabeltypE> getAllKAbelTypen() {

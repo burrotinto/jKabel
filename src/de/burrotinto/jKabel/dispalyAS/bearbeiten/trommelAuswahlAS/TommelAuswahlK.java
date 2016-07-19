@@ -41,20 +41,20 @@ class TommelAuswahlK {
         comperator = new Comparator<ITrommelE>() {
             @Override
             public int compare(ITrommelE o1, ITrommelE o2) {
-                return db.getLiefer(o2).getDatum() < db.getLiefer(o2).getDatum() ? -1 : 1;
+                return ((Long) o1.getGeliefert().getDatum()).compareTo(o2.getGeliefert().getDatum());
             }
         };
     }
 
-    public List<ITrommelE> getAllTrommelForMatNr(IKabeltypE typ) {
-        List<ITrommelE> list = db.getTrommelnForTyp(typ);
+    public List<ITrommelE> getAllTrommelForTyp(IKabeltypE typ) {
+        List<ITrommelE> list = typ.getTrommeln();
         Collections.sort(list, comperator);
         return list;
     }
 
     public int getRestMeter(ITrommelE trommel) {
         int laenge = trommel.getGesamtlaenge();
-        for (IStreckeE s : db.getStreckenForTrommel(trommel)) {
+        for (IStreckeE s : trommel.getStrecken()) {
             laenge -= s.getMeter();
         }
         return laenge;
@@ -65,11 +65,12 @@ class TommelAuswahlK {
     }
 
     public String getBaustelle(ITrommelE t) {
-        for (IStreckeE s : db.getStreckenForTrommel(t)) {
-            if (s.getEnde() < 0 || s.getStart() < 0) {
-                return s.getOrt();
+        if (t != null)
+            for (IStreckeE s : t.getStrecken()) {
+                if (s.getEnde() < 0 || s.getStart() < 0) {
+                    return s.getOrt();
+                }
             }
-        }
         return null;
     }
 

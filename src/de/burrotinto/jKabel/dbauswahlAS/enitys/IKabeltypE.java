@@ -20,6 +20,7 @@
 package de.burrotinto.jKabel.dbauswahlAS.enitys;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * Created by derduke on 25.05.16.
@@ -30,4 +31,6 @@ public interface IKabeltypE extends Serializable {
     void setTyp(String typ);
 
     int getMaterialNummer();
+
+    List<ITrommelE> getTrommeln();
 }
