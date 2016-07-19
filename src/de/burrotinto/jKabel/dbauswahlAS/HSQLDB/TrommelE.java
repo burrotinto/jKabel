@@ -30,9 +30,9 @@ import java.util.List;
  * Created by derduke on 20.05.16.
  */
 class TrommelE extends AbstractTrommelE {
-
-
     private final HSQLDBWrapper db;
+    private IGeliefertE geliefert = null;
+    private List<IStreckeE> strecken = null;
 
     TrommelE(IKabeltypE kabelTyp, int id, String trommelnummer, int gesamtlaenge, String lagerPlatz, int start, boolean freigemeldet, HSQLDBWrapper db) {
         super(id, kabelTyp);
@@ -47,11 +47,11 @@ class TrommelE extends AbstractTrommelE {
 
     @Override
     public List<IStreckeE> getStrecken() {
-        return db.getStreckenForTrommel(this);
+        return strecken = strecken == null ? db.getStreckenForTrommel(this) : strecken;
     }
 
     @Override
     public IGeliefertE getGeliefert() {
-        return db.getLiefer(this);
+        return geliefert = geliefert == null ? db.getLiefer(this) : geliefert;
     }
 }

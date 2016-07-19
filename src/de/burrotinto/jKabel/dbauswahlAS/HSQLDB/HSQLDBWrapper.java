@@ -60,7 +60,7 @@ public class HSQLDBWrapper implements IDBWrapper {
      */
     public HSQLDBWrapper(InetAddress ip) throws SQLException {
         connectionString = "jdbc:hsqldb:hsql://" + ip.getHostAddress() + "/" + HSQLDBServer.DBPREFIX + ";shutdown=true;default_schema=true;";
-        getStatement();
+        if (getStatement() == null) throw new SQLException();
         initDB();
     }
 
@@ -218,10 +218,9 @@ public class HSQLDBWrapper implements IDBWrapper {
 
     IGeliefertE getLiefer(ITrommelE trommel) {
         try {
-            ResultSet rs = getStatement().executeQuery("SELECT * FROM geliefert JOIN trommel ON trommel.id = geliefert.id WHERE id =" + trommel.getId() + ";");
+            ResultSet rs = executeQuery("SELECT * FROM geliefert JOIN trommel ON trommel.id = geliefert.id WHERE id =" + trommel.getId() + ";");
             if (rs.next()) {
-                ILieferantE l = getLieferantByID(rs.getInt("hid"));
-                return new GeliefertE(rs.getLong("datum"), rs.getString("lieferschein"), l, trommel);
+                return new GeliefertE(rs.getLong("datum"), rs.getString("lieferschein"), getLieferantByID(rs.getInt("hid")), trommel);
             } else {
                 return null;
             }
@@ -248,20 +247,20 @@ public class HSQLDBWrapper implements IDBWrapper {
     }
 
 
-    LieferantE getLieferant(IGeliefertE liefert) {
-        try {
-            ResultSet rs = executeQuery("SELECT * FROM geliefert JOIN lieferant ON lieferant.hid = geliefert.hid WHERE hid =" + liefert.getLieferant().getId() + ";");
-            if (rs.next()) {
-                return new LieferantE(rs.getInt("lid"), rs.getString("name"));
-            } else {
-                return null;
-            }
-        } catch (SQLException e) {
-            stmnt = null;
-            e.printStackTrace();
-            return null;
-        }
-    }
+//    LieferantE getLieferant(IGeliefertE liefert) {
+//        try {
+//            ResultSet rs = executeQuery("SELECT * FROM geliefert JOIN lieferant ON lieferant.hid = geliefert.hid WHERE hid =" + liefert.getLieferant().getId() + ";");
+//            if (rs.next()) {
+//                return new LieferantE(rs.getInt("lid"), rs.getString("name"));
+//            } else {
+//                return null;
+//            }
+//        } catch (SQLException e) {
+//            stmnt = null;
+//            e.printStackTrace();
+//            return null;
+//        }
+//    }
 
 
     KabeltypE getTyp(ITrommelE trommel) {
