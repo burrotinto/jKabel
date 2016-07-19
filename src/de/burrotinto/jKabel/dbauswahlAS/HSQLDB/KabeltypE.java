@@ -29,6 +29,7 @@ import java.util.List;
  */
 class KabeltypE extends AbstractKabeltypE {
     private final HSQLDBWrapper db;
+    private List<ITrommelE> trommeln = null;
 
     KabeltypE(String typ, int materialNummer, HSQLDBWrapper db) {
         super(materialNummer);
@@ -39,6 +40,6 @@ class KabeltypE extends AbstractKabeltypE {
 
     @Override
     public List<ITrommelE> getTrommeln() {
-        return db.getTrommelnForTyp(this);
+        return trommeln = trommeln == null ? db.getTrommelnForTyp(this) : trommeln;
     }
 }
