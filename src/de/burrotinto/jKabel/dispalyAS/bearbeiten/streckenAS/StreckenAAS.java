@@ -48,7 +48,6 @@ public class StreckenAAS extends JPanel implements ITrommelListner, ActionListen
     private MinimalisticButton create = new MinimalisticButton("Eintragen");
     private MinimalisticButton update = new MinimalisticButton("Ändern");
     private ITrommelE trommel = null;
-    private IKabeltypE typ = null;
     private JComboBox<ILieferantE> cBox;
     private List<JDialog> scanDialoge = new ArrayList<>();
     private BufferedImage logo = null;
@@ -77,6 +76,7 @@ public class StreckenAAS extends JPanel implements ITrommelListner, ActionListen
 
     private void buildPanel(ITrommelE trommel) {
         this.trommel = trommel;
+        kontroller.setTyp(trommel.getTyp());
         List<IStreckeE> strecken = kontroller.getStreckenForTrommel(trommel);
         JPanel p = new MinimalisticPanel();
         p.setLayout(new GridLayout(strecken.size() + (kontroller.istAusserHaus(trommel) ? 12 : 13), 1));
@@ -338,6 +338,7 @@ public class StreckenAAS extends JPanel implements ITrommelListner, ActionListen
                 kontroller.update(g);
 
 
+                IKabeltypE typ = trommel.getTyp();
                 typ.setTyp(typField.getText());
                 kontroller.update(typ);
 
@@ -354,6 +355,7 @@ public class StreckenAAS extends JPanel implements ITrommelListner, ActionListen
 
         }
         removeAll();
+
         buildPanel(kontroller.getNewCopy(trommel));
         repaint();
         revalidate();
@@ -368,12 +370,12 @@ public class StreckenAAS extends JPanel implements ITrommelListner, ActionListen
 
     @Override
     public void typSelected(IKabeltypE typ) {
-        removeAll();
-        repaint();
-        revalidate();
-
-        this.typ = typ;
-        kontroller.setTyp(typ);
+//        removeAll();
+//        repaint();
+//        revalidate();
+//
+//        this.typ = typ;
+//        kontroller.setTyp(typ);
     }
 
     @Override
