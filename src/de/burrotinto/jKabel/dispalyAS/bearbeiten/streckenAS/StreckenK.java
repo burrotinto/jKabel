@@ -145,4 +145,12 @@ class StreckenK {
         }
         return laenge;
     }
+
+    public ITrommelE getNewCopy(ITrommelE trommel) {
+        return getTrommelByID(trommel.getId());
+    }
+
+    public ITrommelE getTrommelByID(Integer trommelID) {
+        return db.getTrommelByID(trommelID == null ? -1 : trommelID);
+    }
 }

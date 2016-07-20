@@ -67,9 +67,10 @@ public class StreckenAAS extends JPanel implements ITrommelListner, ActionListen
     }
 
     @Override
-    public void trommelAusgewaehlt(ITrommelE trommel) {
+    public void trommelAusgewaehlt(Integer trommelID) {
         removeAll();
-        buildPanel(trommel);
+        if (kontroller != null && kontroller.getTrommelByID(trommelID) != null)
+            buildPanel(kontroller.getTrommelByID(trommelID));
         repaint();
         revalidate();
     }
@@ -273,7 +274,6 @@ public class StreckenAAS extends JPanel implements ITrommelListner, ActionListen
     }
 
 
-
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == create && trommel != null) {
@@ -354,7 +354,7 @@ public class StreckenAAS extends JPanel implements ITrommelListner, ActionListen
 
         }
         removeAll();
-        buildPanel(trommel);
+        buildPanel(kontroller.getNewCopy(trommel));
         repaint();
         revalidate();
         updateOnChange.forEach(new Consumer<JPanel>() {

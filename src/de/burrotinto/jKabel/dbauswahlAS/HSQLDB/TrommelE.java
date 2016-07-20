@@ -23,6 +23,7 @@ import de.burrotinto.jKabel.dbauswahlAS.enitys.AbstractTrommelE;
 import de.burrotinto.jKabel.dbauswahlAS.enitys.IGeliefertE;
 import de.burrotinto.jKabel.dbauswahlAS.enitys.IKabeltypE;
 import de.burrotinto.jKabel.dbauswahlAS.enitys.IStreckeE;
+import org.apache.log4j.Logger;
 
 import java.util.List;
 
@@ -30,28 +31,75 @@ import java.util.List;
  * Created by derduke on 20.05.16.
  */
 class TrommelE extends AbstractTrommelE {
+    private static Logger log = Logger.getLogger(TrommelE.class);
     private final HSQLDBWrapper db;
     private IGeliefertE geliefert = null;
     private List<IStreckeE> strecken = null;
+    private boolean updateS = true;
+    private boolean updateG = true;
 
     TrommelE(IKabeltypE kabelTyp, int id, String trommelnummer, int gesamtlaenge, String lagerPlatz, int start, boolean freigemeldet, HSQLDBWrapper db) {
         super(id, kabelTyp);
-        setStart(start);
-        setLagerPlatz(lagerPlatz);
-        setTrommelnummer(trommelnummer);
-        setGesamtlaenge(gesamtlaenge);
-        setFreimeldung(freigemeldet);
+        super.setStart(start);
+        super.setLagerPlatz(lagerPlatz);
+        super.setTrommelnummer(trommelnummer);
+        super.setGesamtlaenge(gesamtlaenge);
+        super.setFreimeldung(freigemeldet);
         this.db = db;
     }
 
 
     @Override
     public List<IStreckeE> getStrecken() {
-        return strecken = strecken == null ? db.getStreckenForTrommel(this) : strecken;
+        if (updateS) {
+            strecken = db.getStreckenForTrommel(this);
+            updateS = false;
+        }
+        return strecken = strecken;
     }
 
     @Override
     public IGeliefertE getGeliefert() {
-        return geliefert = geliefert == null ? db.getLiefer(this) : geliefert;
+        if (updateG) {
+            geliefert = db.getLiefer(this);
+            updateG = false;
+        }
+        return geliefert;
+    }
+
+    @Override
+    public void setFreimeldung(boolean freigemeldet) {
+        if (freigemeldet != isFreigemeldet()) doUpdate();
+        super.setFreimeldung(freigemeldet);
+    }
+
+    @Override
+    public void setGesamtlaenge(int gesamtlaenge) {
+        if (gesamtlaenge != getStart()) doUpdate();
+        super.setGesamtlaenge(gesamtlaenge);
+    }
+
+    @Override
+    public void setLagerPlatz(String lagerPlatz) {
+        if (!lagerPlatz.equals(getLagerPlatz())) doUpdate();
+        super.setLagerPlatz(lagerPlatz);
+    }
+
+    @Override
+    public void setStart(int start) {
+        if (start != getStart()) doUpdate();
+        super.setStart(start);
+    }
+
+    @Override
+    public void setTrommelnummer(String trommelnummer) {
+        if (!trommelnummer.equals(getTrommelnummer())) doUpdate();
+        super.setTrommelnummer(trommelnummer);
+
+    }
+
+    void doUpdate() {
+        updateS = true;
+        updateG = true;
     }
 }

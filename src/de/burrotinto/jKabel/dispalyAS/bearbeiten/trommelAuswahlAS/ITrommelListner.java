@@ -19,11 +19,9 @@
 
 package de.burrotinto.jKabel.dispalyAS.bearbeiten.trommelAuswahlAS;
 
-import de.burrotinto.jKabel.dbauswahlAS.enitys.ITrommelE;
-
 /**
  * Created by derduke on 22.05.16.
  */
 public interface ITrommelListner {
-    void trommelAusgewaehlt(ITrommelE trommel);
+    void trommelAusgewaehlt(Integer trommelID);
 }

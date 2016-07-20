@@ -41,7 +41,8 @@ class TommelAuswahlK {
         comperator = new Comparator<ITrommelE>() {
             @Override
             public int compare(ITrommelE o1, ITrommelE o2) {
-                return ((Long) o1.getGeliefert().getDatum()).compareTo(o2.getGeliefert().getDatum());
+                return o2.getId() - o2.getId();
+//                return ((Long) o1.getGeliefert().getDatum()).compareTo(o2.getGeliefert().getDatum());
             }
         };
     }
@@ -78,5 +79,13 @@ class TommelAuswahlK {
         if (comperator != null) {
             this.comperator = comperator;
         }
+    }
+
+    public IKabeltypE getNewTypCopy(IKabeltypE typ) {
+        return db.getTypByMaterialnummer(typ.getMaterialNummer());
+    }
+
+    public IKabeltypE getNewTypCopy(int materialnummer) {
+        return db.getTypByMaterialnummer(materialnummer);
     }
 }

@@ -41,5 +41,6 @@ class KabeltypE extends AbstractKabeltypE {
     @Override
     public List<ITrommelE> getTrommeln() {
         return trommeln = trommeln == null ? db.getTrommelnForTyp(this) : trommeln;
+//        return db.getTrommelnForTyp(this);
     }
 }

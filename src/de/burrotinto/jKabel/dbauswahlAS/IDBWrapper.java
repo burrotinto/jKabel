@@ -34,6 +34,8 @@ public interface IDBWrapper {
 
     List<String> getAllTexteForBA(int ba);
 
+    ITrommelE getTrommelByID(int id);
+
     boolean update(IKabeltypE kabeltyp);
 
     /**
@@ -62,4 +64,6 @@ public interface IDBWrapper {
     boolean update(IGeliefertE geliefert);
 
     boolean isClosed();
+
+    IKabeltypE getTypByMaterialnummer(int materialNummer);
 }

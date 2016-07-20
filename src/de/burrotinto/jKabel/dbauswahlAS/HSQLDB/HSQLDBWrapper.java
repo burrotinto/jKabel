@@ -136,7 +136,6 @@ public class HSQLDBWrapper implements IDBWrapper {
         try {
             ResultSet rs = executeQuery("Select * FROM kabeltyp;");
             while (rs.next()) {
-                log.info("getAllKabeltypen() - " + new KabeltypE(rs.getString(2), rs.getInt(1), this));
                 list.add(new KabeltypE(rs.getString(2), rs.getInt(1), this));
             }
             rs.close();
@@ -213,6 +212,36 @@ public class HSQLDBWrapper implements IDBWrapper {
             e.printStackTrace();
         }
         return list;
+    }
+
+    @Override
+    public IKabeltypE getTypByMaterialnummer(int materialNummer) {
+        try {
+            ResultSet rs = executeQuery("Select * FROM kabeltyp Where materialnummer= " + materialNummer + ";");
+            if (!rs.next()) {
+                return null;
+            } else {
+                return new KabeltypE(rs.getString("typ"), rs.getInt("materialnummer"), this);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    @Override
+    public ITrommelE getTrommelByID(int id) {
+        try {
+            ResultSet rs = executeQuery("Select * FROM kabeltyp JOIN trommel ON kabeltyp.materialnummer = trommel.materialnummer Where trommel.id = " + id + ";");
+            if (!rs.next()) {
+                return null;
+            } else {
+                return new TrommelE(new KabeltypE(rs.getString("typ"), rs.getInt("materialnummer"), this), rs.getInt("id"), rs.getString("trommelnummer"), rs.getInt("gesamtlaenge"), rs.getString("lagerplatz"), rs.getInt("kabelstart"), rs.getBoolean("freigemeldet"), this);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
 
@@ -382,5 +411,6 @@ public class HSQLDBWrapper implements IDBWrapper {
             return true;
         }
     }
+
 
 }

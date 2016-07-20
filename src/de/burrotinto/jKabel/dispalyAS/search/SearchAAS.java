@@ -70,7 +70,7 @@ public class SearchAAS extends JPanel implements ActionListener {
         for (ITrommelE t : trommeln) {
             StreckenAAS nachweis = new StreckenAAS(db);
             s.add(new JScrollPane(nachweis));
-            nachweis.trommelAusgewaehlt(t);
+            nachweis.trommelAusgewaehlt(t.getId());
         }
         return s;
     }

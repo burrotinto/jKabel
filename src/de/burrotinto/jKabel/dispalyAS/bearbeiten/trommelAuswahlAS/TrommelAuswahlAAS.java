@@ -34,7 +34,6 @@ import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.function.Consumer;
 
 /**
  * Created by derduke on 22.05.16.
@@ -47,7 +46,7 @@ public class TrommelAuswahlAAS extends JPanel implements IKabelTypListner, Actio
     private boolean zeiheAlle;
     private MinimalisticButton ausgewaehlt = null;
 
-    private HashMap<MinimalisticButton, ITrommelE> buttonTrommelMap;
+    private HashMap<MinimalisticButton, Integer> buttonTrommelMap = new HashMap<>();
 
     private Set<ITrommelListner> trommelListners = new HashSet<>();
 
@@ -65,7 +64,6 @@ public class TrommelAuswahlAAS extends JPanel implements IKabelTypListner, Actio
     private void buildPanel(IKabeltypE typ) {
         if (typ != null) {
             this.typ = typ;
-            buttonTrommelMap = new HashMap<>();
             JPanel panel = new MinimalisticPanel(new GridLayout(kontroll.getAllTrommelForTyp(typ).size() + 1, 1));
             JPanel p = new MinimalisticPanel();
 
@@ -77,7 +75,7 @@ public class TrommelAuswahlAAS extends JPanel implements IKabelTypListner, Actio
                     p = new MinimalisticPanel(new FlowLayout(FlowLayout.LEFT));
                     MinimalisticButton b = new MinimalisticButton(t.getTrommelnummer() + "");
                     b.setSelected(b.equals(ausgewaehlt));
-                    buttonTrommelMap.put(b, t);
+                    buttonTrommelMap.put(b, t.getId());
                     p.add(b);
                     JLabel label;
                     if (t.isFreigemeldet() && kontroll.getRestMeter(t) == 0) {
@@ -117,13 +115,17 @@ public class TrommelAuswahlAAS extends JPanel implements IKabelTypListner, Actio
             buildPanel(typ);
             repaint();
             revalidate();
+            buttonTrommelMap.get(ausgewaehlt);
+            trommelListners.forEach(iTrommelListner -> iTrommelListner.trommelAusgewaehlt(buttonTrommelMap.get(ausgewaehlt)));
         }
     }
 
     @Override
     public void revalidate() {
         removeAll();
-        buildPanel(typ);
+        if (kontroll != null) {
+            buildPanel(typ != null ? kontroll.getNewTypCopy(typ) : kontroll.getNewTypCopy(buttonTrommelMap.get(ausgewaehlt)));
+        }
         repaint();
         super.revalidate();
     }
@@ -132,19 +134,8 @@ public class TrommelAuswahlAAS extends JPanel implements IKabelTypListner, Actio
     public void actionPerformed(ActionEvent e) {
         if (buttonTrommelMap.containsKey(e.getSource())) {
             ausgewaehlt = (MinimalisticButton) e.getSource();
-            buttonTrommelMap.keySet().forEach(new Consumer<MinimalisticButton>() {
-                @Override
-                public void accept(MinimalisticButton minimalisticButton) {
-                    minimalisticButton.setSelected(minimalisticButton == ausgewaehlt);
-                }
-            });
-            trommelListners.forEach(new Consumer<ITrommelListner>() {
-                @Override
-                public void accept(ITrommelListner iTrommelListner) {
-                    iTrommelListner.trommelAusgewaehlt(buttonTrommelMap.get(e.getSource()));
-
-                }
-            });
+            buttonTrommelMap.keySet().forEach(minimalisticButton -> minimalisticButton.setSelected(minimalisticButton == ausgewaehlt));
+            trommelListners.forEach(iTrommelListner -> iTrommelListner.trommelAusgewaehlt(buttonTrommelMap.get(e.getSource())));
         } else {
             if (e.getSource() == addNewButt) {
                 new TrommelCreateAAS(db, typ, this);
@@ -157,9 +148,9 @@ public class TrommelAuswahlAAS extends JPanel implements IKabelTypListner, Actio
         this.zeiheAlle = zeiheAlle;
     }
 
-    @Override
-    public void removeAll() {
-        super.removeAll();
-        ausgewaehlt = null;
-    }
+//    @Override
+//    public void removeAll() {
+//        super.removeAll();
+//        ausgewaehlt = null;
+//    }
 }
