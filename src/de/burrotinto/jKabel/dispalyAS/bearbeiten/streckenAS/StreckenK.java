@@ -151,6 +151,6 @@ class StreckenK {
     }
 
     public ITrommelE getTrommelByID(Integer trommelID) {
-        return db.getTrommelByID(trommelID == null ? -1 : trommelID);
+        return trommelID == null ? null : db.getTrommelByID(trommelID);
     }
 }

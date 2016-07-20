@@ -69,7 +69,7 @@ public class StreckenAAS extends JPanel implements ITrommelListner, ActionListen
     @Override
     public void trommelAusgewaehlt(Integer trommelID) {
         removeAll();
-        if (kontroller != null && kontroller.getTrommelByID(trommelID) != null)
+        if (trommelID != null && kontroller != null && kontroller.getTrommelByID(trommelID) != null)
             buildPanel(kontroller.getTrommelByID(trommelID));
         repaint();
         revalidate();
