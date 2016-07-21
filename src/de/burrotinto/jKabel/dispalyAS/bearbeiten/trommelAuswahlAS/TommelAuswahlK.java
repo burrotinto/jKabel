@@ -88,4 +88,33 @@ class TommelAuswahlK {
     public IKabeltypE getNewTypCopy(int materialnummer) {
         return db.getTypByMaterialnummer(materialnummer);
     }
+
+    public int getMaxMeter(IKabeltypE typ) {
+        int x = 0;
+        for (ITrommelE t : getAllTrommelForTyp(typ)) {
+            if (!isAusserHaus(t)) {
+                x += getRestMeter(t);
+            } else {
+                int i = 0;
+                for (IStreckeE s : t.getStrecken()) {
+                    if (s.getEnde() >= 0) {
+                        i += s.getMeter();
+                    }
+                }
+                x += t.getGesamtlaenge() - i;
+            }
+        }
+        return x;
+    }
+
+    public int getMinMeter(IKabeltypE typ) {
+        int x = 0;
+        for (ITrommelE t : getAllTrommelForTyp(typ)) {
+            if (!isAusserHaus(t)) {
+                x += getRestMeter(t);
+            }
+
+        }
+        return x;
+    }
 }

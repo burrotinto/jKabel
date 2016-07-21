@@ -55,6 +55,7 @@ public class TrommelAuswahlAAS extends JPanel implements IKabelTypListner, Actio
         this.db = db;
         addNewButt.addActionListener(this);
         this.zeiheAlle = zeiheAlle;
+        setLayout(new BorderLayout());
     }
 
     public void addTrommelListner(ITrommelListner listner) {
@@ -64,11 +65,12 @@ public class TrommelAuswahlAAS extends JPanel implements IKabelTypListner, Actio
     private void buildPanel(IKabeltypE typ) {
         if (typ != null) {
             this.typ = typ;
-            JPanel panel = new MinimalisticPanel(new GridLayout(kontroll.getAllTrommelForTyp(typ).size() + 1, 1));
+            JPanel panel = new MinimalisticPanel(new GridLayout(kontroll.getAllTrommelForTyp(typ).size(), 1));
             JPanel p = new MinimalisticPanel();
 
             p.add(addNewButt);
-            panel.add(p);
+            add(p, BorderLayout.NORTH);
+
 
             for (ITrommelE t : kontroll.getAllTrommelForTyp(typ)) {
                 if (zeiheAlle || !(t.isFreigemeldet() && kontroll.getRestMeter(t) == 0)) {
@@ -103,7 +105,15 @@ public class TrommelAuswahlAAS extends JPanel implements IKabelTypListner, Actio
                     panel.add(p);
                 }
             }
-            add(panel);
+            JPanel pp = new MinimalisticPanel();
+            pp.add(panel);
+            add(pp, BorderLayout.CENTER);
+
+            int min = kontroll.getMinMeter(typ);
+            int max = kontroll.getMaxMeter(typ);
+
+            add(new JLabel("Verfügbar: " + (min == max ? max : min + " - " + max) + " m"), BorderLayout.SOUTH);
+
         }
     }
 
