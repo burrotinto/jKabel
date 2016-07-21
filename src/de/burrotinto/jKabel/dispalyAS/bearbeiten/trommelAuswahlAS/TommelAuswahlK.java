@@ -41,6 +41,9 @@ class TommelAuswahlK {
         comperator = new Comparator<ITrommelE>() {
             @Override
             public int compare(ITrommelE o1, ITrommelE o2) {
+                if ((!isAusserHaus(o1) && isAusserHaus(o2)) || (!isAusserHaus(o2) && isAusserHaus(o1))) {
+                    return isAusserHaus(o1) ? 1 : -1;
+                }
                 return o2.getId() - o2.getId();
 //                return ((Long) o1.getGeliefert().getDatum()).compareTo(o2.getGeliefert().getDatum());
             }
@@ -116,5 +119,20 @@ class TommelAuswahlK {
 
         }
         return x;
+    }
+
+    public int getAusleihtage(ITrommelE t) {
+        List<IStreckeE> strecken = t.getStrecken();
+        Collections.sort(strecken, new Comparator<IStreckeE>() {
+            @Override
+            public int compare(IStreckeE iStreckeE, IStreckeE t1) {
+                return -((Long) iStreckeE.getVerlegedatum()).compareTo(t1.getVerlegedatum());
+            }
+        });
+        if (strecken.size() == 0) {
+            return 0;
+        } else {
+            return (int) ((System.currentTimeMillis() - strecken.get(0).getVerlegedatum()) / ((long) (1000 * 60 * 60 * 24)));
+        }
     }
 }

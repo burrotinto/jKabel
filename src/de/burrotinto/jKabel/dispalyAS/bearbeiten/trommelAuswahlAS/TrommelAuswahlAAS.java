@@ -90,7 +90,7 @@ public class TrommelAuswahlAAS extends JPanel implements IKabelTypListner, Actio
                         }
 
                     } else {
-                        label = new JLabel("Bei: " + kontroll.getBaustelle(t));
+                        label = new JLabel("-> " + kontroll.getBaustelle(t) + " <-> " + kontroll.getAusleihtage(t) + " Tag" + (kontroll.getAusleihtage(t) != 1 ? "e" : ""));
                         p.setBackground(Color.ORANGE);
                         p.setOpaque(true);
                     }
