@@ -20,6 +20,9 @@
 package de.burrotinto.jKabel.dispalyAS;
 
 import de.burrotinto.jKabel.config.Reader;
+import de.burrotinto.jKabel.config.TypNameSort;
+import de.burrotinto.jKabel.config.TypeFrequenzSort;
+import de.burrotinto.jKabel.config.TypeMatNrSort;
 import de.burrotinto.jKabel.dbauswahlAS.DBAuswahlAAS;
 import de.burrotinto.jKabel.dbauswahlAS.IDBWrapper;
 import de.burrotinto.jKabel.dbauswahlAS.serverStatus.IStatusClient;
@@ -65,6 +68,7 @@ public class DisplayAAS extends JFrame implements ItemListener, ActionListener {
     private IDBWrapper db = null;
     private IStatusClient sClient = null;
     private JLabel anZClients = new JLabel("Insgesamt 0 angemeldet");
+    private KabelTypAuswahlAAS kabelTypAuswahlAAS = null;
 
     public DisplayAAS() {
         setTitle("jKabel");
@@ -81,7 +85,12 @@ public class DisplayAAS extends JFrame implements ItemListener, ActionListener {
         menue.add(search);
 
         menue.add(auchf);
+
+        menue.addSeparator();
+        menue.add(getjTypSortMenu());
+        menue.addSeparator();
         menue.add(exit);
+
 
         edit.addActionListener(this);
         search.addActionListener(this);
@@ -136,6 +145,71 @@ public class DisplayAAS extends JFrame implements ItemListener, ActionListener {
 
     }
 
+    private JMenu getjTypSortMenu() {
+        JMenu typSortMenu = new JMenu("Typ Sortierung");
+
+
+        ButtonGroup group = new ButtonGroup();
+        JRadioButtonMenuItem matNrSort = new JRadioButtonMenuItem("Sortierung nach Materialnummer");
+        matNrSort.setSelected(Reader.getInstance().getKabeltypSort() instanceof TypeMatNrSort);
+        group.add(matNrSort);
+        typSortMenu.add(matNrSort);
+
+        matNrSort.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                try {
+                    Reader.getInstance().setTypSort("matnr");
+                    if (kabelTypAuswahlAAS != null) {
+                        kabelTypAuswahlAAS.typSelected(null);
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+
+        JRadioButtonMenuItem frequenzSort = new JRadioButtonMenuItem("Sortierung nach Häufigkeit");
+        frequenzSort.setSelected(Reader.getInstance().getKabeltypSort() instanceof TypeFrequenzSort);
+        group.add(frequenzSort);
+        typSortMenu.add(frequenzSort);
+
+        frequenzSort.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                try {
+                    Reader.getInstance().setTypSort("frequenz");
+                    if (kabelTypAuswahlAAS != null) {
+                        kabelTypAuswahlAAS.typSelected(null);
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        JRadioButtonMenuItem nameSort = new JRadioButtonMenuItem("Sortierung nach Typnamen");
+        nameSort.setSelected(Reader.getInstance().getKabeltypSort() instanceof TypNameSort);
+        group.add(nameSort);
+        typSortMenu.add(nameSort);
+
+        nameSort.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                try {
+                    Reader.getInstance().setTypSort("name");
+                    if (kabelTypAuswahlAAS != null) {
+                        kabelTypAuswahlAAS.typSelected(null);
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        return typSortMenu;
+    }
+
     public void setDb(IDBWrapper db) {
         if (this.db != db) {
             this.db = db;
@@ -165,22 +239,22 @@ public class DisplayAAS extends JFrame implements ItemListener, ActionListener {
     }
 
     public JPanel getBearbeitenPanel() {
-        KabelTypAuswahlAAS k = new KabelTypAuswahlAAS(db);
+        kabelTypAuswahlAAS = new KabelTypAuswahlAAS(db);
         tommelAAs = new TrommelAuswahlAAS(db, auchf.isSelected());
         HashSet<JPanel> updateSet = new HashSet<>();
-        updateSet.add(k);
+        updateSet.add(kabelTypAuswahlAAS);
         updateSet.add(tommelAAs);
         StreckenAAS s = new StreckenAAS(db, updateSet);
 
-        k.addKabelTypListner(tommelAAs);
-        k.addKabelTypListner(s);
+        kabelTypAuswahlAAS.addKabelTypListner(tommelAAs);
+        kabelTypAuswahlAAS.addKabelTypListner(s);
 
         tommelAAs.addTrommelListner(s);
 
         JPanel l = new JPanel(new GridLayout(1, 2));
         JPanel all = new JPanel(new GridLayout(1, 2));
 
-        JScrollPane kSP = new JScrollPane(k);
+        JScrollPane kSP = new JScrollPane(kabelTypAuswahlAAS);
         l.add(kSP);
         l.add(new JScrollPane(tommelAAs));
         all.add(l);
@@ -195,7 +269,7 @@ public class DisplayAAS extends JFrame implements ItemListener, ActionListener {
 
         setBackground(BACKGROUND);
         l.setBackground(BACKGROUND);
-        k.setBackground(BACKGROUND);
+        kabelTypAuswahlAAS.setBackground(BACKGROUND);
         tommelAAs.setBackground(BACKGROUND);
         s.setBackground(BACKGROUND);
 

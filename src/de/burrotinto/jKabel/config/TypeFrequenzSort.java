@@ -17,41 +17,31 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package de.burrotinto.jKabel.dispalyAS.bearbeiten.kabelTypAuswahlAS;
+package de.burrotinto.jKabel.config;
 
-import de.burrotinto.jKabel.config.Reader;
-import de.burrotinto.jKabel.dbauswahlAS.IDBWrapper;
 import de.burrotinto.jKabel.dbauswahlAS.enitys.IKabeltypE;
+import de.burrotinto.jKabel.dbauswahlAS.enitys.ITrommelE;
 
 import java.util.Comparator;
-import java.util.List;
 
 /**
- * Created by derduke on 21.05.16.
+ * Created by Florian Klinger on 21.07.16.
  */
-class KabelTypAuswahlK {
-    public final IDBWrapper db;
+public class TypeFrequenzSort implements Comparator<IKabeltypE> {
 
-    public KabelTypAuswahlK(IDBWrapper db) {
-        this.db = db;
-    }
-
-    public List<IKabeltypE> getTypen() {
-
-        return db.getAllKabeltypen();
-    }
-
-    public IKabeltypE getTyp(Integer integer) {
-        for (IKabeltypE k : db.getAllKabeltypen()) {
-            if (k.getMaterialNummer() == integer) {
-                return k;
-            }
+    @Override
+    public int compare(IKabeltypE t1, IKabeltypE t2) {
+        int x1 = 0;
+        for (ITrommelE t : t1.getTrommeln()) {
+            x1 += t.getStrecken().size();
         }
-        return null;
+
+        int x2 = 0;
+        for (ITrommelE t : t2.getTrommeln()) {
+            x2 += t.getStrecken().size();
+        }
+
+        return x2 - x1;
     }
 
-    public Comparator<? super IKabeltypE> getSort() {
-        return Reader.getInstance().getKabeltypSort();
-    }
 }
-

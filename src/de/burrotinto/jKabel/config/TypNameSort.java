@@ -17,41 +17,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package de.burrotinto.jKabel.dispalyAS.bearbeiten.kabelTypAuswahlAS;
+package de.burrotinto.jKabel.config;
 
-import de.burrotinto.jKabel.config.Reader;
-import de.burrotinto.jKabel.dbauswahlAS.IDBWrapper;
 import de.burrotinto.jKabel.dbauswahlAS.enitys.IKabeltypE;
 
 import java.util.Comparator;
-import java.util.List;
 
 /**
- * Created by derduke on 21.05.16.
+ * Created by Florian Klinger on 21.07.16.
  */
-class KabelTypAuswahlK {
-    public final IDBWrapper db;
+public class TypNameSort implements Comparator<IKabeltypE> {
 
-    public KabelTypAuswahlK(IDBWrapper db) {
-        this.db = db;
-    }
-
-    public List<IKabeltypE> getTypen() {
-
-        return db.getAllKabeltypen();
-    }
-
-    public IKabeltypE getTyp(Integer integer) {
-        for (IKabeltypE k : db.getAllKabeltypen()) {
-            if (k.getMaterialNummer() == integer) {
-                return k;
-            }
-        }
-        return null;
-    }
-
-    public Comparator<? super IKabeltypE> getSort() {
-        return Reader.getInstance().getKabeltypSort();
+    @Override
+    public int compare(IKabeltypE t1, IKabeltypE t2) {
+        return t1.getTyp().compareTo(t2.getTyp());
     }
 }
-

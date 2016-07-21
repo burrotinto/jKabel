@@ -48,7 +48,7 @@ public class LieferantCreateAAS extends JDialog implements ActionListener {
 
         JPanel p = new JPanel();
         p.setLayout(new GridLayout(2, 2));
-        p.add(new JLabel("Name:"));
+        p.add(new JLabel("TypNameSort:"));
         p.add(name);
         add(p, BorderLayout.CENTER);
         JPanel south = new JPanel(new FlowLayout());

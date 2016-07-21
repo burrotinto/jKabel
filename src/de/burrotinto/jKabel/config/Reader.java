@@ -19,10 +19,13 @@
 
 package de.burrotinto.jKabel.config;
 
+import de.burrotinto.jKabel.dbauswahlAS.enitys.IKabeltypE;
+
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Comparator;
 import java.util.Properties;
 
 /**
@@ -32,6 +35,7 @@ import java.util.Properties;
 public class Reader {
     public static final String SWNPFAD = "O:\\KFM-Verwaltung\\Materialwirtschaft\\Lager\\jKabelDB\\";
     private static final String DBPFADPROP = "DB.PFAD";
+    private static final String SORTTYP = "SORT.TYP";
     private static Reader instance = new Reader();
 
     private final File propFile = new File(System.getProperty("user.home") + File.separator + "jKabel.prop");
@@ -86,8 +90,41 @@ public class Reader {
      */
     public void savePath(String path) throws IOException {
         prop.setProperty(DBPFADPROP, path);
+    }
+
+    private void save() throws IOException {
         prop.store(new FileWriter(propFile), "Konfigurationsdatei des JKabel");
     }
 
+    public void setTypSort(String typSort) throws IOException {
+        prop.setProperty(SORTTYP, typSort);
+        save();
+    }
 
+    public Comparator<? super IKabeltypE> getKabeltypSort() {
+        try {
+            if (getProperties().getProperty(SORTTYP) == null) {
+                try {
+                    setTypSort("matnr");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            Comparator<? super IKabeltypE> c;
+            switch (prop.getProperty(SORTTYP)) {
+                case "frequenz":
+                    c = new TypeFrequenzSort();
+                    break;
+                case "name":
+                    c = new TypNameSort();
+                    break;
+                default:
+                    c = new TypeMatNrSort();
+                    break;
+            }
+            return c;
+        } catch (Exception e) {
+            return new TypeMatNrSort();
+        }
+    }
 }
