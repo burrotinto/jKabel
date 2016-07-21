@@ -388,7 +388,7 @@ public class HSQLDBWrapper implements IDBWrapper {
 
         try {
             ResultSet rs = executeQuery("SELECT * FROM lieferant WHERE name='" + name + "' ;");
-            // TypNameSort bereits enthalten
+            // Namebereits enthalten
             if (rs.next()) {
                 return false;
             }
