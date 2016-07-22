@@ -26,6 +26,7 @@ import de.burrotinto.jKabel.dispalyAS.bearbeiten.kabelTypAuswahlAS.IKabelTypList
 import de.burrotinto.jKabel.dispalyAS.bearbeiten.trommelCreateAS.TrommelCreateAAS;
 import de.burrotinto.jKabel.dispalyAS.lookAndFeel.MinimalisticButton;
 import de.burrotinto.jKabel.dispalyAS.lookAndFeel.MinimalisticPanel;
+import de.burrotinto.jKabel.dispalyAS.lookAndFeel.PercendBarMinimalisticPanel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -75,14 +76,12 @@ public class TrommelAuswahlAAS extends JPanel implements IKabelTypListner, Actio
             for (ITrommelE t : kontroll.getAllTrommelForTyp(typ)) {
                 if (zeiheAlle || !(t.isFreigemeldet() && kontroll.getRestMeter(t) == 0)) {
                     p = new MinimalisticPanel(new FlowLayout(FlowLayout.LEFT));
-                    MinimalisticButton b = new MinimalisticButton(t.getTrommelnummer() + "");
-                    b.setSelected(b.equals(ausgewaehlt));
-                    buttonTrommelMap.put(b, t.getId());
-                    p.add(b);
+
                     JLabel label;
                     if (kontroll.isBeendet(t)) {
                         label = new JLabel("Beendet");
                     } else if (!kontroll.isAusserHaus(t)) {
+                        p = new PercendBarMinimalisticPanel(new FlowLayout(FlowLayout.LEFT), (double) kontroll.getRestMeter(t) / (double) t.getGesamtlaenge(), t.isFreigemeldet() ? Color.RED : new Color(221, 160, 221), Color.white);
                         label = new JLabel("Noch: " + kontroll.getRestMeter(t) + " m" + (t.isFreigemeldet() ? " - Bund" : ""));
                         if (kontroll.getRestMeter(t) == 0) {
                             p.setBackground(Color.GRAY);
@@ -110,13 +109,17 @@ public class TrommelAuswahlAAS extends JPanel implements IKabelTypListner, Actio
                         p.setBackground(Color.ORANGE);
                         p.setOpaque(true);
                     }
-                    p.add(label);
-                    if (t.isFreigemeldet()) {
+
+                    if (kontroll.isBeendet(t)) {
                         p.setBackground(Color.RED);
                         p.setOpaque(true);
                     }
 
-
+                    MinimalisticButton b = new MinimalisticButton(t.getTrommelnummer() + "");
+                    b.setSelected(b.equals(ausgewaehlt));
+                    buttonTrommelMap.put(b, t.getId());
+                    p.add(b);
+                    p.add(label);
                     b.addActionListener(this);
                     panel.add(p);
                 }

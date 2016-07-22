@@ -17,20 +17,28 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package de.burrotinto.jKabel.dispalyAS;
+package de.burrotinto.jKabel.dispalyAS.lookAndFeel;
 
-import javax.swing.*;
+import java.awt.*;
 
 /**
  * Created by Florian Klinger on 22.07.16.
  */
-public class Version extends JMenu {
-    public static String VERSION = "0.1.1";
-    private JMenuItem version;
+public class PercendBarMinimalisticPanel extends MinimalisticPanel {
+    private double percent;
+    private Color c1, c2;
 
-    public Version() {
-        setText("Version");
-        version = new JMenuItem(VERSION);
-        add(version);
+    public PercendBarMinimalisticPanel(LayoutManager layout, double percent, Color c1, Color c2) {
+        super(layout);
+        this.percent = percent;
+        this.c1 = c1;
+        this.c2 = c2;
+    }
+
+    @Override
+    public void paint(Graphics graphics) {
+        graphics.setColor(c1);
+        graphics.fillRect(0, 0, (int) (this.getWidth() * percent), getHeight());
+        super.paint(graphics);
     }
 }
