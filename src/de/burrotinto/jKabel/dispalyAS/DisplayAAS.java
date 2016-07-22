@@ -118,6 +118,7 @@ public class DisplayAAS extends JFrame implements ItemListener, ActionListener {
         // und zusammenbauen
         menuBar.add(menue);
         menuBar.add(lMenue);
+        menuBar.add(new Version());
 
         setJMenuBar(menuBar);
 
