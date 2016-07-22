@@ -39,6 +39,8 @@ public class PercendBarMinimalisticPanel extends MinimalisticPanel {
     public void paint(Graphics graphics) {
         graphics.setColor(c1);
         graphics.fillRect(0, 0, (int) (this.getWidth() * percent), getHeight());
+        graphics.setColor(c2);
+        graphics.fillRect((int) (this.getWidth() * percent), 0, getWidth(), getHeight());
         super.paint(graphics);
     }
 }
