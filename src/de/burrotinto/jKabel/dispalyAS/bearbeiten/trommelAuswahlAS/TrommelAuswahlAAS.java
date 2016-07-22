@@ -80,7 +80,7 @@ public class TrommelAuswahlAAS extends JPanel implements IKabelTypListner, Actio
                     buttonTrommelMap.put(b, t.getId());
                     p.add(b);
                     JLabel label;
-                    if (t.isFreigemeldet() && kontroll.getRestMeter(t) == 0) {
+                    if (kontroll.isBeendet(t)) {
                         label = new JLabel("Beendet");
                     } else if (!kontroll.isAusserHaus(t)) {
                         label = new JLabel("Noch: " + kontroll.getRestMeter(t) + " m" + (t.isFreigemeldet() ? " - Bund" : ""));
@@ -90,7 +90,23 @@ public class TrommelAuswahlAAS extends JPanel implements IKabelTypListner, Actio
                         }
 
                     } else {
-                        label = new JLabel("-> " + kontroll.getBaustelle(t) + " <-> " + kontroll.getAusleihtage(t) + " Tag" + (kontroll.getAusleihtage(t) != 1 ? "e" : ""));
+                        StringBuilder sb = new StringBuilder(">> ");
+                        sb.append(kontroll.getBaustelle(t)).append(" <<>> ");
+                        if (kontroll.getAusleihtage(t) == 0) {
+                            if (kontroll.getAusleihStunden(t) == 0) {
+                                sb.append(kontroll.getAusleihMinuten(t)).append(" min");
+                            } else {
+                                sb.append(kontroll.getAusleihStunden(t)).append(" h");
+                            }
+                        } else {
+                            sb.append(kontroll.getAusleihtage(t)).append(" Tag");
+                            if (kontroll.getAusleihtage(t) != 1) {
+                                sb.append("e");
+                            }
+
+                        }
+                        sb.append(" <<");
+                        label = new JLabel(sb.toString());
                         p.setBackground(Color.ORANGE);
                         p.setOpaque(true);
                     }

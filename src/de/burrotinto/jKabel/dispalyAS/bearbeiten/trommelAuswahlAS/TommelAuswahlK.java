@@ -41,11 +41,16 @@ class TommelAuswahlK {
         comperator = new Comparator<ITrommelE>() {
             @Override
             public int compare(ITrommelE o1, ITrommelE o2) {
-                if ((!isAusserHaus(o1) && isAusserHaus(o2)) || (!isAusserHaus(o2) && isAusserHaus(o1))) {
+                if ((!isBeendet(o1) && isBeendet(o2)) || (!isBeendet(o2) && isBeendet(o1))) {
+                    return isBeendet(o1) ? 1 : -1;
+                } else if ((!isAusserHaus(o1) && isAusserHaus(o2)) || (!isAusserHaus(o2) && isAusserHaus(o1))) {
                     return isAusserHaus(o1) ? 1 : -1;
+                } else if (isAusserHaus(o1) && isAusserHaus(o2)) {
+                    return getAusleihMinuten(o2) - getAusleihMinuten(o1);
+                } else {
+//                return o2.getId() - o2.getId();
+                    return ((Long) o1.getGeliefert().getDatum()).compareTo(o2.getGeliefert().getDatum());
                 }
-                return o2.getId() - o2.getId();
-//                return ((Long) o1.getGeliefert().getDatum()).compareTo(o2.getGeliefert().getDatum());
             }
         };
     }
@@ -121,7 +126,11 @@ class TommelAuswahlK {
         return x;
     }
 
-    public int getAusleihtage(ITrommelE t) {
+    public int getAusleihStunden(ITrommelE t) {
+        return getAusleihMinuten(t) / 60;
+    }
+
+    public int getAusleihMinuten(ITrommelE t) {
         List<IStreckeE> strecken = t.getStrecken();
         Collections.sort(strecken, new Comparator<IStreckeE>() {
             @Override
@@ -132,7 +141,15 @@ class TommelAuswahlK {
         if (strecken.size() == 0) {
             return 0;
         } else {
-            return (int) ((System.currentTimeMillis() - strecken.get(0).getVerlegedatum()) / ((long) (1000 * 60 * 60 * 24)));
+            return (int) ((System.currentTimeMillis() - strecken.get(0).getVerlegedatum()) / ((long) (1000 * 60)));
         }
+    }
+
+    public int getAusleihtage(ITrommelE t) {
+        return getAusleihStunden(t) / 24;
+    }
+
+    public boolean isBeendet(ITrommelE t) {
+        return t.isFreigemeldet() && getRestMeter(t) == 0;
     }
 }

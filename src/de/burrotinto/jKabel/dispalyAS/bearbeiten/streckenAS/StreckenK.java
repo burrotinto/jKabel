@@ -70,7 +70,7 @@ class StreckenK {
         db.update(typ);
     }
 
-    String getTimeString(long t) {
+    public String getTimeString(long t) {
         StringBuilder sb = new StringBuilder();
         Date d = new Date(t);
         if (d.getDate() < 10) sb.append("0");
