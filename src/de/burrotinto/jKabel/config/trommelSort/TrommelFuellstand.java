@@ -17,20 +17,23 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package de.burrotinto.jKabel.dispalyAS;
+package de.burrotinto.jKabel.config.trommelSort;
 
-import javax.swing.*;
+import de.burrotinto.jKabel.dbauswahlAS.enitys.ITrommelE;
 
 /**
- * Created by Florian Klinger on 22.07.16.
+ * Created by Florian Klinger on 27.07.16.
  */
-public class Version extends JMenu {
-    public static String VERSION = "0.1.2";
-    private JMenuItem version;
+public class TrommelFuellstand extends AbstractTrommelSort {
 
-    public Version() {
-        setText("Version");
-        version = new JMenuItem(VERSION);
-        add(version);
+
+    @Override
+    public String getName() {
+        return "Füllstand";
+    }
+
+    @Override
+    public int compare(ITrommelE iTrommelE, ITrommelE t1) {
+        return -wendeAusgewaehlteOrderreihenfolgeAn(getRestMeter(iTrommelE) - getRestMeter(t1));
     }
 }

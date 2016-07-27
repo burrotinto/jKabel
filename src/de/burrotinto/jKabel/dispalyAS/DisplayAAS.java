@@ -19,10 +19,9 @@
 
 package de.burrotinto.jKabel.dispalyAS;
 
-import de.burrotinto.jKabel.config.Reader;
-import de.burrotinto.jKabel.config.TypNameSort;
-import de.burrotinto.jKabel.config.TypeFrequenzSort;
-import de.burrotinto.jKabel.config.TypeMatNrSort;
+import de.burrotinto.jKabel.config.ConfigReader;
+import de.burrotinto.jKabel.config.trommelSort.AbstractTrommelSort;
+import de.burrotinto.jKabel.config.typSort.AbstractTypeSort;
 import de.burrotinto.jKabel.dbauswahlAS.DBAuswahlAAS;
 import de.burrotinto.jKabel.dbauswahlAS.IDBWrapper;
 import de.burrotinto.jKabel.dbauswahlAS.serverStatus.IStatusClient;
@@ -88,6 +87,7 @@ public class DisplayAAS extends JFrame implements ItemListener, ActionListener {
 
         menue.addSeparator();
         menue.add(getjTypSortMenu());
+        menue.add(getjTrommelSortMenu());
         menue.addSeparator();
         menue.add(exit);
 
@@ -146,68 +146,72 @@ public class DisplayAAS extends JFrame implements ItemListener, ActionListener {
 
     }
 
+    private JMenu getjTrommelSortMenu() {
+        JMenu trommelSortMenu = new JMenu("Trommel Sortierung");
+
+        JRadioButtonMenuItem inOrder = new JRadioButtonMenuItem("Aufsteigend Sortieren");
+        inOrder.setSelected(ConfigReader.getInstance().isTypeInOrder());
+        inOrder.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                try {
+                    ConfigReader.getInstance().setTrommelInOrder(inOrder.isSelected());
+                    if (kabelTypAuswahlAAS != null) {
+                        kabelTypAuswahlAAS.typSelected(kabelTypAuswahlAAS.getSelected());
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        trommelSortMenu.add(inOrder);
+
+        trommelSortMenu.addSeparator();
+
+        ButtonGroup group = new ButtonGroup();
+        for (AbstractTrommelSort aTS : ConfigReader.getInstance().getAllTrommelSort()) {
+
+            JRadioButtonMenuItem sw = new JRadioButtonMenuItem(aTS.getName());
+            sw.setSelected(aTS.equals(ConfigReader.getInstance().getTrommelSort()));
+            group.add(sw);
+            trommelSortMenu.add(sw);
+
+            sw.addActionListener(aTS);
+        }
+        return trommelSortMenu;
+    }
+
     private JMenu getjTypSortMenu() {
         JMenu typSortMenu = new JMenu("Typ Sortierung");
 
+        JRadioButtonMenuItem inOrder = new JRadioButtonMenuItem("Aufsteigend Sortieren");
+        inOrder.setSelected(ConfigReader.getInstance().isTypeInOrder());
+        inOrder.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                try {
+                    ConfigReader.getInstance().setTypeInOrder(inOrder.isSelected());
+                    if (kabelTypAuswahlAAS != null) {
+                        kabelTypAuswahlAAS.typSelected(kabelTypAuswahlAAS.getSelected());
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        typSortMenu.add(inOrder);
+        typSortMenu.addSeparator();
 
         ButtonGroup group = new ButtonGroup();
-        JRadioButtonMenuItem matNrSort = new JRadioButtonMenuItem("Sortierung nach Materialnummer");
-        matNrSort.setSelected(Reader.getInstance().getKabeltypSort() instanceof TypeMatNrSort);
-        group.add(matNrSort);
-        typSortMenu.add(matNrSort);
+        for (AbstractTypeSort aTS : ConfigReader.getInstance().getAllTypSort()) {
 
-        matNrSort.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                try {
-                    Reader.getInstance().setTypSort("matnr");
-                    if (kabelTypAuswahlAAS != null) {
-                        kabelTypAuswahlAAS.typSelected(null);
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
+            JRadioButtonMenuItem sw = new JRadioButtonMenuItem(aTS.getName());
+            sw.setSelected(aTS.equals(ConfigReader.getInstance().getKabeltypSort()));
+            group.add(sw);
+            typSortMenu.add(sw);
 
-
-        JRadioButtonMenuItem frequenzSort = new JRadioButtonMenuItem("Sortierung nach Häufigkeit");
-        frequenzSort.setSelected(Reader.getInstance().getKabeltypSort() instanceof TypeFrequenzSort);
-        group.add(frequenzSort);
-        typSortMenu.add(frequenzSort);
-
-        frequenzSort.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                try {
-                    Reader.getInstance().setTypSort("frequenz");
-                    if (kabelTypAuswahlAAS != null) {
-                        kabelTypAuswahlAAS.typSelected(null);
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-
-        JRadioButtonMenuItem nameSort = new JRadioButtonMenuItem("Sortierung nach Typnamen");
-        nameSort.setSelected(Reader.getInstance().getKabeltypSort() instanceof TypNameSort);
-        group.add(nameSort);
-        typSortMenu.add(nameSort);
-
-        nameSort.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                try {
-                    Reader.getInstance().setTypSort("name");
-                    if (kabelTypAuswahlAAS != null) {
-                        kabelTypAuswahlAAS.typSelected(null);
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
+            sw.addActionListener(aTS);
+        }
         return typSortMenu;
     }
 
@@ -275,7 +279,7 @@ public class DisplayAAS extends JFrame implements ItemListener, ActionListener {
         s.setBackground(BACKGROUND);
 
         try {
-            s.setLogo(ImageIO.read(new File(Reader.getInstance().getPath() + "logo.jpg")));
+            s.setLogo(ImageIO.read(new File(ConfigReader.getInstance().getPath() + "logo.jpg")));
         } catch (IOException e) {
             s.setLogo(null);
         }

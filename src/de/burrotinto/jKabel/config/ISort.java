@@ -19,17 +19,13 @@
 
 package de.burrotinto.jKabel.config;
 
-import de.burrotinto.jKabel.dbauswahlAS.enitys.IKabeltypE;
-
 import java.util.Comparator;
 
 /**
- * Created by Florian Klinger on 21.07.16.
+ * Created by Florian Klinger on 27.07.16.
  */
-public class TypNameSort implements Comparator<IKabeltypE> {
+public interface ISort<T> extends Comparator<T> {
+    void setInOrder(boolean inOrder);
 
-    @Override
-    public int compare(IKabeltypE t1, IKabeltypE t2) {
-        return t1.getTyp().compareTo(t2.getTyp());
-    }
+    String getName();
 }

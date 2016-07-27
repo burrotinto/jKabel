@@ -125,4 +125,7 @@ public class KabelTypAuswahlAAS extends JPanel implements ActionListener, IKabel
         revalidate();
     }
 
+    public IKabeltypE getSelected() {
+        return selected;
+    }
 }

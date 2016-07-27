@@ -19,7 +19,7 @@
 
 package de.burrotinto.jKabel.dispalyAS.bearbeiten.kabelTypAuswahlAS;
 
-import de.burrotinto.jKabel.config.Reader;
+import de.burrotinto.jKabel.config.ConfigReader;
 import de.burrotinto.jKabel.dbauswahlAS.IDBWrapper;
 import de.burrotinto.jKabel.dbauswahlAS.enitys.IKabeltypE;
 
@@ -51,7 +51,7 @@ class KabelTypAuswahlK {
     }
 
     public Comparator<? super IKabeltypE> getSort() {
-        return Reader.getInstance().getKabeltypSort();
+        return ConfigReader.getInstance().getKabeltypSort();
     }
 }
 

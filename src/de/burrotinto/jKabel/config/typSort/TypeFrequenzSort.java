@@ -17,17 +17,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package de.burrotinto.jKabel.config;
+package de.burrotinto.jKabel.config.typSort;
 
 import de.burrotinto.jKabel.dbauswahlAS.enitys.IKabeltypE;
 import de.burrotinto.jKabel.dbauswahlAS.enitys.ITrommelE;
 
-import java.util.Comparator;
-
 /**
  * Created by Florian Klinger on 21.07.16.
  */
-public class TypeFrequenzSort implements Comparator<IKabeltypE> {
+public class TypeFrequenzSort extends AbstractTypeSort {
 
     @Override
     public int compare(IKabeltypE t1, IKabeltypE t2) {
@@ -41,7 +39,11 @@ public class TypeFrequenzSort implements Comparator<IKabeltypE> {
             x2 += t.getStrecken().size();
         }
 
-        return x2 - x1;
+        return wendeAusgewaehlteOrderreihenfolgeAn(x2 - x1);
     }
 
+    @Override
+    public String getName() {
+        return "Häufigkeit";
+    }
 }

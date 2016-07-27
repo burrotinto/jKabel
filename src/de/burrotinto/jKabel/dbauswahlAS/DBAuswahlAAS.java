@@ -19,7 +19,7 @@
 
 package de.burrotinto.jKabel.dbauswahlAS;
 
-import de.burrotinto.jKabel.config.Reader;
+import de.burrotinto.jKabel.config.ConfigReader;
 import de.burrotinto.jKabel.dbauswahlAS.HSQLDB.HSQLDBServer;
 import de.burrotinto.jKabel.dbauswahlAS.HSQLDB.HSQLDBWrapper;
 import de.burrotinto.jKabel.dbauswahlAS.HSQLDB.OnlyOneUserExeption;
@@ -67,11 +67,11 @@ public class DBAuswahlAAS {
     public IDBWrapper getDBWrapper() {
         IDBWrapper db = null;
 
-        pfad = Reader.getInstance().getPath();
+        pfad = ConfigReader.getInstance().getPath();
         if (pfad == null) {
-            pfad = choosePath(Reader.SWNPFAD);
+            pfad = choosePath(ConfigReader.SWNPFAD);
             try {
-                Reader.getInstance().savePath(pfad);
+                ConfigReader.getInstance().savePath(pfad);
             } catch (IOException e) {
                 e.printStackTrace();
             }

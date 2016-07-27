@@ -17,19 +17,21 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package de.burrotinto.jKabel.config;
+package de.burrotinto.jKabel.config.trommelSort;
 
-import de.burrotinto.jKabel.dbauswahlAS.enitys.IKabeltypE;
-
-import java.util.Comparator;
+import de.burrotinto.jKabel.dbauswahlAS.enitys.ITrommelE;
 
 /**
- * Created by Florian Klinger on 21.07.16.
+ * Created by Florian Klinger on 27.07.16.
  */
-public class TypeMatNrSort implements Comparator<IKabeltypE> {
+public class TrommelDatumSort extends AbstractTrommelSort {
+    @Override
+    public String getName() {
+        return "Lieferdatum";
+    }
 
     @Override
-    public int compare(IKabeltypE t1, IKabeltypE t2) {
-        return t1.getMaterialNummer() - t2.getMaterialNummer();
+    public int compare(ITrommelE iTrommelE, ITrommelE t1) {
+        return -wendeAusgewaehlteOrderreihenfolgeAn(((Long) iTrommelE.getGeliefert().getDatum()).compareTo(t1.getGeliefert().getDatum()));
     }
 }

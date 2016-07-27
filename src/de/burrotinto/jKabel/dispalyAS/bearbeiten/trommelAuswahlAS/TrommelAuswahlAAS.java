@@ -139,14 +139,14 @@ public class TrommelAuswahlAAS extends JPanel implements IKabelTypListner, Actio
 
     @Override
     public void typSelected(IKabeltypE typ) {
-        if (this.typ == null || !this.typ.equals(typ)) {
-            removeAll();
-            buildPanel(typ);
-            repaint();
-            revalidate();
-            buttonTrommelMap.get(ausgewaehlt);
-            trommelListners.forEach(iTrommelListner -> iTrommelListner.trommelAusgewaehlt(buttonTrommelMap.get(ausgewaehlt)));
-        }
+
+        removeAll();
+        buildPanel(typ);
+        repaint();
+        revalidate();
+        buttonTrommelMap.get(ausgewaehlt);
+        trommelListners.forEach(iTrommelListner -> iTrommelListner.trommelAusgewaehlt(buttonTrommelMap.get(ausgewaehlt)));
+
     }
 
     @Override

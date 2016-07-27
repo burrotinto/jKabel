@@ -19,6 +19,7 @@
 
 package de.burrotinto.jKabel.dispalyAS.bearbeiten.trommelAuswahlAS;
 
+import de.burrotinto.jKabel.config.ConfigReader;
 import de.burrotinto.jKabel.dbauswahlAS.IDBWrapper;
 import de.burrotinto.jKabel.dbauswahlAS.enitys.IKabeltypE;
 import de.burrotinto.jKabel.dbauswahlAS.enitys.IStreckeE;
@@ -33,31 +34,16 @@ import java.util.List;
  */
 class TommelAuswahlK {
     private final IDBWrapper db;
-    private Comparator<ITrommelE> comperator = null;
 
 
     public TommelAuswahlK(IDBWrapper db) {
         this.db = db;
-        comperator = new Comparator<ITrommelE>() {
-            @Override
-            public int compare(ITrommelE o1, ITrommelE o2) {
-                if ((!isBeendet(o1) && isBeendet(o2)) || (!isBeendet(o2) && isBeendet(o1))) {
-                    return isBeendet(o1) ? 1 : -1;
-                } else if ((!isAusserHaus(o1) && isAusserHaus(o2)) || (!isAusserHaus(o2) && isAusserHaus(o1))) {
-                    return isAusserHaus(o1) ? 1 : -1;
-                } else if (isAusserHaus(o1) && isAusserHaus(o2)) {
-                    return getAusleihMinuten(o2) - getAusleihMinuten(o1);
-                } else {
-//                return o2.getId() - o2.getId();
-                    return ((Long) o1.getGeliefert().getDatum()).compareTo(o2.getGeliefert().getDatum());
-                }
-            }
-        };
+
     }
 
     public List<ITrommelE> getAllTrommelForTyp(IKabeltypE typ) {
         List<ITrommelE> list = typ.getTrommeln();
-        Collections.sort(list, comperator);
+        Collections.sort(list, ConfigReader.getInstance().getTrommelSort());
         return list;
     }
 
@@ -81,12 +67,6 @@ class TommelAuswahlK {
                 }
             }
         return null;
-    }
-
-    public void setSortierReihenfolge(Comparator<ITrommelE> comperator) {
-        if (comperator != null) {
-            this.comperator = comperator;
-        }
     }
 
     public IKabeltypE getNewTypCopy(IKabeltypE typ) {
