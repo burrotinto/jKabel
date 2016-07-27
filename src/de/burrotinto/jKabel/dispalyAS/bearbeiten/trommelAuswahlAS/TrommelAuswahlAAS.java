@@ -19,6 +19,7 @@
 
 package de.burrotinto.jKabel.dispalyAS.bearbeiten.trommelAuswahlAS;
 
+import de.burrotinto.jKabel.config.ConfigReader;
 import de.burrotinto.jKabel.dbauswahlAS.IDBWrapper;
 import de.burrotinto.jKabel.dbauswahlAS.enitys.IKabeltypE;
 import de.burrotinto.jKabel.dbauswahlAS.enitys.ITrommelE;
@@ -44,18 +45,16 @@ public class TrommelAuswahlAAS extends JPanel implements IKabelTypListner, Actio
     private MinimalisticButton addNewButt = new MinimalisticButton("Neue Trommel");
     private IKabeltypE typ = null;
     private IDBWrapper db;
-    private boolean zeiheAlle;
     private MinimalisticButton ausgewaehlt = null;
 
     private HashMap<MinimalisticButton, Integer> buttonTrommelMap = new HashMap<>();
 
     private Set<ITrommelListner> trommelListners = new HashSet<>();
 
-    public TrommelAuswahlAAS(IDBWrapper db, boolean zeiheAlle) {
+    public TrommelAuswahlAAS(IDBWrapper db) {
         kontroll = new TommelAuswahlK(db);
         this.db = db;
         addNewButt.addActionListener(this);
-        this.zeiheAlle = zeiheAlle;
         setLayout(new BorderLayout());
     }
 
@@ -74,7 +73,7 @@ public class TrommelAuswahlAAS extends JPanel implements IKabelTypListner, Actio
 
 
             for (ITrommelE t : kontroll.getAllTrommelForTyp(typ)) {
-                if (zeiheAlle || !(t.isFreigemeldet() && kontroll.getRestMeter(t) == 0)) {
+                if (ConfigReader.getInstance().isZeigeAlle() || !(t.isFreigemeldet() && kontroll.getRestMeter(t) == 0)) {
                     p = new MinimalisticPanel(new FlowLayout(FlowLayout.LEFT));
 
                     JLabel label;
@@ -171,15 +170,4 @@ public class TrommelAuswahlAAS extends JPanel implements IKabelTypListner, Actio
             }
         }
     }
-
-
-    public void setZeiheAlle(boolean zeiheAlle) {
-        this.zeiheAlle = zeiheAlle;
-    }
-
-//    @Override
-//    public void removeAll() {
-//        super.removeAll();
-//        ausgewaehlt = null;
-//    }
 }

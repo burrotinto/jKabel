@@ -38,7 +38,7 @@ public class TrommelIntelligentSort extends AbstractTrommelSort {
         } else {
             i = ((Long) o1.getGeliefert().getDatum()).compareTo(o2.getGeliefert().getDatum());
         }
-        return -wendeAusgewaehlteOrderreihenfolgeAn(i);
+        return wendeAusgewaehlteOrderreihenfolgeAn(i);
     }
 
     @Override

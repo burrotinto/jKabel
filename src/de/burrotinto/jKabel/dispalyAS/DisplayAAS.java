@@ -95,7 +95,16 @@ public class DisplayAAS extends JFrame implements ItemListener, ActionListener {
         edit.addActionListener(this);
         search.addActionListener(this);
         exit.addActionListener(this);
-        auchf.addActionListener(this);
+        auchf.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                try {
+                    ConfigReader.getInstance().setZeigeAlle(auchf.isSelected());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
 
         //License and more
         JMenu lMenue = new JMenu("Hilfe");
@@ -245,7 +254,7 @@ public class DisplayAAS extends JFrame implements ItemListener, ActionListener {
 
     public JPanel getBearbeitenPanel() {
         kabelTypAuswahlAAS = new KabelTypAuswahlAAS(db);
-        tommelAAs = new TrommelAuswahlAAS(db, auchf.isSelected());
+        tommelAAs = new TrommelAuswahlAAS(db);
         HashSet<JPanel> updateSet = new HashSet<>();
         updateSet.add(kabelTypAuswahlAAS);
         updateSet.add(tommelAAs);
@@ -312,8 +321,6 @@ public class DisplayAAS extends JFrame implements ItemListener, ActionListener {
                 remove(center);
                 center = new SearchAAS(db);
                 getContentPane().add(center, BorderLayout.CENTER);
-            } else if (e.getSource() == auchf && tommelAAs != null) {
-                tommelAAs.setZeiheAlle(auchf.isSelected());
             }
             repaint();
             revalidate();

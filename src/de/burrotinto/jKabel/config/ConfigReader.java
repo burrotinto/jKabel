@@ -45,6 +45,7 @@ public class ConfigReader {
     private static final String SORTTYPINORDER = "SORT.TYP.INORDER";
     private static final String SORTTROMMELINORDER = "SORT.TROMMEL.INORDER";
     private static final String SORTTROMMEL = "SORT.TROMMEL";
+    private static final String ZEIGEALLE = "SORT.TROMMEL.ZEIGEALLE";
     private static ConfigReader instance = new ConfigReader();
     private static Logger log = Logger.getLogger(ConfigReader.class);
     private final File propFile = new File(System.getProperty("user.home") + File.separator + "jKabel.prop");
@@ -213,5 +214,18 @@ public class ConfigReader {
             alleTrommelSortierer.put(TrommelNummerSort.class.getName(), new TrommelNummerSort());
         }
         return alleTrommelSortierer.values();
+    }
+
+    public boolean isZeigeAlle() {
+        try {
+            return getProperties().getProperty(ZEIGEALLE) != null && Boolean.parseBoolean(getProperties().getProperty(ZEIGEALLE));
+        } catch (IOException e) {
+            return false;
+        }
+    }
+
+    public void setZeigeAlle(boolean zeigeAlle) throws IOException {
+        prop.setProperty(ZEIGEALLE, Boolean.toString(zeigeAlle));
+        save();
     }
 }
