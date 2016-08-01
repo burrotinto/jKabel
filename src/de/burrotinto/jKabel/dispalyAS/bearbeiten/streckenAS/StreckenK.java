@@ -21,9 +21,11 @@ package de.burrotinto.jKabel.dispalyAS.bearbeiten.streckenAS;
 
 import de.burrotinto.jKabel.dbauswahlAS.IDBWrapper;
 import de.burrotinto.jKabel.dbauswahlAS.enitys.*;
+import de.burrotinto.usefull.list.SortedSetAnzahlDerEingefuegtenElemente;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 import java.util.Vector;
 
 /**
@@ -125,8 +127,9 @@ class StreckenK {
     }
 
     public String getTextForBA(int ba) {
-        List<String> list = db.getAllTexteForBA(ba);
-        return list == null ? "" : list.get(0);
+        Set<String> set = new SortedSetAnzahlDerEingefuegtenElemente();
+        set.addAll(db.getAllTexteForBA(ba));
+        return set.isEmpty() ? "" : (String) set.toArray()[0];
     }
 
     public boolean istAusserHaus(ITrommelE trommel) {
