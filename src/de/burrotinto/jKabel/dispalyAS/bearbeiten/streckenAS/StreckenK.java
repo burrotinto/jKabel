@@ -27,6 +27,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import java.util.Vector;
+import java.util.function.Consumer;
 
 /**
  * Created by derduke on 22.05.16.
@@ -126,10 +127,27 @@ class StreckenK {
         db.createStrecke(ba, text, l, start, ende, trommel);
     }
 
-    public String getTextForBA(int ba) {
+    public Vector<String> getTextForBA(int ba) {
         Set<String> set = new SortedSetAnzahlDerEingefuegtenElemente();
+//        db.getAllKabeltypen().forEach(new Consumer<IKabeltypE>() {
+//            @Override
+//            public void accept(IKabeltypE iKabeltypE) {
+//                iKabeltypE.getTrommeln().forEach(new Consumer<ITrommelE>() {
+//                    @Override
+//                    public void accept(ITrommelE iTrommelE) {
+//                        iTrommelE.getStrecken().forEach(new Consumer<IStreckeE>() {
+//                            @Override
+//                            public void accept(IStreckeE iStreckeE) {
+//                                if (new String( iStreckeE.getBa()+ "").startsWith("" + ba))
+//                                    set.add(iStreckeE.getOrt() == null ? "" : iStreckeE.getOrt());
+//                            }
+//                        });
+//                    }
+//                });
+//            }
+//        });
         set.addAll(db.getAllTexteForBA(ba));
-        return set.isEmpty() ? "" : (String) set.toArray()[0];
+        return new Vector<>(set);
     }
 
     public boolean istAusserHaus(ITrommelE trommel) {
@@ -155,5 +173,17 @@ class StreckenK {
 
     public ITrommelE getTrommelByID(Integer trommelID) {
         return trommelID == null ? null : db.getTrommelByID(trommelID);
+    }
+
+
+    public Vector<String> getLagerPlaetze() {
+        SortedSetAnzahlDerEingefuegtenElemente<String> sort = new SortedSetAnzahlDerEingefuegtenElemente<>();
+        typ.getTrommeln().forEach(new Consumer<ITrommelE>() {
+            @Override
+            public void accept(ITrommelE iTrommelE) {
+                sort.add(iTrommelE.getLagerPlatz());
+            }
+        });
+        return new Vector<String>(sort);
     }
 }

@@ -42,7 +42,8 @@ import java.util.function.Consumer;
 public class StreckenAAS extends JPanel implements ITrommelListner, ActionListener, IKabelTypListner, KeyListener {
     private final StreckenK kontroller;
     private final Set<JPanel> updateOnChange;
-    private JTextField trommelnummerField, datumField, laengeField, typField, matNrField, baField, startField, endField, ortField, lagerplatzField, trommelstartField;
+    private JTextField trommelnummerField, datumField, laengeField, typField, matNrField, baField, startField, endField, trommelstartField;
+    private JComboBox<String> lagerplatzBox, ortBox;
     private JCheckBox freiCheckBox;
     private List<Abgang> abgaenge;
     private MinimalisticButton create = new MinimalisticButton("Eintragen");
@@ -51,6 +52,7 @@ public class StreckenAAS extends JPanel implements ITrommelListner, ActionListen
     private JComboBox<ILieferantE> cBox;
     private List<JDialog> scanDialoge = new ArrayList<>();
     private BufferedImage logo = null;
+
 
     public StreckenAAS(IDBWrapper db, Set<JPanel> updateOnChange) {
         this.updateOnChange = updateOnChange == null ? new HashSet<>() : updateOnChange;
@@ -145,8 +147,10 @@ public class StreckenAAS extends JPanel implements ITrommelListner, ActionListen
         //Lagerplatz
         JPanel lP = new MinimalisticPanel(new FlowLayout());
         lP.add(new JLabel("Lagerplatz:"));
-        lagerplatzField = new JTextField(trommel.getLagerPlatz(), 12);
-        lP.add(lagerplatzField);
+        lagerplatzBox = new JComboBox<String>(kontroller.getLagerPlaetze());
+        lagerplatzBox.setEditable(true);
+        lagerplatzBox.setSelectedItem(trommel.getLagerPlatz());
+        lP.add(lagerplatzBox);
         p.add(lP);
 
         //MatNr
@@ -245,12 +249,16 @@ public class StreckenAAS extends JPanel implements ITrommelListner, ActionListen
             baField = new MinimalisticFormattetTextField("", 8);
             startField = new MinimalisticFormattetTextField(last, 4);
             endField = new MinimalisticFormattetTextField("", 4);
-            ortField = new JTextField("", 16);
+
+            ortBox = new JComboBox<String>();
+            ortBox.setEditable(true);
+            ortBox.setPreferredSize(new Dimension(180, 21));
+
             baField.addKeyListener(this);
             panel.add(baField);
             panel.add(startField);
             panel.add(endField);
-            panel.add(ortField);
+            panel.add(ortBox);
             panel.add(create);
             p.add(panel);
         }
@@ -312,7 +320,7 @@ public class StreckenAAS extends JPanel implements ITrommelListner, ActionListen
                 dialog.setVisible(true);
 
             } else {
-                kontroller.eintragenStrecke(ba, ortField.getText(), System.currentTimeMillis(), start, ende, trommel);
+                kontroller.eintragenStrecke(ba, ortBox.getSelectedItem() == null ? "" : (String) ortBox.getSelectedItem(), System.currentTimeMillis(), start, ende, trommel);
             }
         } else {
             // Updates der Einträge
@@ -328,7 +336,7 @@ public class StreckenAAS extends JPanel implements ITrommelListner, ActionListen
 
                 trommel.setGesamtlaenge(Integer.parseInt(laengeField.getText()));
                 trommel.setTrommelnummer(trommelnummerField.getText());
-                trommel.setLagerPlatz(lagerplatzField.getText());
+                trommel.setLagerPlatz((String) lagerplatzBox.getSelectedItem());
                 trommel.setStart(Integer.parseInt(trommelstartField.getText()));
                 trommel.setFreimeldung(freiCheckBox.isSelected());
                 kontroller.update(trommel);
@@ -390,12 +398,27 @@ public class StreckenAAS extends JPanel implements ITrommelListner, ActionListen
 
     @Override
     public void keyReleased(KeyEvent e) {
-        if (ortField.getText().equals("")) {
             try {
-                ortField.setText(kontroller.getTextForBA(Integer.parseInt(((JTextField) e.getSource()).getText())));
+                if (!kontroller.getTextForBA(Integer.parseInt(((JTextField) e.getSource()).getText())).isEmpty()) {
+                    String old = (String) ortBox.getSelectedItem();
+                    ortBox.removeAllItems();
+                    ortBox.addItem(old);
+                    Vector<String> v = kontroller.getTextForBA(Integer.parseInt(((JTextField) e.getSource()).getText()));
+                    v.forEach(new Consumer<String>() {
+                        @Override
+                        public void accept(String s) {
+                            ortBox.addItem(s.equals("null") ? "" : s);
+                        }
+                    });
+                    if (!v.isEmpty()) {
+                        ortBox.setSelectedItem(v.firstElement());
+                    } else {
+                        ortBox.setSelectedItem(old);
+                    }
+                    ortBox.updateUI();
+                }
             } catch (Exception ex) {
             }
-        }
     }
 
     @Override
@@ -540,7 +563,7 @@ public class StreckenAAS extends JPanel implements ITrommelListner, ActionListen
         public void keyReleased(KeyEvent e) {
             if (text.getText().equals("")) {
                 try {
-                    text.setText(kontroller.getTextForBA(Integer.parseInt(((JTextField) e.getSource()).getText())));
+                    text.setText(kontroller.getTextForBA(Integer.parseInt(((JTextField) e.getSource()).getText())).firstElement());
                 } catch (Exception ex) {
                 }
             }

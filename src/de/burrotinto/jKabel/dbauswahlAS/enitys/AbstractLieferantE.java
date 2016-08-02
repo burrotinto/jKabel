@@ -59,4 +59,8 @@ public abstract class AbstractLieferantE implements ILieferantE {
         }
     }
 
+    @Override
+    public int hashCode() {
+        return getId();
+    }
 }

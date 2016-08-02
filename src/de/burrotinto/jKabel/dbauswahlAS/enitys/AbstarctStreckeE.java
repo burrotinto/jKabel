@@ -113,4 +113,8 @@ public abstract class AbstarctStreckeE implements IStreckeE {
         return id;
     }
 
+    @Override
+    public int hashCode() {
+        return getId();
+    }
 }

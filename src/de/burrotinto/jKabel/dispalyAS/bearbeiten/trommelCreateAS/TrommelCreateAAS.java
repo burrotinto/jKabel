@@ -21,14 +21,18 @@ package de.burrotinto.jKabel.dispalyAS.bearbeiten.trommelCreateAS;
 
 import de.burrotinto.jKabel.dbauswahlAS.IDBWrapper;
 import de.burrotinto.jKabel.dbauswahlAS.enitys.IKabeltypE;
+import de.burrotinto.jKabel.dbauswahlAS.enitys.ITrommelE;
 import de.burrotinto.jKabel.dispalyAS.bearbeiten.lieferantAuswahlAS.LieferantenAuswahlAAS;
 import de.burrotinto.jKabel.dispalyAS.bearbeiten.trommelAuswahlAS.TrommelAuswahlAAS;
 import de.burrotinto.jKabel.dispalyAS.lookAndFeel.MinimalisticFormattetTextField;
+import de.burrotinto.usefull.list.SortedSetAnzahlDerEingefuegtenElemente;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Vector;
+import java.util.function.Consumer;
 
 /**
  *  Startet den Anwendungsfall zum erstellen einer Trommel
@@ -40,7 +44,7 @@ public class TrommelCreateAAS extends JDialog implements ActionListener {
     private JTextField trommelNummer = new JTextField();
     private JTextField laenge = new MinimalisticFormattetTextField();
     private JTextField lieferscheinNr = new JTextField();
-    private JTextField lagerPlatz = new JTextField();
+    private JComboBox<String> lagerPlatzComboBox = null;
     private JTextField start = new MinimalisticFormattetTextField();
 
     private JButton cancel = new JButton("Abbruch");
@@ -50,6 +54,15 @@ public class TrommelCreateAAS extends JDialog implements ActionListener {
 
     private LieferantenAuswahlAAS lieferantenAuswahlAAS;
 
+    private Vector<String> lagerPlatzVektor = null;
+
+    /**
+     * Erstellen des Anwendungsfalles zum erstellen einer neuen Trommel
+     *
+     * @param db         Datenbank die dazu benutzt werden soll
+     * @param typ        Der Kabeltyp der auf die Trommel gespulöt wurde
+     * @param auswahlAAS welcher Trommelauswahlanwendungsfall nach dem erstellen neu gezeichnet werden soll
+     */
     public TrommelCreateAAS(IDBWrapper db, IKabeltypE typ, TrommelAuswahlAAS auswahlAAS) {
         this.db = db;
         this.typ = typ;
@@ -83,7 +96,9 @@ public class TrommelCreateAAS extends JDialog implements ActionListener {
         start.setText("0");
 
         p.add(new JLabel("Lagerplatz:"));
-        p.add(lagerPlatz);
+        lagerPlatzComboBox = getLagerPlatzComboBox();
+        lagerPlatzComboBox.setEditable(true);
+        p.add(lagerPlatzComboBox);
 
         p.add(new JLabel("Lieferscheinnummer:"));
         p.add(lieferscheinNr);
@@ -101,6 +116,25 @@ public class TrommelCreateAAS extends JDialog implements ActionListener {
         add(south, BorderLayout.SOUTH);
     }
 
+    private JComboBox<String> getLagerPlatzComboBox() {
+        return new JComboBox<String>(getLagerPlaetze());
+    }
+
+    private Vector<String> getLagerPlaetze() {
+        if (lagerPlatzVektor == null) {
+            SortedSetAnzahlDerEingefuegtenElemente<String> sort = new SortedSetAnzahlDerEingefuegtenElemente<>();
+            typ.getTrommeln().forEach(new Consumer<ITrommelE>() {
+                @Override
+                public void accept(ITrommelE iTrommelE) {
+                    sort.add(iTrommelE.getLagerPlatz());
+                }
+            });
+            lagerPlatzVektor = new Vector<String>(sort);
+            lagerPlatzVektor.add(0, "");
+        }
+        return lagerPlatzVektor;
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == cancel) {
@@ -113,7 +147,7 @@ public class TrommelCreateAAS extends JDialog implements ActionListener {
                 startW = 0;
             }
             try {
-                if (db.createTrommel(typ, trommelNummer.getText(), Integer.parseInt(laenge.getText()), lagerPlatz.getText(), startW, lieferantenAuswahlAAS.getAuswahl(), System.currentTimeMillis(), lieferscheinNr.getText())) {
+                if (db.createTrommel(typ, trommelNummer.getText(), Integer.parseInt(laenge.getText()), (String) lagerPlatzComboBox.getSelectedItem(), startW, lieferantenAuswahlAAS.getAuswahl(), System.currentTimeMillis(), lieferscheinNr.getText())) {
                     auswahlAAS.repaint();
                     auswahlAAS.revalidate();
                     dispose();

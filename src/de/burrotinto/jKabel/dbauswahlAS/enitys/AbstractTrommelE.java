@@ -112,4 +112,8 @@ public abstract class AbstractTrommelE implements ITrommelE {
         return kabelTyp;
     }
 
+    @Override
+    public int hashCode() {
+        return getId();
+    }
 }

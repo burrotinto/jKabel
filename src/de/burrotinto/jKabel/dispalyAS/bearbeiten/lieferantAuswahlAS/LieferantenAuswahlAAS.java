@@ -30,7 +30,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 /**
- * Created by derduke on 24.05.16.
+ * Startet den Anwendungsfall zum Auswahl eines Liferanten
+ * Created by Florian Klinger on 24.05.16.
  */
 public class LieferantenAuswahlAAS extends JPanel implements ActionListener {
     private final IDBWrapper db;
@@ -48,7 +49,7 @@ public class LieferantenAuswahlAAS extends JPanel implements ActionListener {
         JPanel panel = new JPanel(new GridLayout(2,1));
         JPanel p = new JPanel();
         p.add(new JLabel("Lieferantenauswahl:"));
-        cBox = new JComboBox<>(kontroll.getLieferanten());
+        cBox = new JComboBox<>(kontroll.getLieferantenSorted());
         p.add(cBox);
         panel.add(p);
         panel.add(neuButt);

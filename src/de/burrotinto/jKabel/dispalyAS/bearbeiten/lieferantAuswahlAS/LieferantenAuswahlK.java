@@ -20,12 +20,16 @@
 package de.burrotinto.jKabel.dispalyAS.bearbeiten.lieferantAuswahlAS;
 
 import de.burrotinto.jKabel.dbauswahlAS.IDBWrapper;
+import de.burrotinto.jKabel.dbauswahlAS.enitys.IKabeltypE;
 import de.burrotinto.jKabel.dbauswahlAS.enitys.ILieferantE;
+import de.burrotinto.jKabel.dbauswahlAS.enitys.ITrommelE;
+import de.burrotinto.usefull.list.SortedSetAnzahlDerEingefuegtenElemente;
 
 import java.util.Vector;
+import java.util.function.Consumer;
 
 /**
- * Created by derduke on 24.05.16.
+ * Created by Florian Klinger on 24.05.16.
  */
 class LieferantenAuswahlK {
 
@@ -37,5 +41,21 @@ class LieferantenAuswahlK {
 
     public Vector<ILieferantE> getLieferanten() {
         return new Vector<ILieferantE>(db.getAllLieferanten());
+    }
+
+    public Vector<ILieferantE> getLieferantenSorted() {
+        SortedSetAnzahlDerEingefuegtenElemente<ILieferantE> sort = new SortedSetAnzahlDerEingefuegtenElemente<>();
+        db.getAllKabeltypen().forEach(new Consumer<IKabeltypE>() {
+            @Override
+            public void accept(IKabeltypE iKabeltypE) {
+                iKabeltypE.getTrommeln().forEach(new Consumer<ITrommelE>() {
+                    @Override
+                    public void accept(ITrommelE iTrommelE) {
+                        sort.add(iTrommelE.getGeliefert().getLieferant());
+                    }
+                });
+            }
+        });
+        return new Vector<ILieferantE>(sort);
     }
 }

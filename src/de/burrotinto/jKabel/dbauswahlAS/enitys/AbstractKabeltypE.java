@@ -60,4 +60,8 @@ public abstract class AbstractKabeltypE implements IKabeltypE {
         }
     }
 
+    @Override
+    public int hashCode() {
+        return materialNummer;
+    }
 }
