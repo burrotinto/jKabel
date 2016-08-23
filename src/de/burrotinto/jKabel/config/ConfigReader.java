@@ -19,7 +19,7 @@
 
 package de.burrotinto.jKabel.config;
 
-import de.burrotinto.jKabel.config.trommelSort.*;
+import de.burrotinto.jKabel.config.trommelSort.AbstractTrommelSort;
 import de.burrotinto.jKabel.config.typSort.AbstractTypeSort;
 import de.burrotinto.jKabel.config.typSort.TypNameSort;
 import de.burrotinto.jKabel.config.typSort.TypeFrequenzSort;
@@ -27,6 +27,8 @@ import de.burrotinto.jKabel.config.typSort.TypeMatNrSort;
 import de.burrotinto.jKabel.dbauswahlAS.enitys.IKabeltypE;
 import de.burrotinto.jKabel.dbauswahlAS.enitys.ITrommelE;
 import org.apache.log4j.Logger;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import java.io.File;
 import java.io.FileReader;
@@ -46,13 +48,13 @@ public class ConfigReader {
     private static final String SORTTROMMELINORDER = "SORT.TROMMEL.INORDER";
     private static final String SORTTROMMEL = "SORT.TROMMEL";
     private static final String ZEIGEALLE = "SORT.TROMMEL.ZEIGEALLE";
+    private static final ApplicationContext context = new AnnotationConfigApplicationContext(ConfigReaderK.class);
     private static ConfigReader instance = new ConfigReader();
     private static Logger log = Logger.getLogger(ConfigReader.class);
     private final File propFile = new File(System.getProperty("user.home") + File.separator + "jKabel.prop");
     private Properties prop = null;
 
     private HashMap<String, AbstractTypeSort> alleTypSortierer = null;
-    private HashMap<String, AbstractTrommelSort> alleTrommelSortierer = null;
 
     private ConfigReader() {
     }
@@ -153,27 +155,24 @@ public class ConfigReader {
     }
 
     public Comparator<ITrommelE> getTrommelSort() {
+        AbstractTrommelSort c;
         try {
             //Default Wert speichern
             if (getProperties().getProperty(SORTTROMMEL) == null) {
                 try {
-                    setTrommelSort("intelligent");
+                    setTrommelSort("TrommelIntelligentSort.class");
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
 
-            AbstractTrommelSort c = alleTrommelSortierer.get(prop.getProperty(SORTTROMMEL));
-            if (c == null) {
-                c = new TrommelIntelligentSort();
-            }
-            c.setInOrder(isTrommelInOrder());
-
-            return c;
+            c = (AbstractTrommelSort) context.getBean(prop.getProperty(SORTTROMMEL));
 
         } catch (Exception e) {
-            return new TrommelIntelligentSort();
+            c = (AbstractTrommelSort) context.getBean("TrommelIntelligentSort.class");
         }
+        c.setInOrder(isTrommelInOrder());
+        return c;
     }
 
     public void setTrommelSort(String typSort) throws IOException {
@@ -203,17 +202,6 @@ public class ConfigReader {
             alleTypSortierer.put(TypNameSort.class.getName(), new TypNameSort());
         }
         return alleTypSortierer.values();
-    }
-
-    public Collection<AbstractTrommelSort> getAllTrommelSort() {
-        if (alleTrommelSortierer == null) {
-            alleTrommelSortierer = new HashMap<String, AbstractTrommelSort>();
-            alleTrommelSortierer.put(TrommelIntelligentSort.class.getName(), new TrommelIntelligentSort());
-            alleTrommelSortierer.put(TrommelDatumSort.class.getName(), new TrommelDatumSort());
-            alleTrommelSortierer.put(TrommelFuellstand.class.getName(), new TrommelFuellstand());
-            alleTrommelSortierer.put(TrommelNummerSort.class.getName(), new TrommelNummerSort());
-        }
-        return alleTrommelSortierer.values();
     }
 
     public boolean isZeigeAlle() {
