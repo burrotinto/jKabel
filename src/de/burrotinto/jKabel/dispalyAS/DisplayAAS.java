@@ -69,14 +69,15 @@ public class DisplayAAS extends JFrame implements ItemListener, ActionListener {
     private JLabel anZClients = new JLabel("Insgesamt 0 angemeldet");
     private KabelTypAuswahlAAS kabelTypAuswahlAAS = null;
 
+    // MenueBar
+    private JMenuBar menuBar = new JMenuBar();
+
     public DisplayAAS() {
         setTitle("jKabel");
 
         getContentPane().setLayout(new BorderLayout());
         getContentPane().add(south = getSouth(), BorderLayout.SOUTH);
 
-        // MenueBar
-        JMenuBar menuBar = new JMenuBar();
 
         //File menue
         JMenu menue = new JMenu("File");

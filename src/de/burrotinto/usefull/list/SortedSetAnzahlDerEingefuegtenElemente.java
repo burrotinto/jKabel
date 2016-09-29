@@ -29,19 +29,6 @@ public class SortedSetAnzahlDerEingefuegtenElemente<T> implements Set<T> {
 
     private final HashMap<T, Integer> map = new HashMap<T, Integer>();
 
-    public static void main(String[] args) {
-        SortedSetAnzahlDerEingefuegtenElemente<String> test = new SortedSetAnzahlDerEingefuegtenElemente<>();
-        test.add("Xa");
-        test.add("Auto");
-        test.add("Xa");
-        test.add("Auto");
-        test.add("Auto");
-        for (String s : test
-            ) {
-            System.out.println(s);
-        }
-    }
-
     private synchronized List<T> getSort() {
         List<T> list = new ArrayList<T>(map.keySet());
         Collections.sort(list, new Comparator<T>() {
@@ -109,11 +96,15 @@ public class SortedSetAnzahlDerEingefuegtenElemente<T> implements Set<T> {
 
     @Override
     public synchronized boolean addAll(Collection<? extends T> collection) {
+        boolean r = true;
         for (T t : collection) {
-            add(t);
+            if (!add(t)) {
+                r = false;
+            }
         }
-        return true;
+        return r;
     }
+
 
     @Override
     public boolean retainAll(Collection<?> collection) {

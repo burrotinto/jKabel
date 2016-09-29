@@ -34,6 +34,27 @@ import java.util.function.Consumer;
 class LieferantenAuswahlK {
 
     private final IDBWrapper db;
+    private ILieferantE dummyL = new ILieferantE() {
+        @Override
+        public int getId() {
+            return -1;
+        }
+
+        @Override
+        public String getName() {
+            return "";
+        }
+
+        @Override
+        public void setName(String name) {
+
+        }
+
+        @Override
+        public String toString() {
+            return getName();
+        }
+    };
 
     public LieferantenAuswahlK(IDBWrapper db) {
         this.db = db;
@@ -45,6 +66,7 @@ class LieferantenAuswahlK {
 
     public Vector<ILieferantE> getLieferantenSorted() {
         SortedSetAnzahlDerEingefuegtenElemente<ILieferantE> sort = new SortedSetAnzahlDerEingefuegtenElemente<>();
+        sort.addAll(db.getAllLieferanten());
         db.getAllKabeltypen().forEach(new Consumer<IKabeltypE>() {
             @Override
             public void accept(IKabeltypE iKabeltypE) {
@@ -56,6 +78,18 @@ class LieferantenAuswahlK {
                 });
             }
         });
-        return new Vector<ILieferantE>(sort);
+        Vector<ILieferantE> v = new Vector<>();
+        v.add(dummyL);
+        v.addAll(sort);
+        return v;
+    }
+
+    public ILieferantE getLieferantByName(String name) {
+        for (ILieferantE l : db.getAllLieferanten()) {
+            if (l.getName().equals(name)) {
+                return l;
+            }
+        }
+        return null;
     }
 }

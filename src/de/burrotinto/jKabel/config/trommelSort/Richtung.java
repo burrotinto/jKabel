@@ -17,13 +17,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package de.burrotinto.jKabel.config;
-
-import java.util.Comparator;
+package de.burrotinto.jKabel.config.trommelSort;
 
 /**
- * Created by Florian Klinger on 27.07.16.
+ * Created by Florian Klinger on 24.08.16.
  */
-public interface ISort<T> extends Comparator<T> {
-    String getName();
+public class Richtung {
+    private boolean aufsteigend = true;
+
+    public boolean isAufsteigend() {
+        return aufsteigend;
+    }
+
+    public void setAufsteigend(boolean aufsteigend) {
+        this.aufsteigend = aufsteigend;
+    }
 }

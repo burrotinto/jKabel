@@ -37,7 +37,6 @@ public abstract class AbstractTypeSort implements ISort<IKabeltypE>, ActionListe
         return inOrder;
     }
 
-    @Override
     public void setInOrder(boolean inOrder) {
         this.inOrder = inOrder;
     }

@@ -23,6 +23,7 @@ import de.burrotinto.jKabel.config.ConfigReader;
 import de.burrotinto.jKabel.config.ISort;
 import de.burrotinto.jKabel.dbauswahlAS.enitys.IStreckeE;
 import de.burrotinto.jKabel.dbauswahlAS.enitys.ITrommelE;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -35,15 +36,16 @@ import java.util.List;
  * Created by Florian Klinger on 27.07.16.
  */
 public abstract class AbstractTrommelSort implements ISort<ITrommelE>, ActionListener {
-    private boolean inOrder = true;
+    private Richtung richtung;
 
-    protected boolean isInOrder() {
-        return inOrder;
+    @Autowired
+    public void setRichtung(Richtung richtung) {
+        System.out.println("AUTOWIRED");
+        this.richtung = richtung;
     }
 
-    @Override
-    public void setInOrder(boolean inOrder) {
-        this.inOrder = inOrder;
+    protected boolean isInOrder() {
+        return richtung.isAufsteigend();
     }
 
     protected int wendeAusgewaehlteOrderreihenfolgeAn(int x) {

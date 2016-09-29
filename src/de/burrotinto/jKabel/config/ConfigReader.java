@@ -20,6 +20,8 @@
 package de.burrotinto.jKabel.config;
 
 import de.burrotinto.jKabel.config.trommelSort.AbstractTrommelSort;
+import de.burrotinto.jKabel.config.trommelSort.Richtung;
+import de.burrotinto.jKabel.config.trommelSort.TrommelIntelligentSort;
 import de.burrotinto.jKabel.config.typSort.AbstractTypeSort;
 import de.burrotinto.jKabel.config.typSort.TypNameSort;
 import de.burrotinto.jKabel.config.typSort.TypeFrequenzSort;
@@ -27,7 +29,6 @@ import de.burrotinto.jKabel.config.typSort.TypeMatNrSort;
 import de.burrotinto.jKabel.dbauswahlAS.enitys.IKabeltypE;
 import de.burrotinto.jKabel.dbauswahlAS.enitys.ITrommelE;
 import org.apache.log4j.Logger;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import java.io.File;
@@ -48,7 +49,7 @@ public class ConfigReader {
     private static final String SORTTROMMELINORDER = "SORT.TROMMEL.INORDER";
     private static final String SORTTROMMEL = "SORT.TROMMEL";
     private static final String ZEIGEALLE = "SORT.TROMMEL.ZEIGEALLE";
-    private static final ApplicationContext context = new AnnotationConfigApplicationContext(ConfigReaderK.class);
+    private static final AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(ConfigReaderK.class);
     private static ConfigReader instance = new ConfigReader();
     private static Logger log = Logger.getLogger(ConfigReader.class);
     private final File propFile = new File(System.getProperty("user.home") + File.separator + "jKabel.prop");
@@ -104,6 +105,7 @@ public class ConfigReader {
      */
     public void savePath(String path) throws IOException {
         prop.setProperty(DBPFADPROP, path);
+        save();
     }
 
     private void save() throws IOException {
@@ -166,12 +168,12 @@ public class ConfigReader {
                 }
             }
 
-            c = (AbstractTrommelSort) context.getBean(prop.getProperty(SORTTROMMEL));
+            c = (AbstractTrommelSort) context.getBean(Class.forName(prop.getProperty(SORTTROMMEL)));
 
         } catch (Exception e) {
-            c = (AbstractTrommelSort) context.getBean("TrommelIntelligentSort.class");
+            c = context.getBean(TrommelIntelligentSort.class);
         }
-        c.setInOrder(isTrommelInOrder());
+        context.getBean(Richtung.class).setAufsteigend(isTrommelInOrder());
         return c;
     }
 
@@ -215,5 +217,9 @@ public class ConfigReader {
     public void setZeigeAlle(boolean zeigeAlle) throws IOException {
         prop.setProperty(ZEIGEALLE, Boolean.toString(zeigeAlle));
         save();
+    }
+
+    public List<AbstractTrommelSort> getAllTrommelSort() {
+        return (List<AbstractTrommelSort>) context.getBean("getAllTrommelSort");
     }
 }

@@ -50,14 +50,19 @@ public class LieferantenAuswahlAAS extends JPanel implements ActionListener {
         JPanel p = new JPanel();
         p.add(new JLabel("Lieferantenauswahl:"));
         cBox = new JComboBox<>(kontroll.getLieferantenSorted());
+        cBox.setEditable(true);
         p.add(cBox);
         panel.add(p);
-        panel.add(neuButt);
+//        panel.add(neuButt);
         neuButt.addActionListener(this);
         add(panel);
     }
 
     public ILieferantE getAuswahl() {
+        if (cBox.getSelectedItem() instanceof String) {
+            db.createLieferant(cBox.getSelectedItem().toString());
+            return kontroll.getLieferantByName(cBox.getSelectedItem().toString());
+        }
         return (ILieferantE) cBox.getSelectedItem();
     }
 
