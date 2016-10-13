@@ -19,6 +19,7 @@
 
 package de.burrotinto.jKabel.config;
 
+import de.burrotinto.jKabel.JKabelS;
 import de.burrotinto.jKabel.config.trommelSort.AbstractTrommelSort;
 import de.burrotinto.jKabel.config.trommelSort.Richtung;
 import de.burrotinto.jKabel.config.trommelSort.TrommelIntelligentSort;
@@ -29,6 +30,7 @@ import de.burrotinto.jKabel.config.typSort.TypeMatNrSort;
 import de.burrotinto.jKabel.dbauswahlAS.enitys.IKabeltypE;
 import de.burrotinto.jKabel.dbauswahlAS.enitys.ITrommelE;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import java.io.File;
@@ -49,11 +51,15 @@ public class ConfigReader {
     private static final String SORTTROMMELINORDER = "SORT.TROMMEL.INORDER";
     private static final String SORTTROMMEL = "SORT.TROMMEL";
     private static final String ZEIGEALLE = "SORT.TROMMEL.ZEIGEALLE";
-    private static final AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(ConfigReaderK.class);
+
     private static ConfigReader instance = new ConfigReader();
     private static Logger log = Logger.getLogger(ConfigReader.class);
     private final File propFile = new File(System.getProperty("user.home") + File.separator + "jKabel.prop");
+
     private Properties prop = null;
+
+
+    private AnnotationConfigApplicationContext context = JKabelS.getSpringContext();
 
     private HashMap<String, AbstractTypeSort> alleTypSortierer = null;
 
@@ -221,5 +227,11 @@ public class ConfigReader {
 
     public List<AbstractTrommelSort> getAllTrommelSort() {
         return (List<AbstractTrommelSort>) context.getBean("getAllTrommelSort");
+    }
+
+
+    @Autowired(required = true)
+    public void setAnnotationConfigApplicationContext(AnnotationConfigApplicationContext context) {
+        this.context = context;
     }
 }

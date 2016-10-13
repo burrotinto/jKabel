@@ -19,35 +19,32 @@
 
 package de.burrotinto.jKabel.dispalyAS;
 
+import de.burrotinto.jKabel.JKabelS;
 import de.burrotinto.jKabel.config.ConfigReader;
 import de.burrotinto.jKabel.config.trommelSort.AbstractTrommelSort;
 import de.burrotinto.jKabel.config.typSort.AbstractTypeSort;
 import de.burrotinto.jKabel.dbauswahlAS.DBAuswahlAAS;
 import de.burrotinto.jKabel.dbauswahlAS.IDBWrapper;
 import de.burrotinto.jKabel.dbauswahlAS.serverStatus.IStatusClient;
-import de.burrotinto.jKabel.dispalyAS.bearbeiten.kabelTypAuswahlAS.KabelTypAuswahlAAS;
-import de.burrotinto.jKabel.dispalyAS.bearbeiten.streckenAS.StreckenAAS;
-import de.burrotinto.jKabel.dispalyAS.bearbeiten.trommelAuswahlAS.TrommelAuswahlAAS;
 import de.burrotinto.jKabel.dispalyAS.help.GPLAAS;
 import de.burrotinto.jKabel.dispalyAS.help.HelpAAS;
-import de.burrotinto.jKabel.dispalyAS.search.SearchAAS;
+import de.burrotinto.jKabel.dispalyAS.search.trommelByBA.SearchAAS;
+import de.burrotinto.jKabel.dispalyAS.search.trommelByNummer.SearchTrommelNrAAS;
+import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.io.File;
 import java.io.IOException;
-import java.util.HashSet;
 
 /**
  * Created by derduke on 22.05.16.
  */
 public class DisplayAAS extends JFrame implements ItemListener, ActionListener {
-    public static Color BACKGROUND = Color.WHITE;
+
     private JPanel north = new JPanel();
 
     private JMenuItem edit = new JMenuItem("Bearbeiten");
@@ -61,23 +58,29 @@ public class DisplayAAS extends JFrame implements ItemListener, ActionListener {
     private JPanel center = new JPanel();
     private JPanel south = new JPanel();
 
-    private TrommelAuswahlAAS tommelAAs = null;
+    @Autowired(required = true)
+    private DisplayK kontroll;
 
-    private DBAuswahlAAS dbAuswahlAAS = new DBAuswahlAAS();
+    private JPanel bearbeitenPanel;
+
+    private JMenu trommeln;
+
+    private DBAuswahlAAS dbAuswahlAAS;
     private IDBWrapper db = null;
     private IStatusClient sClient = null;
     private JLabel anZClients = new JLabel("Insgesamt 0 angemeldet");
-    private KabelTypAuswahlAAS kabelTypAuswahlAAS = null;
+
 
     // MenueBar
     private JMenuBar menuBar = new JMenuBar();
 
     public DisplayAAS() {
+        dbAuswahlAAS = JKabelS.getSpringContext().getBean(DBAuswahlAAS.class);
+
         setTitle("jKabel");
 
         getContentPane().setLayout(new BorderLayout());
         getContentPane().add(south = getSouth(), BorderLayout.SOUTH);
-
 
         //File menue
         JMenu menue = new JMenu("File");
@@ -129,11 +132,19 @@ public class DisplayAAS extends JFrame implements ItemListener, ActionListener {
         menuBar.add(menue);
         menuBar.add(lMenue);
         menuBar.add(new Version());
+        JMenuItem sbt = new JMenuItem("Suchen nach Trommelnummer");
+        sbt.addActionListener(JKabelS.getSpringContext().getBean(SearchTrommelNrAAS.class));
+
+        menuBar.add(sbt);
+        menuBar.add((JMenu) JKabelS.getSpringContext().getBean("trommeln"));
 
         setJMenuBar(menuBar);
 
 
         IDBWrapper db = dbAuswahlAAS.getDBWrapper();
+
+
+        bearbeitenPanel = (JPanel) JKabelS.getSpringContext().getBean("bearbeitenPanel");
 
         if (db == null) {
             center.add(new JLabel("Es konnte keine Verbindung zur DB hergestellt werden."));
@@ -166,9 +177,9 @@ public class DisplayAAS extends JFrame implements ItemListener, ActionListener {
             public void actionPerformed(ActionEvent actionEvent) {
                 try {
                     ConfigReader.getInstance().setTrommelInOrder(inOrder.isSelected());
-                    if (kabelTypAuswahlAAS != null) {
-                        kabelTypAuswahlAAS.typSelected(kabelTypAuswahlAAS.getSelected());
-                    }
+//                    if (kabelTypAuswahlAAS != null) {
+//                        kabelTypAuswahlAAS.typSelected(kabelTypAuswahlAAS.getSelected());
+//                    }
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -201,9 +212,9 @@ public class DisplayAAS extends JFrame implements ItemListener, ActionListener {
             public void actionPerformed(ActionEvent actionEvent) {
                 try {
                     ConfigReader.getInstance().setTypeInOrder(inOrder.isSelected());
-                    if (kabelTypAuswahlAAS != null) {
-                        kabelTypAuswahlAAS.typSelected(kabelTypAuswahlAAS.getSelected());
-                    }
+//                    if (kabelTypAuswahlAAS != null) {
+//                        kabelTypAuswahlAAS.typSelected(kabelTypAuswahlAAS.getSelected());
+//                    }
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -242,7 +253,7 @@ public class DisplayAAS extends JFrame implements ItemListener, ActionListener {
                 south.removeAll();
                 remove(center);
                 remove(south);
-                getContentPane().add(center = getBearbeitenPanel(), BorderLayout.CENTER);
+                getContentPane().add(center = bearbeitenPanel, BorderLayout.CENTER);
                 getContentPane().add(south = getSouth(), BorderLayout.SOUTH);
                 revalidate();
                 new Thread(new DBConectionTester(this, db, dbAuswahlAAS)).start();
@@ -253,49 +264,7 @@ public class DisplayAAS extends JFrame implements ItemListener, ActionListener {
         }
     }
 
-    public JPanel getBearbeitenPanel() {
-        kabelTypAuswahlAAS = new KabelTypAuswahlAAS(db);
-        tommelAAs = new TrommelAuswahlAAS(db);
-        HashSet<JPanel> updateSet = new HashSet<>();
-        updateSet.add(kabelTypAuswahlAAS);
-        updateSet.add(tommelAAs);
-        StreckenAAS s = new StreckenAAS(db, updateSet);
 
-        kabelTypAuswahlAAS.addKabelTypListner(tommelAAs);
-        kabelTypAuswahlAAS.addKabelTypListner(s);
-
-        tommelAAs.addTrommelListner(s);
-
-        JPanel l = new JPanel(new GridLayout(1, 2));
-        JPanel all = new JPanel(new GridLayout(1, 2));
-
-        JScrollPane kSP = new JScrollPane(kabelTypAuswahlAAS);
-        l.add(kSP);
-        l.add(new JScrollPane(tommelAAs));
-        all.add(l);
-        JScrollPane sc = new JScrollPane(s);
-        sc.setPreferredSize(new Dimension(740, 740));
-        all.add(sc);
-
-        setBackground(BACKGROUND);
-
-        kSP.setOpaque(false);
-        sc.setOpaque(false);
-
-        setBackground(BACKGROUND);
-        l.setBackground(BACKGROUND);
-        kabelTypAuswahlAAS.setBackground(BACKGROUND);
-        tommelAAs.setBackground(BACKGROUND);
-        s.setBackground(BACKGROUND);
-
-        try {
-            s.setLogo(ImageIO.read(new File(ConfigReader.getInstance().getPath() + "logo.jpg")));
-        } catch (IOException e) {
-            s.setLogo(null);
-        }
-        all.setBackground(BACKGROUND);
-        return all;
-    }
 
     @Override
     public void itemStateChanged(ItemEvent e) {
@@ -315,12 +284,15 @@ public class DisplayAAS extends JFrame implements ItemListener, ActionListener {
         if (db != null) {
             if (e.getSource() == edit) {
                 remove(center);
-                center = getBearbeitenPanel();
+                center = bearbeitenPanel;
+                menuBar.add(trommeln);
+                menuBar.updateUI();
                 getContentPane().add(center, BorderLayout.CENTER);
 
             } else if (e.getSource() == search) {
                 remove(center);
                 center = new SearchAAS(db);
+                menuBar.remove(trommeln);
                 getContentPane().add(center, BorderLayout.CENTER);
             }
             repaint();
@@ -359,6 +331,11 @@ public class DisplayAAS extends JFrame implements ItemListener, ActionListener {
 
     }
 
+    @Autowired(required = true)
+    public void setBearbeitenPanel(JPanel bearbeitenPanel) {
+        this.bearbeitenPanel = bearbeitenPanel;
+    }
+
     /**
      * Soll die Verbindung zur Datenbank prüfen. Wenn diese geschlossen wurde soll eine neue Verbindung hergestellt werden.
      */
@@ -391,5 +368,6 @@ public class DisplayAAS extends JFrame implements ItemListener, ActionListener {
             display.setDb(dbAuswahlAAS.getDBWrapper());
         }
     }
+
 }
 

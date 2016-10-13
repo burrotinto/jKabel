@@ -26,6 +26,8 @@ import de.burrotinto.jKabel.dbauswahlAS.HSQLDB.OnlyOneUserExeption;
 import de.burrotinto.jKabel.dbauswahlAS.serverStatus.IStatusClient;
 import de.burrotinto.jKabel.dbauswahlAS.serverStatus.StatusClient;
 import de.burrotinto.jKabel.dbauswahlAS.serverStatus.StatusServer;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
 import javax.swing.*;
 import java.io.File;
@@ -39,6 +41,7 @@ import java.util.List;
  * Startet den Akteursanwendungsfall der DB auswahl.
  * Created by derduke on 19.05.2016.
  */
+@Configuration
 public class DBAuswahlAAS {
     private final DBAuswahlK kontroll;
     private String pfad;
@@ -64,6 +67,7 @@ public class DBAuswahlAAS {
      *
      * @return eine DB
      */
+    @Bean
     public IDBWrapper getDBWrapper() {
         IDBWrapper db = null;
 

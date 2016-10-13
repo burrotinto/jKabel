@@ -19,9 +19,15 @@
 
 package de.burrotinto.jKabel;
 
+import de.burrotinto.jKabel.config.ConfigReaderK;
+import de.burrotinto.jKabel.dbauswahlAS.DBAuswahlAAS;
 import de.burrotinto.jKabel.dbauswahlAS.HSQLDB.HSQLDBServer;
 import de.burrotinto.jKabel.dbauswahlAS.HSQLDB.OnlyOneUserExeption;
 import de.burrotinto.jKabel.dispalyAS.DisplayAAS;
+import de.burrotinto.jKabel.dispalyAS.DisplayK;
+import de.burrotinto.jKabel.dispalyAS.search.trommelByNummer.SearchTrommelNrK;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.context.annotation.Bean;
 
 import java.io.File;
 import java.io.IOException;
@@ -33,11 +39,15 @@ import java.util.Date;
  */
 public class JKabelS {
     public static final String PROGRAMMNAME = "jKAbel";
+    private static final AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
 
     public static void main(String[] args) throws ClassNotFoundException, SQLException, OnlyOneUserExeption, IOException {
         if (args.length == 0) {
             //start der Gui
+            context.register(ConfigReaderK.class, DBAuswahlAAS.class, DisplayK.class, SearchTrommelNrK.class);
+            context.refresh();
             new DisplayAAS();
+
         } else {
             System.out.println(JKabelS.getGPL("Florian Klinger"));
             System.out.println();
@@ -54,4 +64,10 @@ public class JKabelS {
     public static String getGPL(String name) {
         return PROGRAMMNAME + " Copyright (C) " + (new Date().getYear() + 1900) + " " + name + "\nThis program comes with ABSOLUTELY NO WARRANTY; for details type `show w'.\nThis is free software, and you are welcome to redistribute it\nunder certain conditions; type `show c' for details.";
     }
+
+    @Bean
+    public static AnnotationConfigApplicationContext getSpringContext() {
+        return context;
+    }
+
 }
