@@ -19,7 +19,7 @@
 
 package de.burrotinto.jKabel.dispalyAS.lookAndFeel;
 
-import de.burrotinto.jKabel.dispalyAS.DisplayAAS;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.swing.*;
 import java.awt.*;
@@ -32,12 +32,15 @@ public class MinimalisticPanel extends JPanel {
     public MinimalisticPanel() {
         super();
         setOpaque(false);
-        setBackground(DisplayAAS.BACKGROUND);
     }
 
     public MinimalisticPanel(LayoutManager layout) {
         super(layout);
         setOpaque(false);
-        setBackground(DisplayAAS.BACKGROUND);
+    }
+
+    @Autowired
+    public void setBackground(Color color) {
+        super.setBackground(color);
     }
 }
