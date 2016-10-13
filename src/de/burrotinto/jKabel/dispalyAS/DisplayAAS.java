@@ -132,11 +132,14 @@ public class DisplayAAS extends JFrame implements ItemListener, ActionListener {
         menuBar.add(menue);
         menuBar.add(lMenue);
         menuBar.add(new Version());
-        JMenuItem sbt = new JMenuItem("Suchen nach Trommelnummer");
-        sbt.addActionListener(JKabelS.getSpringContext().getBean(SearchTrommelNrAAS.class));
 
+        // Trommelsuchband
+        JMenuItem sbt = new JMenuItem("Suchen nach Trommelnummer");
         menuBar.add(sbt);
-        //    menuBar.add((JMenu) JKabelS.getSpringContext().getBean("trommeln"));
+        sbt.addActionListener(JKabelS.getSpringContext().getBean(SearchTrommelNrAAS.class));
+        JKabelS.getSpringContext().getBean(SearchTrommelNrAAS.class).setVisible(false);
+        getContentPane().add(JKabelS.getSpringContext().getBean(SearchTrommelNrAAS.class), BorderLayout.NORTH);
+
 
         setJMenuBar(menuBar);
 

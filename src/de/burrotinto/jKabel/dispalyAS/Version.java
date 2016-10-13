@@ -25,7 +25,7 @@ import javax.swing.*;
  * Created by Florian Klinger on 22.07.16.
  */
 public class Version extends JMenu {
-    public static String VERSION = "0.1.2";
+    public static String VERSION = "0.2.0";
     private JMenuItem version;
 
     public Version() {

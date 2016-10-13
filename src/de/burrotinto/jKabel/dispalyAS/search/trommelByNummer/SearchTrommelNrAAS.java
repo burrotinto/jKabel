@@ -23,6 +23,7 @@ import de.burrotinto.jKabel.dbauswahlAS.IDBWrapper;
 import de.burrotinto.jKabel.dbauswahlAS.enitys.ITrommelE;
 import de.burrotinto.jKabel.dispalyAS.bearbeiten.streckenAS.StreckenAAS;
 import de.burrotinto.jKabel.dispalyAS.lookAndFeel.MinimalisticButton;
+import de.burrotinto.jKabel.dispalyAS.lookAndFeel.MinimalisticPanel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -35,9 +36,9 @@ import java.util.List;
 /**
  * Created by derduke on 13.10.16.
  */
-public class SearchTrommelNrAAS extends JDialog implements KeyListener, ActionListener {
+public class SearchTrommelNrAAS extends MinimalisticPanel implements KeyListener, ActionListener {
     private SearchTrommelNrK kontroll;
-    private JTextField tf = new JTextField(30);
+    private JTextField tf = new JTextField(9);
     private JPanel ergebnis = new JPanel();
     private StreckenAAS streckenPanel;
 
@@ -52,7 +53,6 @@ public class SearchTrommelNrAAS extends JDialog implements KeyListener, ActionLi
         tf.addKeyListener(this);
         add(p);
         add(ergebnis);
-        pack();
     }
 
 
@@ -78,7 +78,6 @@ public class SearchTrommelNrAAS extends JDialog implements KeyListener, ActionLi
                 }
             });
             ergebnis.add(b);
-            pack();
         }
     }
 
