@@ -44,6 +44,8 @@ public class DisplayAAS extends JFrame implements ItemListener {
     private final DisplayK kontroll;
     private final DBAuswahlAAS dbAuswahlAAS;
     private final JPanel bearbeitenPanel;
+    private final SearchAAS searchAAS;
+
     private JPanel north = new JPanel();
     private JMenuItem edit = new JMenuItem("Bearbeiten");
     private JMenuItem search = new JMenuItem("Suchen");
@@ -61,9 +63,11 @@ public class DisplayAAS extends JFrame implements ItemListener {
     // MenueBar
     private JMenuBar menuBar = new JMenuBar();
 
-    public DisplayAAS(DisplayK kontroll, DBAuswahlAAS dbAuswahlAAS, SearchTrommelNrAAS searchTrommelNrAAS) {
+
+    public DisplayAAS(DisplayK kontroll, DBAuswahlAAS dbAuswahlAAS, SearchTrommelNrAAS searchTrommelNrAAS, SearchAAS searchAAS) {
         this.kontroll = kontroll;
         this.dbAuswahlAAS = dbAuswahlAAS;
+        this.searchAAS = searchAAS;
 
         setTitle("jKabel");
 
@@ -164,7 +168,7 @@ public class DisplayAAS extends JFrame implements ItemListener {
 
     private void search(ActionEvent actionEvent) {
         remove(center);
-        center = new SearchAAS(db);
+        center = searchAAS;
         getContentPane().add(center, BorderLayout.CENTER);
 
         repaint();
