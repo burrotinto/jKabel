@@ -22,10 +22,14 @@ package de.burrotinto.jKabel.dispalyAS.bearbeiten.scanAS
 
 import de.burrotinto.jKabel.dbauswahlAS.enitys.IStreckeE
 import de.burrotinto.jKabel.dbauswahlAS.enitys.ITrommelE
+import net.sourceforge.barbecue.BarcodeFactory
+import net.sourceforge.barbecue.BarcodeImageHandler
 import java.awt.FlowLayout
+import java.awt.Graphics2D
 import java.awt.event.ActionEvent
 import java.awt.event.ActionListener
 import java.awt.image.BufferedImage
+import java.io.File
 import java.net.URL
 import javax.imageio.ImageIO
 import javax.swing.*
@@ -40,8 +44,7 @@ class ScanAAS(trommelE: ITrommelE, strecke: IStreckeE) : JDialog(), ActionListen
     init {
         layout = FlowLayout(FlowLayout.CENTER)
 
-        add(JLabel(ImageIcon(getImageFromUrl(sanizizeString("http://barcode.tec-it.com/barcode.ashx?data=${strecke
-                .ba}")))))
+        add(JLabel(ImageIcon(getBarcode(strecke.ba.toString()))))
 
         val panel = JPanel()
         panel.layout = BoxLayout(panel, BoxLayout.Y_AXIS)
@@ -58,11 +61,10 @@ class ScanAAS(trommelE: ITrommelE, strecke: IStreckeE) : JDialog(), ActionListen
 
         add(JLabel())
         if (trommelE.lagerPlatz == null || trommelE.lagerPlatz == "") {
-            add(JLabel(ImageIcon(getImageFromUrl(sanizizeString("http://barcode.tec-it.com/barcode" +
-                    ".ashx?data=${trommelE.materialNummer}")))))
+            add(JLabel(ImageIcon(getBarcode(trommelE.materialNummer.toString()))))
         } else {
-            add(JLabel(ImageIcon(getImageFromUrl(sanizizeString("http://barcode.tec-it.com/barcode" +
-                    ".ashx?data=${trommelE.lagerPlatz + " " + trommelE.materialNummer}")))))
+            add(JLabel(ImageIcon(getBarcode("${trommelE.lagerPlatz} ${trommelE.materialNummer}"))))
+
         }
         pack()
 
@@ -79,6 +81,9 @@ class ScanAAS(trommelE: ITrommelE, strecke: IStreckeE) : JDialog(), ActionListen
 
 }
 
-fun getImageFromUrl(url: String): BufferedImage = ImageIO.read(URL(url).openStream())
+
+fun getBarcode(s: String): BufferedImage = BarcodeImageHandler.getImage(BarcodeFactory.createCode128B(s))
+
+fun getImageFromUrl(url: String): BufferedImage = ImageIO.read(URL(sanizizeString(url)).openStream())
 
 fun sanizizeString(s: String): String = s.replace(" ", "%20")

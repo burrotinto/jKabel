@@ -22,7 +22,6 @@ package de.burrotinto.jKabel;
 
 import de.burrotinto.jKabel.dbauswahlAS.HSQLDB.HSQLDBServer;
 import de.burrotinto.jKabel.dbauswahlAS.HSQLDB.OnlyOneUserExeption;
-import de.burrotinto.jKabel.dispalyAS.DisplayAAS;
 import org.hsqldb.server.ServerAcl;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
@@ -47,11 +46,7 @@ public class JKabelS {
         ConfigurableApplicationContext ctx = new SpringApplicationBuilder(JKabelS.class)
                 .headless(false).run(args);
 
-        if (args.length == 0) {
-            //start der Gui
-            DisplayAAS appFrame = context.getBean(DisplayAAS.class);
-
-        } else {
+        if (args.length != 0) {
             System.out.println(JKabelS.getGPL("Florian Klinger"));
             System.out.println();
             if (args.length != 2 || !(args[0]).equals("server") && new File(args[1]).isDirectory()) {

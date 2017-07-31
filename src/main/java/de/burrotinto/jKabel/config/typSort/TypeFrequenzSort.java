@@ -21,10 +21,14 @@ package de.burrotinto.jKabel.config.typSort;
 
 import de.burrotinto.jKabel.dbauswahlAS.enitys.IKabeltypE;
 import de.burrotinto.jKabel.dbauswahlAS.enitys.ITrommelE;
+import org.springframework.context.annotation.Primary;
+import org.springframework.stereotype.Component;
 
 /**
  * Created by Florian Klinger on 21.07.16.
  */
+@Primary
+@Component
 public class TypeFrequenzSort extends AbstractTypeSort {
 
     @Override

@@ -20,10 +20,12 @@
 package de.burrotinto.jKabel.config.typSort;
 
 import de.burrotinto.jKabel.dbauswahlAS.enitys.IKabeltypE;
+import org.springframework.stereotype.Component;
 
 /**
  * Created by Florian Klinger on 21.07.16.
  */
+@Component
 public class TypNameSort extends AbstractTypeSort {
 
     @Override

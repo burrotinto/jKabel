@@ -68,8 +68,6 @@ public class KabelTypAuswahlAAS extends JPanel implements ActionListener, IKabel
             KabelTypAuswahlAAS kta = this;
 
 
-            Collections.sort(list, kontroll.getSort());
-
             list.forEach(new Consumer<IKabeltypE>() {
                 @Override
                 public void accept(IKabeltypE iKabeltypE) {

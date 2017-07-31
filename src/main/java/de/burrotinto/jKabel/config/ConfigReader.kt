@@ -32,6 +32,7 @@ import de.burrotinto.jKabel.dbauswahlAS.enitys.ITrommelE
 import org.apache.log4j.Logger
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.AnnotationConfigApplicationContext
+import org.springframework.context.annotation.Primary
 import org.springframework.stereotype.Service
 
 import java.io.File
@@ -45,7 +46,7 @@ import java.util.*
  * Created by derduke on 01.06.16.
  */
 @Service
-class ConfigReader(val allTrommelSort: List<AbstractTrommelSort> ) {
+class ConfigReader(val allTrommelSort: List<AbstractTrommelSort>, val allTypeSort:  List<AbstractTypeSort> ) {
     private val propFile = File(System.getProperty("user.home") + File.separator + "jKabel.prop")
 
     private var prop: Properties? = null

@@ -19,7 +19,7 @@
 
 package de.burrotinto.jKabel.dispalyAS.bearbeiten.kabelTypAuswahlAS
 
-import de.burrotinto.jKabel.config.ConfigReader
+import de.burrotinto.jKabel.config.typSort.AbstractTypeSort
 import de.burrotinto.jKabel.dbauswahlAS.IDBWrapper
 import de.burrotinto.jKabel.dbauswahlAS.enitys.IKabeltypE
 import org.springframework.stereotype.Component
@@ -29,21 +29,17 @@ import java.util.*
  * Created by derduke on 21.05.16.
  */
 @Component
-internal class KabelTypAuswahlK(val db: IDBWrapper, val configReader: ConfigReader) {
+internal class KabelTypAuswahlK(val db: IDBWrapper, val typeSort: AbstractTypeSort) {
 
     val typen: List<IKabeltypE>
-        get() = db.allKabeltypen
+        get() {
+            val list = db.allKabeltypen
+            Collections.sort(list, typeSort)
+            return list
+        }
 
     fun getTyp(integer: Int?): IKabeltypE? {
-        for (k in db.allKabeltypen) {
-            if (k.materialNummer == integer) {
-                return k
-            }
-        }
-        return null
+        return db.allKabeltypen.firstOrNull { it.materialNummer == integer }
     }
-
-    val sort: Comparator<in IKabeltypE>
-        get() = configReader.kabeltypSort
 }
 
