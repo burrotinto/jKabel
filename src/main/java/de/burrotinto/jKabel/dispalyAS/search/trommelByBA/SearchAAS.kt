@@ -75,6 +75,7 @@ class SearchAAS(private val db: IDBWrapper,val kontroller: SearchK) : JPanel(), 
     }
 
     override fun actionPerformed(e: ActionEvent) {
+        remove(ergebnis)
         ergebnis = JScrollPane(getErgebnisPanel(Integer.parseInt(baFied!!.text), cBox!!.selectedItem as IKabeltypE))
         add(ergebnis, BorderLayout.CENTER)
         repaint()
