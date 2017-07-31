@@ -20,7 +20,11 @@
 package de.burrotinto.jKabel.dispalyAS.bearbeiten.streckenAS;
 
 import de.burrotinto.jKabel.dbauswahlAS.IDBWrapper;
-import de.burrotinto.jKabel.dbauswahlAS.enitys.*;
+import de.burrotinto.jKabel.dbauswahlAS.enitys.IGeliefertE;
+import de.burrotinto.jKabel.dbauswahlAS.enitys.IKabeltypE;
+import de.burrotinto.jKabel.dbauswahlAS.enitys.ILieferantE;
+import de.burrotinto.jKabel.dbauswahlAS.enitys.IStreckeE;
+import de.burrotinto.jKabel.dbauswahlAS.enitys.ITrommelE;
 import de.burrotinto.jKabel.dispalyAS.UpdateSet;
 import de.burrotinto.jKabel.dispalyAS.bearbeiten.kabelTypAuswahlAS.IKabelTypListner;
 import de.burrotinto.jKabel.dispalyAS.bearbeiten.scanAS.ScanAAS;
@@ -28,14 +32,19 @@ import de.burrotinto.jKabel.dispalyAS.bearbeiten.trommelAuswahlAS.ITrommelListne
 import de.burrotinto.jKabel.dispalyAS.lookAndFeel.MinimalisticButton;
 import de.burrotinto.jKabel.dispalyAS.lookAndFeel.MinimalisticFormattetTextField;
 import de.burrotinto.jKabel.dispalyAS.lookAndFeel.MinimalisticPanel;
-import org.springframework.stereotype.Component;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
-import java.util.*;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
 import java.util.function.Consumer;
 
 /**
@@ -224,7 +233,13 @@ public class StreckenAAS extends JPanel implements ITrommelListner, ActionListen
             // Wenn Trommel ausser haus
             if (a.ende.getText().equals(Abgang.platzHalter)) {
                 panel.setBackground(Color.ORANGE);
-                tF.setText(Abgang.platzHalter);
+                int free = trommel.getGesamtlaenge();
+                for (IStreckeE iStreckeE : trommel.getStrecken()) {
+                    if (iStreckeE.getEnde() != -1) {
+                        free -= iStreckeE.getMeter();
+                    }
+                }
+                tF.setText(free + "");
             }
 
             dT.setEditable(false);
@@ -396,27 +411,27 @@ public class StreckenAAS extends JPanel implements ITrommelListner, ActionListen
 
     @Override
     public void keyReleased(KeyEvent e) {
-            try {
-                if (!kontroller.getTextForBA(Integer.parseInt(((JTextField) e.getSource()).getText())).isEmpty()) {
-                    String old = (String) ortBox.getSelectedItem();
-                    ortBox.removeAllItems();
-                    ortBox.addItem(old);
-                    Vector<String> v = kontroller.getTextForBA(Integer.parseInt(((JTextField) e.getSource()).getText()));
-                    v.forEach(new Consumer<String>() {
-                        @Override
-                        public void accept(String s) {
-                            ortBox.addItem(s.equals("null") ? "" : s);
-                        }
-                    });
-                    if (!v.isEmpty()) {
-                        ortBox.setSelectedItem(v.firstElement());
-                    } else {
-                        ortBox.setSelectedItem(old);
+        try {
+            if (!kontroller.getTextForBA(Integer.parseInt(((JTextField) e.getSource()).getText())).isEmpty()) {
+                String old = (String) ortBox.getSelectedItem();
+                ortBox.removeAllItems();
+                ortBox.addItem(old);
+                Vector<String> v = kontroller.getTextForBA(Integer.parseInt(((JTextField) e.getSource()).getText()));
+                v.forEach(new Consumer<String>() {
+                    @Override
+                    public void accept(String s) {
+                        ortBox.addItem(s.equals("null") ? "" : s);
                     }
-                    ortBox.updateUI();
+                });
+                if (!v.isEmpty()) {
+                    ortBox.setSelectedItem(v.firstElement());
+                } else {
+                    ortBox.setSelectedItem(old);
                 }
-            } catch (Exception ex) {
+                ortBox.updateUI();
             }
+        } catch (Exception ex) {
+        }
     }
 
     @Override
