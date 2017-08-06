@@ -27,6 +27,7 @@ import de.burrotinto.jKabel.dbauswahlAS.serverStatus.IStatusClient;
 import de.burrotinto.jKabel.dbauswahlAS.serverStatus.StatusClient;
 import de.burrotinto.jKabel.dbauswahlAS.serverStatus.StatusServer;
 import org.hsqldb.server.ServerAcl;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -55,6 +56,7 @@ public class DBAuswahlAAS {
         kontroll = new DBAuswahlK();
     }
 
+    @Nullable
     private String choosePath(String pfad) {
         JFileChooser chooser = new JFileChooser();
         chooser.setCurrentDirectory(new java.io.File(pfad));

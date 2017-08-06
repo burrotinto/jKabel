@@ -39,7 +39,7 @@ import java.util.Date;
  */
 @SpringBootApplication
 public class JKabelS {
-    public static final String PROGRAMMNAME = "jKAbel";
+    public static final String PROGRAMMNAME = "jKabel";
     private static final AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
 
     public static void main(String[] args) throws ClassNotFoundException, SQLException, OnlyOneUserExeption, IOException, ServerAcl.AclFormatException {

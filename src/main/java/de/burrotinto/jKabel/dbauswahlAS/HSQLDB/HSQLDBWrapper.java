@@ -100,7 +100,7 @@ public class HSQLDBWrapper implements IDBWrapper {
 
             stmnt.execute("CREATE TABLE lieferant(hid IDENTITY,name VARCHAR(64) );");
 
-            stmnt.execute("create table trommel(id IDENTITY, materialnummer integer not null, trommelnummer VARCHAR(64) NOT NULL, gesamtlaenge INTEGER,lagerplatz VARCHAR(32),kabelstart INTEGER ,  FOREIGN KEY(materialnummer) REFERENCES kabeltyp(materialnummer) ); ");
+            stmnt.execute("create table trommel(id IDENTITY, materialnummer integer not null, trommelnummer VARCHAR(64) NOT NULL, gesamtlaenge INTEGER,lagerplatz VARCHAR(32),kabelstart INTEGER ,  FOREIGN KEY(materialnummer) REFERENCES kabeltyp(materialnummer),freigemeldet BOOLEAN ); ");
 
             stmnt.execute("CREATE TABLE geliefert(lid IDENTITY,hid INTEGER, id INTEGER, datum BIGINT,lieferschein VARCHAR(64), FOREIGN KEY(hid) REFERENCES lieferant(hid) , FOREIGN KEY(id) REFERENCES trommel(id));");
 
