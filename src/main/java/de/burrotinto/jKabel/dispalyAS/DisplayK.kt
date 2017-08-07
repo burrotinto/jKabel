@@ -54,8 +54,6 @@ class DisplayK(var db: IDBWrapper,
         kabelTypAuswahlAAS.addKabelTypListner(tommelAAs)
         kabelTypAuswahlAAS.addKabelTypListner(streckenAAS)
 
-        tommelAAs.addTrommelListner(streckenAAS)
-
         val l = JPanel(GridLayout(1, 2))
         val all = JPanel(GridLayout(1, 2))
 

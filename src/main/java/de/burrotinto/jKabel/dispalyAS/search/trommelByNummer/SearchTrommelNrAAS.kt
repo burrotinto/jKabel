@@ -19,20 +19,21 @@
 
 package de.burrotinto.jKabel.dispalyAS.search.trommelByNummer
 
-import de.burrotinto.jKabel.eventDriven.events.TrommelSelectEvent
 import de.burrotinto.jKabel.dispalyAS.lookAndFeel.MinimalisticButton
 import de.burrotinto.jKabel.dispalyAS.lookAndFeel.MinimalisticPanel
-import de.burrotinto.jKabel.eventDriven.EventDrivenConf
 import de.burrotinto.jKabel.eventDriven.EventDrivenWire
+import de.burrotinto.jKabel.eventDriven.events.TrommelSelectEvent
+import de.burrotinto.jKabel.eventDriven.events.TypSelectEvent
 import reactor.bus.Event
 import reactor.bus.EventBus
-
-import javax.swing.*
-import java.awt.*
+import java.awt.FlowLayout
 import java.awt.event.ActionEvent
 import java.awt.event.ActionListener
 import java.awt.event.KeyEvent
 import java.awt.event.KeyListener
+import javax.swing.JLabel
+import javax.swing.JPanel
+import javax.swing.JTextField
 
 /**
  * Created by derduke on 13.10.16.
@@ -68,8 +69,14 @@ open class SearchTrommelNrAAS(val kontroll: SearchTrommelNrK,
         ergebnis.removeAll()
         kontroll.getListOfTrommeln(tf.text).forEach {
             val b = MinimalisticButton(it.trommelnummer)
+
             val id = it.id
-            b.addActionListener {eventBus.notify(EventDrivenWire.TROMMEL_SELECTED_REGISTRATION, Event.wrap(TrommelSelectEvent(id))) }
+            val typId = it.typ.materialNummer
+            b.addActionListener {
+                eventBus.notify(EventDrivenWire.TROMMEL_SELECTED_REGISTRATION, Event.wrap(TrommelSelectEvent(id)))
+                eventBus.notify(EventDrivenWire.TYPE_SELECTED, Event.wrap(TypSelectEvent(typId)))
+            }
+
             ergebnis.add(b)
         }
     }

@@ -13,6 +13,7 @@ class EventDrivenWire(private val streckenAAS: StreckenAAS, private val eventBus
 
     companion object {
         val TROMMEL_SELECTED_REGISTRATION = "trommelSelected"
+        val TYPE_SELECTED = "typSelected"
     }
 
     override fun afterPropertiesSet() {

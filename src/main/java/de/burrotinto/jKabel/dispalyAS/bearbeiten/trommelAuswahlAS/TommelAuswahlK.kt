@@ -31,7 +31,7 @@ import java.util.*
  * Created by derduke on 22.05.16.
  */
 @Component
-internal class TommelAuswahlK(private val db: IDBWrapper, val configReader: ConfigReader, val abstractTrommelSort: AbstractTrommelSort) {
+class TommelAuswahlK(private val db: IDBWrapper, val configReader: ConfigReader, val abstractTrommelSort: AbstractTrommelSort) {
 
     fun getAllTrommelForTyp(typ: IKabeltypE): List<ITrommelE> {
         val list = typ.trommeln
