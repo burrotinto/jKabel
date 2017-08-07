@@ -68,7 +68,8 @@ open class SearchTrommelNrAAS(val kontroll: SearchTrommelNrK,
         ergebnis.removeAll()
         kontroll.getListOfTrommeln(tf.text).forEach {
             val b = MinimalisticButton(it.trommelnummer)
-            b.addActionListener {eventBus.notify(EventDrivenWire.TROMMEL_SELECTED_REGISTRATION, Event.wrap(TrommelSelectEvent(it.id))) }
+            val id = it.id
+            b.addActionListener {eventBus.notify(EventDrivenWire.TROMMEL_SELECTED_REGISTRATION, Event.wrap(TrommelSelectEvent(id))) }
             ergebnis.add(b)
         }
     }
