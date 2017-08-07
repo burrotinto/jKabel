@@ -29,9 +29,12 @@ import de.burrotinto.jKabel.dispalyAS.UpdateSet;
 import de.burrotinto.jKabel.dispalyAS.bearbeiten.kabelTypAuswahlAS.IKabelTypListner;
 import de.burrotinto.jKabel.dispalyAS.bearbeiten.scanAS.ScanAAS;
 import de.burrotinto.jKabel.dispalyAS.bearbeiten.trommelAuswahlAS.ITrommelListner;
+import de.burrotinto.jKabel.eventDriven.events.TrommelSelectEvent;
 import de.burrotinto.jKabel.dispalyAS.lookAndFeel.MinimalisticButton;
 import de.burrotinto.jKabel.dispalyAS.lookAndFeel.MinimalisticFormattetTextField;
 import de.burrotinto.jKabel.dispalyAS.lookAndFeel.MinimalisticPanel;
+import org.springframework.stereotype.Component;
+import reactor.bus.Event;
 
 import javax.swing.*;
 import java.awt.*;
@@ -50,7 +53,8 @@ import java.util.function.Consumer;
 /**
  * Created by derduke on 22.05.16.
  */
-public class StreckenAAS extends JPanel implements ITrommelListner, ActionListener, IKabelTypListner, KeyListener {
+@Component
+public class StreckenAAS extends JPanel implements ITrommelListner, ActionListener, IKabelTypListner, KeyListener,  reactor.fn.Consumer<Event<TrommelSelectEvent>> {
     private final StreckenK kontroller;
     private final UpdateSet updateOnChange;
     private JTextField trommelnummerField, datumField, laengeField, typField, matNrField, baField, startField, endField, trommelstartField;
@@ -303,15 +307,15 @@ public class StreckenAAS extends JPanel implements ITrommelListner, ActionListen
             int ende = -1;
             try {
                 ba = Integer.parseInt(baField.getText());
-            } catch (NumberFormatException ex) {
+            } catch (NumberFormatException ignored) {
             }
             try {
                 start = Integer.parseInt(startField.getText());
-            } catch (NumberFormatException ex) {
+            } catch (NumberFormatException ignored) {
             }
             try {
                 ende = Integer.parseInt(endField.getText());
-            } catch (NumberFormatException ex) {
+            } catch (NumberFormatException ignored) {
             }
             if (ende >= 0 && !kontroller.richtigeRichtung(trommel, start, ende)) {
 
@@ -444,6 +448,11 @@ public class StreckenAAS extends JPanel implements ITrommelListner, ActionListen
             }
         });
         scanDialoge = new ArrayList<>();
+    }
+
+    @Override
+    public void accept(Event<TrommelSelectEvent> trommelSelectEventEvent) {
+        trommelAusgewaehlt(trommelSelectEventEvent.getData().getTrommelId());
     }
 
     private class Abgang implements FocusListener, IStreckeE, KeyListener {

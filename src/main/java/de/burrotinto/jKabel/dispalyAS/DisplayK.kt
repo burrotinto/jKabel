@@ -47,10 +47,10 @@ class DisplayK(var db: IDBWrapper,
                var updateSet: UpdateSet,
                var configReader: ConfigReader,
                val kabelTypAuswahlAAS: KabelTypAuswahlAAS,
-               val tommelAAs: TrommelAuswahlAAS) {
+               val tommelAAs: TrommelAuswahlAAS,
+               val streckenAAS: StreckenAAS) {
 
     fun getBearbeitenPanel(): JPanel {
-        val streckenAAS = StreckenAAS(db, updateSet)
         kabelTypAuswahlAAS.addKabelTypListner(tommelAAs)
         kabelTypAuswahlAAS.addKabelTypListner(streckenAAS)
 
@@ -97,10 +97,4 @@ class DisplayK(var db: IDBWrapper,
         db.allKabeltypen.forEach(Consumer<IKabeltypE> { iKabeltypE -> iKabeltypE.trommeln.forEach(Consumer<ITrommelE> { iTrommelE -> m.add(iTrommelE.id.toString() + " " + iTrommelE.trommelnummer) }) })
         return m
     }
-
-    @Bean
-    fun searchTrommelNrAAS(db: IDBWrapper, updateOnChange: UpdateSet): SearchTrommelNrAAS {
-        return SearchTrommelNrAAS(StreckenAAS(db, updateOnChange), db)
-    }
-
 }
