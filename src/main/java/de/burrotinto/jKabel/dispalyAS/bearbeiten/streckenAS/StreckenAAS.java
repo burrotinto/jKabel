@@ -25,7 +25,6 @@ import de.burrotinto.jKabel.dbauswahlAS.enitys.IKabeltypE;
 import de.burrotinto.jKabel.dbauswahlAS.enitys.ILieferantE;
 import de.burrotinto.jKabel.dbauswahlAS.enitys.IStreckeE;
 import de.burrotinto.jKabel.dbauswahlAS.enitys.ITrommelE;
-import de.burrotinto.jKabel.dispalyAS.UpdateSet;
 import de.burrotinto.jKabel.dispalyAS.bearbeiten.kabelTypAuswahlAS.IKabelTypListner;
 import de.burrotinto.jKabel.dispalyAS.bearbeiten.scanAS.ScanAAS;
 import de.burrotinto.jKabel.dispalyAS.bearbeiten.trommelAuswahlAS.ITrommelListner;
@@ -33,6 +32,9 @@ import de.burrotinto.jKabel.eventDriven.events.TrommelSelectEvent;
 import de.burrotinto.jKabel.dispalyAS.lookAndFeel.MinimalisticButton;
 import de.burrotinto.jKabel.dispalyAS.lookAndFeel.MinimalisticFormattetTextField;
 import de.burrotinto.jKabel.dispalyAS.lookAndFeel.MinimalisticPanel;
+import de.burrotinto.jKabel.eventDriven.events.UpdateEvent;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 import reactor.bus.Event;
 
@@ -54,9 +56,9 @@ import java.util.function.Consumer;
  * Created by derduke on 22.05.16.
  */
 @Component
-public class StreckenAAS extends JPanel implements ITrommelListner, ActionListener, IKabelTypListner, KeyListener,  reactor.fn.Consumer<Event<TrommelSelectEvent>> {
+public class StreckenAAS extends JPanel implements ITrommelListner, ActionListener, IKabelTypListner, KeyListener{
     private final StreckenK kontroller;
-    private final UpdateSet updateOnChange;
+    private final ApplicationEventPublisher eventPublisher;
     private JTextField trommelnummerField, datumField, laengeField, typField, matNrField, baField, startField, endField, trommelstartField;
     private JComboBox<String> lagerplatzBox, ortBox;
     private JCheckBox freiCheckBox;
@@ -69,9 +71,9 @@ public class StreckenAAS extends JPanel implements ITrommelListner, ActionListen
     private BufferedImage logo = null;
 
 
-    public StreckenAAS(IDBWrapper db, UpdateSet updateOnChange) {
-        this.updateOnChange = updateOnChange;
+    public StreckenAAS(IDBWrapper db, ApplicationEventPublisher eventPublisher) {
         kontroller = new StreckenK(db);
+        this.eventPublisher = eventPublisher;
         create.addActionListener(this);
         update.addActionListener(this);
 //        setPreferredSize(new Dimension(680,680));
@@ -384,13 +386,7 @@ public class StreckenAAS extends JPanel implements ITrommelListner, ActionListen
         buildPanel(kontroller.getNewCopy(trommel));
         repaint();
         revalidate();
-        updateOnChange.getSet().forEach(new Consumer<JPanel>() {
-            @Override
-            public void accept(JPanel jPanel) {
-                jPanel.repaint();
-                jPanel.revalidate();
-            }
-        });
+        eventPublisher.publishEvent(new UpdateEvent(trommel));
     }
 
     @Override
@@ -450,9 +446,9 @@ public class StreckenAAS extends JPanel implements ITrommelListner, ActionListen
         scanDialoge = new ArrayList<>();
     }
 
-    @Override
-    public void accept(Event<TrommelSelectEvent> trommelSelectEventEvent) {
-        trommelAusgewaehlt(trommelSelectEventEvent.getData().getTrommelId());
+    @EventListener
+    public void handle(TrommelSelectEvent trommelSelectEvent) {
+        trommelAusgewaehlt(trommelSelectEvent.getTrommelId());
     }
 
     private class Abgang implements FocusListener, IStreckeE, KeyListener {

@@ -23,14 +23,10 @@ package de.burrotinto.jKabel;
 import de.burrotinto.jKabel.dbauswahlAS.HSQLDB.HSQLDBServer;
 import de.burrotinto.jKabel.dbauswahlAS.HSQLDB.OnlyOneUserExeption;
 import org.hsqldb.server.ServerAcl;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.context.annotation.Bean;
-
-import javax.swing.*;
-import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -40,7 +36,7 @@ import java.util.Date;
  * Schnittstelle zum start von jKabel
  */
 @SpringBootApplication
-public class JKabelS {
+public class JKabelS implements InitializingBean {
     public static final String PROGRAMMNAME = "jKabel";
 
     public static void main(String[] args) throws ClassNotFoundException, SQLException, OnlyOneUserExeption, IOException, ServerAcl.AclFormatException, InterruptedException {
@@ -62,6 +58,11 @@ public class JKabelS {
 
     public static String getGPL(String name) {
         return PROGRAMMNAME + " Copyright (C) " + (new Date().getYear() + 1900) + " " + name + "\nThis program comes with ABSOLUTELY NO WARRANTY; for details type `show w'.\nThis is free software, and you are welcome to redistribute it\nunder certain conditions; type `show c' for details.";
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+
     }
 }
 

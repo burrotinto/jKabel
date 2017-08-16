@@ -44,7 +44,6 @@ import javax.swing.JScrollPane
  */
 @org.springframework.stereotype.Component
 class DisplayK(var db: IDBWrapper,
-               var updateSet: UpdateSet,
                var configReader: ConfigReader,
                val kabelTypAuswahlAAS: KabelTypAuswahlAAS,
                val tommelAAs: TrommelAuswahlAAS,

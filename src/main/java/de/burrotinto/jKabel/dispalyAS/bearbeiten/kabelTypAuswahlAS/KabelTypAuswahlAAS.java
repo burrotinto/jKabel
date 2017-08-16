@@ -21,11 +21,11 @@ package de.burrotinto.jKabel.dispalyAS.bearbeiten.kabelTypAuswahlAS;
 
 import de.burrotinto.jKabel.dbauswahlAS.IDBWrapper;
 import de.burrotinto.jKabel.dbauswahlAS.enitys.IKabeltypE;
-import de.burrotinto.jKabel.dispalyAS.UpdateSet;
 import de.burrotinto.jKabel.dispalyAS.bearbeiten.kabeltypCreateAS.KabelTypCreateAAS;
 import de.burrotinto.jKabel.dispalyAS.lookAndFeel.MinimalisticButton;
 import de.burrotinto.jKabel.dispalyAS.lookAndFeel.MinimalisticPanel;
 import de.burrotinto.jKabel.eventDriven.events.TrommelSelectEvent;
+import org.springframework.context.event.EventListener;
 import reactor.bus.Event;
 
 import javax.swing.*;
@@ -40,7 +40,7 @@ import java.util.Set;
 import java.util.function.Consumer;
 
 @org.springframework.stereotype.Component
-public class KabelTypAuswahlAAS extends JPanel implements ActionListener, IKabelTypListner, reactor.fn.Consumer<reactor.bus.Event<TrommelSelectEvent>> {
+public class KabelTypAuswahlAAS extends JPanel implements ActionListener, IKabelTypListner {
     private final IDBWrapper db;
     private KabelTypAuswahlK kontroll;
     private HashMap<MinimalisticButton, Integer> buttonsMatNr = new HashMap<>();
@@ -49,9 +49,8 @@ public class KabelTypAuswahlAAS extends JPanel implements ActionListener, IKabel
     private IKabeltypE selected = null;
 
 
-    public KabelTypAuswahlAAS(IDBWrapper db, UpdateSet updateSet, KabelTypAuswahlK kontroll) {
+    public KabelTypAuswahlAAS(IDBWrapper db,KabelTypAuswahlK kontroll) {
         super();
-        updateSet.getSet().add(this);
         this.kontroll = kontroll;
         addKabelTypListner(this);
         buildPanel();
@@ -135,11 +134,10 @@ public class KabelTypAuswahlAAS extends JPanel implements ActionListener, IKabel
         return selected;
     }
 
-    @Override
-    public void accept(Event<TrommelSelectEvent> trommelSelectEventEvent) {
+    @EventListener
+    public void handle(TrommelSelectEvent trommelSelectEvent) {
         for (Map.Entry<MinimalisticButton, Integer> entry : buttonsMatNr.entrySet()) {
-            entry.getKey().setSelected(entry.getValue() == db.getTrommelByID(trommelSelectEventEvent.getData()
-                    .getTrommelId()).getMaterialNummer());
+            entry.getKey().setSelected(entry.getValue() == db.getTrommelByID(trommelSelectEvent.getTrommelId()).getMaterialNummer());
         }
     }
 }

@@ -21,16 +21,15 @@ package de.burrotinto.jKabel.dispalyAS.bearbeiten.trommelAuswahlAS
 
 import de.burrotinto.jKabel.dbauswahlAS.IDBWrapper
 import de.burrotinto.jKabel.dbauswahlAS.enitys.IKabeltypE
-import de.burrotinto.jKabel.dispalyAS.UpdateSet
 import de.burrotinto.jKabel.dispalyAS.bearbeiten.kabelTypAuswahlAS.IKabelTypListner
 import de.burrotinto.jKabel.dispalyAS.bearbeiten.trommelCreateAS.TrommelCreateAAS
 import de.burrotinto.jKabel.dispalyAS.lookAndFeel.MinimalisticButton
 import de.burrotinto.jKabel.dispalyAS.lookAndFeel.MinimalisticPanel
 import de.burrotinto.jKabel.dispalyAS.lookAndFeel.PercendBarMinimalisticPanel
-import de.burrotinto.jKabel.eventDriven.EventDrivenWire
 import de.burrotinto.jKabel.eventDriven.events.TrommelSelectEvent
-import reactor.bus.Event
-import reactor.bus.EventBus
+import de.burrotinto.jKabel.eventDriven.events.UpdateEvent
+import org.springframework.context.ApplicationEventPublisher
+import org.springframework.context.event.EventListener
 import java.awt.BorderLayout
 import java.awt.Color
 import java.awt.FlowLayout
@@ -43,16 +42,16 @@ import javax.swing.JPanel
  * Created by derduke on 22.05.16.
  */
 @org.springframework.stereotype.Component
-class TrommelAuswahlAAS(private val db: IDBWrapper, updateSet: UpdateSet, val kontroll: TommelAuswahlK, val eventBus: EventBus) :
-        JPanel(), IKabelTypListner, reactor.fn.Consumer<reactor.bus.Event<TrommelSelectEvent>> {
-
+class TrommelAuswahlAAS(private val db: IDBWrapper,
+                        val kontroll: TommelAuswahlK,
+                        val eventPublisher: ApplicationEventPublisher) :
+        JPanel(), IKabelTypListner {
 
     private val addNewButt = MinimalisticButton("Neue Trommel")
     private var typ: IKabeltypE? = null
     private var buttons: MutableMap<Int, MinimalisticButton> = hashMapOf()
 
     init {
-        updateSet.set.add(this)
         addNewButt.addActionListener { this.create(it) }
         layout = BorderLayout()
     }
@@ -122,7 +121,7 @@ class TrommelAuswahlAAS(private val db: IDBWrapper, updateSet: UpdateSet, val ko
             p.add(label)
 
             b.addActionListener {
-                eventBus.notify(EventDrivenWire.TROMMEL_SELECTED_REGISTRATION, Event.wrap(TrommelSelectEvent(t.id)))
+                 eventPublisher.publishEvent(TrommelSelectEvent(t.id))
             }
 
             panel.add(p)
@@ -146,18 +145,16 @@ class TrommelAuswahlAAS(private val db: IDBWrapper, updateSet: UpdateSet, val ko
         repaint()
         revalidate()
     }
-//
-//    override fun revalidate() {
-//        removeAll()
-//        if (typ != null)
-//            buildPanel(kontroll.getNewTypCopy(typ!!))
-//        repaint()
-//        super.revalidate()
-//    }
 
-    override fun accept(p0: Event<TrommelSelectEvent>?) {
-        typSelected(db.getTrommelByID(p0!!.data.trommelId).typ)
-        buttons.forEach { id, button -> button.isSelected = id == p0?.data?.trommelId }
+    @EventListener
+    fun handle(event: TrommelSelectEvent) {
+        typSelected(db.getTrommelByID(event.trommelId).typ)
+        buttons.forEach { id, button -> button.isSelected = id == event.trommelId }
+    }
 
+    @EventListener
+    fun handle(event: UpdateEvent) {
+        typSelected(event.trommel.typ)
+        buttons.forEach { id, button -> button.isSelected = id == event.trommel.id }
     }
 }

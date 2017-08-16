@@ -21,11 +21,9 @@ package de.burrotinto.jKabel.dispalyAS.search.trommelByNummer
 
 import de.burrotinto.jKabel.dispalyAS.lookAndFeel.MinimalisticButton
 import de.burrotinto.jKabel.dispalyAS.lookAndFeel.MinimalisticPanel
-import de.burrotinto.jKabel.eventDriven.EventDrivenWire
 import de.burrotinto.jKabel.eventDriven.events.TrommelSelectEvent
 import de.burrotinto.jKabel.eventDriven.events.TypSelectEvent
-import reactor.bus.Event
-import reactor.bus.EventBus
+import org.springframework.context.ApplicationEventPublisher
 import java.awt.FlowLayout
 import java.awt.event.ActionEvent
 import java.awt.event.ActionListener
@@ -40,7 +38,7 @@ import javax.swing.JTextField
  */
 @org.springframework.stereotype.Service
 open class SearchTrommelNrAAS(val kontroll: SearchTrommelNrK,
-                              val eventBus: EventBus) : MinimalisticPanel(), KeyListener, ActionListener {
+                              val eventPublisher: ApplicationEventPublisher) : MinimalisticPanel(), KeyListener, ActionListener {
 
     private val tf = JTextField(9)
     private val ergebnis = JPanel()
@@ -73,8 +71,8 @@ open class SearchTrommelNrAAS(val kontroll: SearchTrommelNrK,
             val id = it.id
             val typId = it.typ.materialNummer
             b.addActionListener {
-                eventBus.notify(EventDrivenWire.TROMMEL_SELECTED_REGISTRATION, Event.wrap(TrommelSelectEvent(id)))
-                eventBus.notify(EventDrivenWire.TYPE_SELECTED, Event.wrap(TypSelectEvent(typId)))
+               eventPublisher.publishEvent(TrommelSelectEvent(id))
+                eventPublisher.publishEvent(TypSelectEvent(typId))
             }
 
             ergebnis.add(b)
