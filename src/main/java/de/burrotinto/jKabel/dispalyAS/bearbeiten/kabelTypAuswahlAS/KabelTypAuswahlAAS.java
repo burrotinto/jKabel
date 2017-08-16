@@ -25,20 +25,22 @@ import de.burrotinto.jKabel.dispalyAS.UpdateSet;
 import de.burrotinto.jKabel.dispalyAS.bearbeiten.kabeltypCreateAS.KabelTypCreateAAS;
 import de.burrotinto.jKabel.dispalyAS.lookAndFeel.MinimalisticButton;
 import de.burrotinto.jKabel.dispalyAS.lookAndFeel.MinimalisticPanel;
+import de.burrotinto.jKabel.eventDriven.events.TrommelSelectEvent;
+import reactor.bus.Event;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
 
 @org.springframework.stereotype.Component
-public class KabelTypAuswahlAAS extends JPanel implements ActionListener, IKabelTypListner {
+public class KabelTypAuswahlAAS extends JPanel implements ActionListener, IKabelTypListner, reactor.fn.Consumer<reactor.bus.Event<TrommelSelectEvent>> {
     private final IDBWrapper db;
     private KabelTypAuswahlK kontroll;
     private HashMap<MinimalisticButton, Integer> buttonsMatNr = new HashMap<>();
@@ -131,5 +133,13 @@ public class KabelTypAuswahlAAS extends JPanel implements ActionListener, IKabel
 
     public IKabeltypE getSelected() {
         return selected;
+    }
+
+    @Override
+    public void accept(Event<TrommelSelectEvent> trommelSelectEventEvent) {
+        for (Map.Entry<MinimalisticButton, Integer> entry : buttonsMatNr.entrySet()) {
+            entry.getKey().setSelected(entry.getValue() == db.getTrommelByID(trommelSelectEventEvent.getData()
+                    .getTrommelId()).getMaterialNummer());
+        }
     }
 }

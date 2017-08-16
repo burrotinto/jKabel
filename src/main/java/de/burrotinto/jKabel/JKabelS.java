@@ -29,6 +29,8 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
 
+import javax.swing.*;
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -40,9 +42,8 @@ import java.util.Date;
 @SpringBootApplication
 public class JKabelS {
     public static final String PROGRAMMNAME = "jKabel";
-    private static final AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
 
-    public static void main(String[] args) throws ClassNotFoundException, SQLException, OnlyOneUserExeption, IOException, ServerAcl.AclFormatException {
+    public static void main(String[] args) throws ClassNotFoundException, SQLException, OnlyOneUserExeption, IOException, ServerAcl.AclFormatException, InterruptedException {
         ConfigurableApplicationContext ctx = new SpringApplicationBuilder(JKabelS.class)
                 .headless(false).run(args);
 
@@ -62,10 +63,5 @@ public class JKabelS {
     public static String getGPL(String name) {
         return PROGRAMMNAME + " Copyright (C) " + (new Date().getYear() + 1900) + " " + name + "\nThis program comes with ABSOLUTELY NO WARRANTY; for details type `show w'.\nThis is free software, and you are welcome to redistribute it\nunder certain conditions; type `show c' for details.";
     }
-
-    @Bean
-    public static AnnotationConfigApplicationContext getSpringContext() {
-        return context;
-    }
-
 }
+

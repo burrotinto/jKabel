@@ -178,9 +178,7 @@ public class DisplayAAS extends JFrame implements ItemListener {
     public void exit(ActionEvent e) {
         System.exit(0);
     }
-//    }
 
-//    }
 
     public void setDb(IDBWrapper db) {
         if (this.db != db) {
@@ -203,8 +201,6 @@ public class DisplayAAS extends JFrame implements ItemListener {
                 getContentPane().add(south = getSouth(), BorderLayout.SOUTH);
                 revalidate();
                 new Thread(new DBConectionTester(this, db, dbAuswahlAAS)).start();
-
-            } else {
 
             }
         }

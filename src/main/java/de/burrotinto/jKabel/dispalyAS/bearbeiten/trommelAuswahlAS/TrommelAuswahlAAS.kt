@@ -44,10 +44,12 @@ import javax.swing.JPanel
  */
 @org.springframework.stereotype.Component
 class TrommelAuswahlAAS(private val db: IDBWrapper, updateSet: UpdateSet, val kontroll: TommelAuswahlK, val eventBus: EventBus) :
-        JPanel(), IKabelTypListner {
+        JPanel(), IKabelTypListner, reactor.fn.Consumer<reactor.bus.Event<TrommelSelectEvent>> {
+
+
     private val addNewButt = MinimalisticButton("Neue Trommel")
     private var typ: IKabeltypE? = null
-    private var ausgewaehlt: MinimalisticButton? = null
+    private var buttons: MutableMap<Int, MinimalisticButton> = hashMapOf()
 
     init {
         updateSet.set.add(this)
@@ -59,81 +61,82 @@ class TrommelAuswahlAAS(private val db: IDBWrapper, updateSet: UpdateSet, val ko
         TrommelCreateAAS(db, typ, this)
     }
 
-    private fun buildPanel(typ: IKabeltypE?) {
-        if (typ != null) {
-            this.typ = typ
-            val panel = MinimalisticPanel(GridLayout(kontroll!!.getAllTrommelForTyp(typ).size, 1))
-            var p: JPanel = MinimalisticPanel()
+    private fun buildPanel(typ: IKabeltypE) {
+        this.typ = typ
+        buttons = HashMap()
 
-            p.add(addNewButt)
-            add(p, BorderLayout.NORTH)
+        val panel = MinimalisticPanel(GridLayout(kontroll!!.getAllTrommelForTyp(typ).size, 1))
+        var p: JPanel = MinimalisticPanel()
+
+        p.add(addNewButt)
+        add(p, BorderLayout.NORTH)
 
 
-            for (t in kontroll.getAllTrommelForTyp(typ)) {
-                //                if (ConfigReader.getInstance().isZeigeAlle() || !(t.isFreigemeldet() && kontroll.getRestMeter(t) == 0)) {
-                p = MinimalisticPanel(FlowLayout(FlowLayout.LEFT))
+        for (t in kontroll.getAllTrommelForTyp(typ)) {
+            //                if (ConfigReader.getInstance().isZeigeAlle() || !(t.isFreigemeldet() && kontroll.getRestMeter(t) == 0)) {
+            p = MinimalisticPanel(FlowLayout(FlowLayout.LEFT))
 
-                val label: JLabel
-                if (kontroll.isBeendet(t)) {
-                    label = JLabel("Beendet")
-                } else if (!kontroll.isAusserHaus(t)) {
-                    p = PercendBarMinimalisticPanel(FlowLayout(FlowLayout.LEFT), kontroll.getRestMeter(t).toDouble() / t.gesamtlaenge.toDouble(), if (t.isFreigemeldet) Color.RED else Color(221, 160, 221), Color.white)
-                    label = JLabel("Noch: " + kontroll.getRestMeter(t) + " m" + if (t.isFreigemeldet) " - Bund" else "")
-                    if (kontroll.getRestMeter(t) == 0) {
-                        p.setBackground(Color.GRAY)
-                        p.setOpaque(true)
-                    }
-
-                } else {
-                    val sb = StringBuilder(">> ")
-                    sb.append(kontroll.getBaustelle(t)).append(" <<>> ")
-                    if (kontroll.getAusleihtage(t) == 0) {
-                        if (kontroll.getAusleihStunden(t) == 0) {
-                            sb.append(kontroll.getAusleihMinuten(t)).append(" min")
-                        } else {
-                            sb.append(kontroll.getAusleihStunden(t)).append(" h")
-                        }
-                    } else {
-                        sb.append(kontroll.getAusleihtage(t)).append(" Tag")
-                        if (kontroll.getAusleihtage(t) != 1) {
-                            sb.append("e")
-                        }
-
-                    }
-                    sb.append(" <<")
-                    label = JLabel(sb.toString())
-                    p.setBackground(Color.ORANGE)
+            val label: JLabel
+            if (kontroll.isBeendet(t)) {
+                label = JLabel("Beendet")
+            } else if (!kontroll.isAusserHaus(t)) {
+                p = PercendBarMinimalisticPanel(FlowLayout(FlowLayout.LEFT), kontroll.getRestMeter(t).toDouble() / t.gesamtlaenge.toDouble(), if (t.isFreigemeldet) Color.RED else Color(221, 160, 221), Color.white)
+                label = JLabel("Noch: " + kontroll.getRestMeter(t) + " m" + if (t.isFreigemeldet) " - Bund" else "")
+                if (kontroll.getRestMeter(t) == 0) {
+                    p.setBackground(Color.GRAY)
                     p.setOpaque(true)
                 }
 
-                if (kontroll.isBeendet(t)) {
-                    p.background = Color.RED
-                    p.isOpaque = true
+            } else {
+                val sb = StringBuilder(">> ")
+                sb.append(kontroll.getBaustelle(t)).append(" <<>> ")
+                if (kontroll.getAusleihtage(t) == 0) {
+                    if (kontroll.getAusleihStunden(t) == 0) {
+                        sb.append(kontroll.getAusleihMinuten(t)).append(" min")
+                    } else {
+                        sb.append(kontroll.getAusleihStunden(t)).append(" h")
+                    }
+                } else {
+                    sb.append(kontroll.getAusleihtage(t)).append(" Tag")
+                    if (kontroll.getAusleihtage(t) != 1) {
+                        sb.append("e")
+                    }
+
                 }
-
-                val b = MinimalisticButton(t.trommelnummer + "")
-                b.isSelected = b == ausgewaehlt
-                p.add(b)
-                p.add(label)
-
-                b.addActionListener {
-                    ausgewaehlt = b
-                    eventBus.notify(EventDrivenWire.TROMMEL_SELECTED_REGISTRATION, Event.wrap(TrommelSelectEvent(t.id)))
-                }
-
-                panel.add(p)
+                sb.append(" <<")
+                label = JLabel(sb.toString())
+                p.setBackground(Color.ORANGE)
+                p.setOpaque(true)
             }
-            //            }
-            val pp = MinimalisticPanel()
-            pp.add(panel)
-            add(pp, BorderLayout.CENTER)
 
-            val min = kontroll.getMinMeter(typ)
-            val max = kontroll.getMaxMeter(typ)
+            if (kontroll.isBeendet(t)) {
+                p.background = Color.RED
+                p.isOpaque = true
+            }
 
-            add(JLabel("Verfügbar: " + (if (min == max) max else min.toString() + " - " + max) + " m"), BorderLayout.SOUTH)
+            val b = MinimalisticButton(t.trommelnummer + "")
 
+            buttons.put(t.id, b)
+
+            p.add(b)
+            p.add(label)
+
+            b.addActionListener {
+                eventBus.notify(EventDrivenWire.TROMMEL_SELECTED_REGISTRATION, Event.wrap(TrommelSelectEvent(t.id)))
+            }
+
+            panel.add(p)
         }
+        //            }
+        val pp = MinimalisticPanel()
+        pp.add(panel)
+        add(pp, BorderLayout.CENTER)
+
+        val min = kontroll.getMinMeter(typ)
+        val max = kontroll.getMaxMeter(typ)
+
+        add(JLabel("Verfügbar: " + (if (min == max) max else min.toString() + " - " + max) + " m"), BorderLayout.SOUTH)
+
     }
 
 
@@ -143,11 +146,18 @@ class TrommelAuswahlAAS(private val db: IDBWrapper, updateSet: UpdateSet, val ko
         repaint()
         revalidate()
     }
+//
+//    override fun revalidate() {
+//        removeAll()
+//        if (typ != null)
+//            buildPanel(kontroll.getNewTypCopy(typ!!))
+//        repaint()
+//        super.revalidate()
+//    }
 
-    override fun revalidate() {
-        removeAll()
-        buildPanel(if (typ != null) kontroll.getNewTypCopy(typ!!) else null)
-        repaint()
-        super.revalidate()
+    override fun accept(p0: Event<TrommelSelectEvent>?) {
+        typSelected(db.getTrommelByID(p0!!.data.trommelId).typ)
+        buttons.forEach { id, button -> button.isSelected = id == p0?.data?.trommelId }
+
     }
 }
