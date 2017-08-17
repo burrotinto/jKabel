@@ -24,6 +24,7 @@ import de.burrotinto.jKabel.dbauswahlAS.HSQLDB.HSQLDBServer;
 import de.burrotinto.jKabel.dbauswahlAS.HSQLDB.OnlyOneUserExeption;
 import org.hsqldb.server.ServerAcl;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -38,6 +39,9 @@ import java.util.Date;
 @SpringBootApplication
 public class JKabelS implements InitializingBean {
     public static final String PROGRAMMNAME = "jKabel";
+
+    @Autowired
+    SplashScreen splashScreen;
 
     public static void main(String[] args) throws ClassNotFoundException, SQLException, OnlyOneUserExeption, IOException, ServerAcl.AclFormatException, InterruptedException {
         ConfigurableApplicationContext ctx = new SpringApplicationBuilder(JKabelS.class)
