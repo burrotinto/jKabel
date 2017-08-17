@@ -45,7 +45,7 @@ public class JKabelS implements InitializingBean {
 
     public static void main(String[] args) throws ClassNotFoundException, SQLException, OnlyOneUserExeption, IOException, ServerAcl.AclFormatException, InterruptedException {
         ConfigurableApplicationContext ctx = new SpringApplicationBuilder(JKabelS.class)
-                .headless(false).run(args);
+                .headless(false).web(false).run(args);
 
         if (args.length != 0) {
             System.out.println(JKabelS.getGPL("Florian Klinger"));
