@@ -35,6 +35,7 @@ import java.awt.event.ItemListener
 import java.io.IOException
 import javax.swing.*
 
+
 /**
  * Created by derduke on 22.05.16.
  */
@@ -313,22 +314,22 @@ class DisplayAAS(private val kontroll: DisplayK,
     private inner class DBConectionTester internal constructor(private val display: DisplayAAS, private val db: IDBWrapper, private val dbAuswahlAAS: DBAuswahlAAS) : Runnable {
 
         override fun run() {
-            while (!db.isClosed) {
-                try {
-                    Thread.sleep(1000)
-                    try {
-                        anZClients.text = "| Insgesamt " + sClient!!.anzahlClients + " angemeldet |"
-                        anZClients.revalidate()
-                    } catch (e: IOException) {
-                        e.printStackTrace()
-                    }
+            try {
+                while (true) {
+                    Thread.sleep(500)
 
-                } catch (e: InterruptedException) {
-                    e.printStackTrace()
+                    anZClients.text = "| Insgesamt " + sClient!!.anzahlClients + " angemeldet |"
+                    anZClients.revalidate()
+
                 }
-
+            } catch (e: Exception) {
+                val dialog = JOptionPane.showMessageDialog(display,
+                        "Ungespeicherte Daten aufschreiben und jKabel neu starten ",
+                        "Datenbank wurde geschlossen",
+                        JOptionPane.ERROR_MESSAGE)
+//                display.setDb(dbAuswahlAAS.dbWrapper)
             }
-            display.setDb(dbAuswahlAAS.dbWrapper)
+
         }
     }
 
