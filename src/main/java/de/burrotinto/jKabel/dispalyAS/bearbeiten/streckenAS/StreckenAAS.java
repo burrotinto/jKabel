@@ -28,15 +28,14 @@ import de.burrotinto.jKabel.dbauswahlAS.enitys.ITrommelE;
 import de.burrotinto.jKabel.dispalyAS.bearbeiten.kabelTypAuswahlAS.IKabelTypListner;
 import de.burrotinto.jKabel.dispalyAS.bearbeiten.scanAS.ScanAAS;
 import de.burrotinto.jKabel.dispalyAS.bearbeiten.trommelAuswahlAS.ITrommelListner;
-import de.burrotinto.jKabel.eventDriven.events.TrommelSelectEvent;
 import de.burrotinto.jKabel.dispalyAS.lookAndFeel.MinimalisticButton;
 import de.burrotinto.jKabel.dispalyAS.lookAndFeel.MinimalisticFormattetTextField;
 import de.burrotinto.jKabel.dispalyAS.lookAndFeel.MinimalisticPanel;
+import de.burrotinto.jKabel.eventDriven.events.TrommelSelectEvent;
 import de.burrotinto.jKabel.eventDriven.events.UpdateEvent;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
-import reactor.bus.Event;
 
 import javax.swing.*;
 import java.awt.*;
@@ -56,15 +55,15 @@ import java.util.function.Consumer;
  * Created by derduke on 22.05.16.
  */
 @Component
-public class StreckenAAS extends JPanel implements ITrommelListner, ActionListener, IKabelTypListner, KeyListener{
+public class StreckenAAS extends JPanel implements ITrommelListner, IKabelTypListner, KeyListener {
     private final StreckenK kontroller;
     private final ApplicationEventPublisher eventPublisher;
     private JTextField trommelnummerField, datumField, laengeField, typField, matNrField, baField, startField, endField, trommelstartField;
     private JComboBox<String> lagerplatzBox, ortBox;
     private JCheckBox freiCheckBox;
     private List<Abgang> abgaenge;
-    private MinimalisticButton create = new MinimalisticButton("Eintragen");
-    private MinimalisticButton update = new MinimalisticButton("Ändern");
+    //    private MinimalisticButton create = new MinimalisticButton("Eintragen");
+    private MinimalisticButton update = new MinimalisticButton("Save");
     private ITrommelE trommel = null;
     private JComboBox<ILieferantE> cBox;
     private List<JDialog> scanDialoge = new ArrayList<>();
@@ -74,11 +73,11 @@ public class StreckenAAS extends JPanel implements ITrommelListner, ActionListen
     public StreckenAAS(IDBWrapper db, ApplicationEventPublisher eventPublisher) {
         kontroller = new StreckenK(db);
         this.eventPublisher = eventPublisher;
-        create.addActionListener(this);
-        update.addActionListener(this);
+        update.addActionListener(this::update);
 //        setPreferredSize(new Dimension(680,680));
 
     }
+
 
     @Override
     public void trommelAusgewaehlt(Integer trommelID) {
@@ -214,8 +213,22 @@ public class StreckenAAS extends JPanel implements ITrommelListner, ActionListen
 
             next = !next;
             MinimalisticButton del = new MinimalisticButton("Löschen");
-            del.addActionListener(this);
-            Abgang a = new Abgang(s, del, trommel);
+
+            Abgang a = new Abgang(s, trommel);
+            del.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    a.setDelete(!a.isDelete());
+                    if (a.isDelete()) {
+                        del.setText("Nicht löschen");
+                        panel.setBackground(Color.BLACK);
+                    } else {
+                        del.setText("Löschen");
+                        panel.setBackground(Color.WHITE);
+                    }
+                }
+            });
+
             abgaenge.add(a);
             JTextField dT = new JTextField(kontroller.getTimeString(s.getVerlegedatum()), 10);
             panel.add(dT);
@@ -278,7 +291,7 @@ public class StreckenAAS extends JPanel implements ITrommelListner, ActionListen
             panel.add(startField);
             panel.add(endField);
             panel.add(ortBox);
-            panel.add(create);
+//            panel.add(create);
             p.add(panel);
         }
         JPanel butt = new MinimalisticPanel();
@@ -300,10 +313,54 @@ public class StreckenAAS extends JPanel implements ITrommelListner, ActionListen
         }
     }
 
+    private void update(ActionEvent e) {
+        // Updates der Einträge
+        trommel.setGesamtlaenge(Integer.parseInt(laengeField.getText()));
+        trommel.setTrommelnummer(trommelnummerField.getText());
+        trommel.setLagerPlatz((String) lagerplatzBox.getSelectedItem());
+        trommel.setStart(Integer.parseInt(trommelstartField.getText()));
+        trommel.setFreimeldung(freiCheckBox.isSelected());
+        kontroller.update(trommel);
 
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == create && trommel != null) {
+        IGeliefertE g = kontroller.getLiefer(trommel);
+        g.setLieferantID(((ILieferantE) cBox.getSelectedItem()));
+        kontroller.update(g);
+
+
+        IKabeltypE typ = trommel.getTyp();
+        typ.setTyp(typField.getText());
+        kontroller.update(typ);
+
+        for (Abgang a : abgaenge) {
+            try {
+                if (a.isDelete()) {
+                    kontroller.remove(a);
+                } else {
+                    kontroller.update(a);
+                }
+            } catch (NumberFormatException ex) {
+                ex.printStackTrace();
+            }
+        }
+
+
+        //Entnahme erzeugen
+        createRemoval();
+        refresh();
+    }
+
+    private void refresh() {
+        removeAll();
+
+        buildPanel(kontroller.getNewCopy(trommel));
+        repaint();
+        revalidate();
+        eventPublisher.publishEvent(new UpdateEvent(trommel));
+    }
+
+    private void createRemoval() {
+        if (((baField != null && baField.getText() != null && !baField.getText().equals("")) || (ortBox != null &&
+                ortBox.getSelectedItem() != null && !ortBox.getSelectedItem().equals(""))) && !kontroller.istAusserHaus(trommel)) {
             int ba = -1;
             int start = -1;
             int ende = -1;
@@ -341,52 +398,7 @@ public class StreckenAAS extends JPanel implements ITrommelListner, ActionListen
             } else {
                 kontroller.eintragenStrecke(ba, ortBox.getSelectedItem() == null ? "" : (String) ortBox.getSelectedItem(), System.currentTimeMillis(), start, ende, trommel);
             }
-        } else {
-            // Updates der Einträge
-            if (e.getSource() == update) {
-                for (Abgang a : abgaenge) {
-                    try {
-                        kontroller.update(a);
-                    } catch (NumberFormatException ex) {
-                        ex.printStackTrace();
-                    }
-
-                }
-
-                trommel.setGesamtlaenge(Integer.parseInt(laengeField.getText()));
-                trommel.setTrommelnummer(trommelnummerField.getText());
-                trommel.setLagerPlatz((String) lagerplatzBox.getSelectedItem());
-                trommel.setStart(Integer.parseInt(trommelstartField.getText()));
-                trommel.setFreimeldung(freiCheckBox.isSelected());
-                kontroller.update(trommel);
-
-                IGeliefertE g = kontroller.getLiefer(trommel);
-                g.setLieferantID(((ILieferantE) cBox.getSelectedItem()));
-                kontroller.update(g);
-
-
-                IKabeltypE typ = trommel.getTyp();
-                typ.setTyp(typField.getText());
-                kontroller.update(typ);
-
-
-            } else {
-                IStreckeE s = null;
-                for (Abgang a : abgaenge) {
-                    if (e.getSource() == a.butt) {
-                        kontroller.remove(a.strecke);
-                        break;
-                    }
-                }
-            }
-
         }
-        removeAll();
-
-        buildPanel(kontroller.getNewCopy(trommel));
-        repaint();
-        revalidate();
-        eventPublisher.publishEvent(new UpdateEvent(trommel));
     }
 
     @Override
@@ -408,6 +420,7 @@ public class StreckenAAS extends JPanel implements ITrommelListner, ActionListen
     public void keyPressed(KeyEvent e) {
 
     }
+
 
     @Override
     public void keyReleased(KeyEvent e) {
@@ -456,11 +469,10 @@ public class StreckenAAS extends JPanel implements ITrommelListner, ActionListen
         private final IStreckeE strecke;
         private MinimalisticFormattetTextField bA, start, ende;
         private JTextField text;
-        private MinimalisticButton butt;
         private ITrommelE trommel;
+        private boolean delete = false;
 
-        private Abgang(IStreckeE strecke, MinimalisticButton butt, ITrommelE trommel) {
-            this.butt = butt;
+        private Abgang(IStreckeE strecke, ITrommelE trommel) {
             this.strecke = strecke;
             bA = new MinimalisticFormattetTextField((strecke.getBa() < 0 ? "" : strecke.getBa()) + "", 8);
             start = new MinimalisticFormattetTextField((strecke.getStart() < 0 ? "" : strecke.getStart()) + "", 4);
@@ -469,6 +481,14 @@ public class StreckenAAS extends JPanel implements ITrommelListner, ActionListen
             ende.addFocusListener(this);
             bA.addKeyListener(this);
             this.trommel = trommel;
+        }
+
+        public boolean isDelete() {
+            return delete;
+        }
+
+        public void setDelete(boolean delete) {
+            this.delete = delete;
         }
 
         @Override
