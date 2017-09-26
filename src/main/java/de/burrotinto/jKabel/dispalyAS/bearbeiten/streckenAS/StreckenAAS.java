@@ -331,6 +331,9 @@ public class StreckenAAS extends JPanel implements ITrommelListner, IKabelTypLis
         typ.setTyp(typField.getText());
         kontroller.update(typ);
 
+        //Entnahme erzeugen
+        createRemoval();
+
         for (Abgang a : abgaenge) {
             try {
                 if (a.isDelete()) {
@@ -343,9 +346,6 @@ public class StreckenAAS extends JPanel implements ITrommelListner, IKabelTypLis
             }
         }
 
-
-        //Entnahme erzeugen
-        createRemoval();
         refresh();
     }
 
