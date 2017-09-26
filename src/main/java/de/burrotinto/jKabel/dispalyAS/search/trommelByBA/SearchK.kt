@@ -50,6 +50,8 @@ class SearchK(private val db: IDBWrapper) {
         return trommel.strecken
     }
 
-    val allKAbelTypen: Vector<IKabeltypE>
+    val allKabelTypenVector: Vector<IKabeltypE>
         get() = Vector(db.allKabeltypen)
+
+    fun allkabelTypen():List<IKabeltypE> = db.allKabeltypen
 }

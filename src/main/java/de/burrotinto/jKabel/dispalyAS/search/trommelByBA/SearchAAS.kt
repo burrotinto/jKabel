@@ -23,18 +23,19 @@ import de.burrotinto.jKabel.dbauswahlAS.IDBWrapper
 import de.burrotinto.jKabel.dbauswahlAS.enitys.IKabeltypE
 import de.burrotinto.jKabel.dbauswahlAS.enitys.ITrommelE
 import de.burrotinto.jKabel.dispalyAS.bearbeiten.streckenAS.StreckenAAS
-
-import javax.swing.*
-import java.awt.*
+import java.awt.BorderLayout
+import java.awt.GridLayout
 import java.awt.event.ActionEvent
 import java.awt.event.ActionListener
+import javax.swing.*
 
 /**
  * Created by derduke on 25.05.16.
  */
 @org.springframework.stereotype.Component
-class SearchAAS(private val db: IDBWrapper,val kontroller: SearchK) : JPanel(), ActionListener {
+class SearchAAS(private val db: IDBWrapper, val kontroller: SearchK) : JPanel(), ActionListener {
     private val searchButt = JButton("suchen")
+
     private var baFied: JTextField? = null
     private var cBox: JComboBox<IKabeltypE>? = null
     private var ergebnis = JScrollPane()
@@ -54,16 +55,29 @@ class SearchAAS(private val db: IDBWrapper,val kontroller: SearchK) : JPanel(), 
             baFied = JTextField(8)
             s.add(baFied)
             s.add(JLabel("Kabeltyp"))
-            cBox = JComboBox(kontroller.allKAbelTypen)
+            val vector = kontroller.allKabelTypenVector
+            vector.addElement(null)
+            cBox = JComboBox(vector)
             s.add(cBox)
             val p = JPanel()
             p.add(s)
             return p
         }
 
-    private fun getErgebnisPanel(ba: Int, typ: IKabeltypE): JPanel {
-        val trommeln = kontroller.getAllTrommelWithBA(ba,typ)
-        val s = JPanel(GridLayout(trommeln.size+1, 1))
+    private fun getErgebnisPanel(ba: Int, typ: IKabeltypE?): JPanel {
+        val trommeln = ArrayList<ITrommelE>()
+        if (typ != null) {
+            trommeln.addAll(kontroller.getAllTrommelWithBA(ba, typ))
+        } else {
+            trommeln.addAll(kontroller.allkabelTypen()
+                    .flatMap { it.trommeln }
+                    .filter {
+                        it.strecken.any {
+                                    it.ba == ba
+                                }
+                    })
+        }
+        val s = JPanel(GridLayout(trommeln.size + 1, 1))
 
         s.add(JLabel("Insgesamt: ${trommeln.flatMap { it.strecken }.filter { it.ba == ba }.sumBy { it.meter }} m"))
         for (t in trommeln) {
@@ -76,7 +90,7 @@ class SearchAAS(private val db: IDBWrapper,val kontroller: SearchK) : JPanel(), 
 
     override fun actionPerformed(e: ActionEvent) {
         remove(ergebnis)
-        ergebnis = JScrollPane(getErgebnisPanel(Integer.parseInt(baFied!!.text), cBox!!.selectedItem as IKabeltypE))
+        ergebnis = JScrollPane(getErgebnisPanel(Integer.parseInt(baFied!!.text), if(cBox?.selectedItem != null) cBox!!.selectedItem as IKabeltypE else null))
         add(ergebnis, BorderLayout.CENTER)
         repaint()
         revalidate()
