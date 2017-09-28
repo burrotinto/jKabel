@@ -278,20 +278,19 @@ public class StreckenAAS extends JPanel implements ITrommelListner, IKabelTypLis
             JTextField tF = new JTextField(4);
             tF.setEditable(false);
             panel.add(tF);
-            baField = new MinimalisticFormattetTextField("", 8);
-            startField = new MinimalisticFormattetTextField(last, 4);
-            endField = new MinimalisticFormattetTextField("", 4);
 
             ortBox = new JComboBox<String>();
             ortBox.setEditable(true);
             ortBox.setPreferredSize(new Dimension(180, 21));
 
+            baField = new MinimalisticFormattetTextField("", 8);
+            startField = new MinimalisticFormattetTextField(last, 4);
+            endField = new MinimalisticFormattetTextField("", 4);
             baField.addKeyListener(this);
             panel.add(baField);
             panel.add(startField);
             panel.add(endField);
             panel.add(ortBox);
-//            panel.add(create);
             p.add(panel);
         }
         JPanel butt = new MinimalisticPanel();
@@ -450,6 +449,9 @@ public class StreckenAAS extends JPanel implements ITrommelListner, IKabelTypLis
     @Override
     public void removeAll() {
         super.removeAll();
+        baField = null;
+        startField =  null;
+        endField =  null;
         scanDialoge.forEach(new Consumer<JDialog>() {
             @Override
             public void accept(JDialog jDialog) {
